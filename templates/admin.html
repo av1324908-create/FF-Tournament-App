@@ -1,166 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FF Tournament Hub - Admin</title>
 
     <style>
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
             background: #111;
             color: white;
-            margin: 0;
+        }
+
+        header {
+            background: #ff6a00;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
             padding: 20px;
         }
 
         .box {
-            max-width: 550px;
-            margin: auto;
-            background: #222;
+            background: #1c1c1c;
             padding: 20px;
-            border-radius: 15px;
+            margin-bottom: 20px;
+            border-radius: 12px;
         }
 
         input, select, button {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            box-sizing: border-box;
-            border-radius: 8px;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 6px;
             border: none;
         }
 
         button {
-            background: orange;
-            font-weight: bold;
+            background: #ff6a00;
+            color: white;
             cursor: pointer;
+            font-weight: bold;
         }
 
-        h1, h2, h3 {
-            text-align: center;
+        button:hover {
+            background: #ff8500;
         }
 
-        #dashboard {
-            display: none;
-        }
-
-        .card {
-            background: #333;
+        .tournament {
+            background: #252525;
             padding: 15px;
-            margin: 10px 0;
+            margin-top: 15px;
             border-radius: 10px;
         }
 
-        hr {
-            border: 0;
-            border-top: 1px solid #555;
-            margin: 25px 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            text-align: center;
+        }
+
+        th {
+            background: #ff6a00;
+        }
+
+        .login {
+            max-width: 400px;
+            margin: 60px auto;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .profit {
+            color: #00ff88;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
 
-<div class="box">
-
+<header>
     <h1>👑 FF Tournament Admin</h1>
+</header>
 
-    <div id="login">
+<div class="container">
+
+    <!-- LOGIN -->
+    <div id="loginBox" class="box login">
 
         <h2>🔐 Admin Login</h2>
 
-        <input id="username" placeholder="Username">
+        <input
+            type="text"
+            id="username"
+            placeholder="Username"
+        >
+
+        <br>
 
         <input
-            id="password"
             type="password"
+            id="password"
             placeholder="Password"
         >
 
-        <button onclick="login()">Login</button>
+        <br>
 
-        <p id="loginMessage"></p>
+        <button onclick="login()">
+            Login
+        </button>
+
+        <p id="loginMsg"></p>
 
     </div>
 
 
-    <div id="dashboard">
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="hidden">
 
-        <h2>🎮 Admin Dashboard</h2>
+        <div class="box">
 
-        <button onclick="logout()">Logout</button>
+            <h2>📊 Dashboard</h2>
 
-        <hr>
+            <button onclick="loadTournaments()">
+                🔄 Refresh
+            </button>
 
-        <h3>🏆 Create Tournament</h3>
+            <button onclick="logout()">
+                🚪 Logout
+            </button>
 
-        <input id="name" placeholder="Tournament Name">
+        </div>
 
-        <input
-            id="entry_fee"
-            type="number"
-            placeholder="Entry Fee"
-        >
 
-        <input
-            id="max_players"
-            type="number"
-            placeholder="Max Players"
-        >
+        <!-- CREATE TOURNAMENT -->
 
-        <input
-            id="kill_reward"
-            type="number"
-            placeholder="Per Kill Reward"
-        >
+        <div class="box">
 
-        <input
-            id="first_prize"
-            type="number"
-            placeholder="1st Prize"
-        >
+            <h2>➕ Create Tournament</h2>
 
-        <input
-            id="date_time"
-            type="datetime-local"
-        >
+            <input
+                id="tName"
+                placeholder="Tournament Name"
+            >
 
-        <button onclick="createTournament()">
-            Create Tournament
-        </button>
+            <input
+                id="entryFee"
+                type="number"
+                placeholder="Entry Fee"
+            >
 
-        <p id="message"></p>
+            <input
+                id="maxPlayers"
+                type="number"
+                placeholder="Max Players"
+            >
 
-        <hr>
+            <input
+                id="killReward"
+                type="number"
+                placeholder="Per Kill Reward"
+            >
 
-        <h3>👤 Player Registration</h3>
+            <input
+                id="firstPrize"
+                type="number"
+                placeholder="1st Prize"
+            >
 
-        <select id="playerTournament">
-            <option value="">Select Tournament</option>
-        </select>
+            <input
+                id="dateTime"
+                type="text"
+                placeholder="Date & Time"
+            >
 
-        <input
-            id="playerName"
-            placeholder="Player Name"
-        >
+            <br>
 
-        <input
-            id="playerUID"
-            placeholder="Free Fire UID"
-        >
+            <button onclick="createTournament()">
+                Create Tournament
+            </button>
 
-        <button onclick="registerPlayer()">
-            Register Player
-        </button>
+            <p id="createMsg"></p>
 
-        <p id="playerMessage"></p>
+        </div>
 
-        <hr>
 
-        <h3>📋 Tournaments</h3>
+        <!-- TOURNAMENTS -->
 
-        <div id="tournaments"></div>
+        <div class="box">
+
+            <h2>🏆 Tournaments</h2>
+
+            <div id="tournaments"></div>
+
+        </div>
 
     </div>
 
@@ -171,7 +215,15 @@
 
 async function login() {
 
+    const username =
+        document.getElementById("username").value;
+
+    const password =
+        document.getElementById("password").value;
+
+
     const response = await fetch("/admin-login", {
+
         method: "POST",
 
         headers: {
@@ -179,149 +231,72 @@ async function login() {
         },
 
         body: JSON.stringify({
-            username: document.getElementById("username").value,
-            password: document.getElementById("password").value
+            username: username,
+            password: password
         })
+
     });
+
 
     const data = await response.json();
 
+
     if (data.success) {
 
-        document.getElementById("login").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
+        document.getElementById("loginBox")
+            .classList.add("hidden");
+
+        document.getElementById("dashboard")
+            .classList.remove("hidden");
 
         loadTournaments();
 
     } else {
 
-        document.getElementById("loginMessage").innerText =
-            "❌ Wrong username or password";
+        document.getElementById("loginMsg")
+            .innerText = data.message;
+
     }
+
 }
 
 
-function logout() {
-    window.location.href = "/admin-logout";
+async function logout() {
+
+    await fetch("/admin-logout");
+
+    location.reload();
+
 }
 
 
 async function createTournament() {
 
-    const response = await fetch("/api/tournaments", {
+    const data = {
 
-        method: "POST",
+        name:
+            document.getElementById("tName").value,
 
-        headers: {
-            "Content-Type": "application/json"
-        },
+        entry_fee:
+            document.getElementById("entryFee").value,
 
-        body: JSON.stringify({
+        max_players:
+            document.getElementById("maxPlayers").value,
 
-            name: document.getElementById("name").value,
-            entry_fee: document.getElementById("entry_fee").value,
-            max_players: document.getElementById("max_players").value,
-            kill_reward: document.getElementById("kill_reward").value,
-            first_prize: document.getElementById("first_prize").value,
-            date_time: document.getElementById("date_time").value
+        kill_reward:
+            document.getElementById("killReward").value,
 
-        })
-    });
+        first_prize:
+            document.getElementById("firstPrize").value,
 
-    const data = await response.json();
+        date_time:
+            document.getElementById("dateTime").value
 
-    if (data.success) {
-
-        document.getElementById("message").innerText =
-            "✅ Tournament created successfully!";
-
-        loadTournaments();
-
-    } else {
-
-        document.getElementById("message").innerText =
-            "❌ " + data.message;
-    }
-}
-
-
-async function loadTournaments() {
-
-    const response = await fetch("/api/tournaments");
-
-    const tournaments = await response.json();
-
-    const box = document.getElementById("tournaments");
-
-    const select = document.getElementById("playerTournament");
-
-    box.innerHTML = "";
-
-    select.innerHTML =
-        '<option value="">Select Tournament</option>';
-
-
-    tournaments.forEach(t => {
-
-        box.innerHTML += `
-
-            <div class="card">
-
-                <b>🎮 ${t.name}</b><br><br>
-
-                💰 Entry: ₹${t.entry_fee}<br>
-
-                👥 Players:
-                ${t.players.length}/${t.max_players}<br>
-
-                🎯 Kill Reward:
-                ₹${t.kill_reward}<br>
-
-                🏆 1st Prize:
-                ₹${t.first_prize}<br>
-
-                📅 Date:
-                ${t.date_time}
-
-            </div>
-
-        `;
-
-
-        select.innerHTML += `
-
-            <option value="${t.id}">
-                ${t.name}
-            </option>
-
-        `;
-    });
-}
-
-
-async function registerPlayer() {
-
-    const tournamentId =
-        document.getElementById("playerTournament").value;
-
-    const name =
-        document.getElementById("playerName").value;
-
-    const uid =
-        document.getElementById("playerUID").value;
-
-
-    if (!tournamentId || !name || !uid) {
-
-        document.getElementById("playerMessage").innerText =
-            "❌ Sab details bharo";
-
-        return;
-    }
+    };
 
 
     const response = await fetch(
-        `/api/tournaments/${tournamentId}/players`,
+        "/api/tournaments",
         {
             method: "POST",
 
@@ -329,32 +304,177 @@ async function registerPlayer() {
                 "Content-Type": "application/json"
             },
 
-            body: JSON.stringify({
-                name: name,
-                uid: uid
-            })
+            body: JSON.stringify(data)
         }
     );
 
 
-    const data = await response.json();
+    const result = await response.json();
 
 
-    if (data.success) {
+    if (result.success) {
 
-        document.getElementById("playerMessage").innerText =
-            "✅ Player registered!";
-
-        document.getElementById("playerName").value = "";
-        document.getElementById("playerUID").value = "";
+        document.getElementById("createMsg")
+            .innerText =
+            "✅ Tournament created!";
 
         loadTournaments();
 
     } else {
 
-        document.getElementById("playerMessage").innerText =
-            "❌ " + data.message;
+        document.getElementById("createMsg")
+            .innerText =
+            result.message;
+
     }
+
+}
+
+
+async function loadTournaments() {
+
+    const response =
+        await fetch("/api/tournaments");
+
+    const tournaments =
+        await response.json();
+
+
+    const container =
+        document.getElementById("tournaments");
+
+    container.innerHTML = "";
+
+
+    tournaments.forEach(t => {
+
+        const revenue =
+            t.players.length * t.entry_fee;
+
+        const prizePool =
+            t.first_prize;
+
+        const profit =
+            revenue - prizePool;
+
+
+        let playersHTML = "";
+
+
+        if (t.players.length > 0) {
+
+            playersHTML = `
+
+                <h3>👥 Players</h3>
+
+                <table>
+
+                    <tr>
+                        <th>Player</th>
+                        <th>UID</th>
+                        <th>Kills</th>
+                        <th>Position</th>
+                        <th>Kill Reward</th>
+                    </tr>
+
+                    ${t.players.map(p => `
+
+                        <tr>
+
+                            <td>${p.name}</td>
+
+                            <td>${p.uid}</td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    value="${p.kills || 0}"
+                                    style="width:70px"
+                                >
+                            </td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    value="${p.position || 0}"
+                                    style="width:70px"
+                                >
+                            </td>
+
+                            <td>
+                                ₹${(p.kills || 0) * t.kill_reward}
+                            </td>
+
+                        </tr>
+
+                    `).join("")}
+
+                </table>
+
+            `;
+
+        } else {
+
+            playersHTML =
+                "<p>Abhi koi player registered nahi hai.</p>";
+
+        }
+
+
+        container.innerHTML += `
+
+            <div class="tournament">
+
+                <h2>🏆 ${t.name}</h2>
+
+                <p>
+                    💰 Entry: ₹${t.entry_fee}
+                </p>
+
+                <p>
+                    👥 Players:
+                    ${t.players.length}/${t.max_players}
+                </p>
+
+                <p>
+                    🗡️ Per Kill:
+                    ₹${t.kill_reward}
+                </p>
+
+                <p>
+                    🥇 1st Prize:
+                    ₹${t.first_prize}
+                </p>
+
+                <p>
+                    📅 ${t.date_time}
+                </p>
+
+                <hr>
+
+                <p>
+                    💵 Revenue:
+                    ₹${revenue}
+                </p>
+
+                <p>
+                    🎁 Prize:
+                    ₹${prizePool}
+                </p>
+
+                <p class="profit">
+                    📈 Current Profit:
+                    ₹${profit}
+                </p>
+
+                ${playersHTML}
+
+            </div>
+
+        `;
+
+    });
+
 }
 
 </script>
