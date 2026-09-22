@@ -14,7 +14,7 @@ with app.app_context():
     db.create_all()
 
 
-# PUBLIC PLAYER PAGE
+# PUBLIC PAGE
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -33,6 +33,7 @@ def admin_login():
     data = request.json
 
     if data.get("username") == "admin" and data.get("password") == "1234":
+
         session["admin"] = True
 
         return jsonify({
@@ -54,7 +55,7 @@ def admin_logout():
     return redirect("/admin")
 
 
-# GET ALL TOURNAMENTS
+# GET TOURNAMENTS
 @app.route("/api/tournaments", methods=["GET"])
 def get_tournaments():
 
@@ -71,17 +72,11 @@ def get_tournaments():
         result.append({
 
             "id": t.id,
-
             "name": t.name,
-
             "entry_fee": t.entry_fee,
-
             "max_players": t.max_players,
-
             "kill_reward": t.kill_reward,
-
             "first_prize": t.first_prize,
-
             "date_time": t.date_time,
 
             "players": [
@@ -117,15 +112,10 @@ def add_tournament():
     tournament = Tournament(
 
         name=data["name"],
-
         entry_fee=int(data["entry_fee"]),
-
         max_players=int(data["max_players"]),
-
         kill_reward=int(data["kill_reward"]),
-
         first_prize=int(data["first_prize"]),
-
         date_time=data["date_time"]
     )
 
@@ -134,9 +124,7 @@ def add_tournament():
     db.session.commit()
 
     return jsonify({
-
         "success": True,
-
         "tournament": {
             "id": tournament.id
         }
@@ -164,11 +152,9 @@ def add_player(tournament_id):
             "message": "Tournament not found"
         }), 404
 
-
     count = Player.query.filter_by(
         tournament_id=tournament_id
     ).count()
-
 
     if count >= tournament.max_players:
 
@@ -177,21 +163,16 @@ def add_player(tournament_id):
             "message": "Tournament full"
         }), 400
 
-
     player = Player(
 
         name=data["name"],
-
         uid=data["uid"],
-
         tournament_id=tournament_id
     )
-
 
     db.session.add(player)
 
     db.session.commit()
-
 
     return jsonify({
 
@@ -200,6 +181,48 @@ def add_player(tournament_id):
         "player": {
             "id": player.id
         }
+    })
+
+
+# UPDATE PLAYER RESULT
+@app.route(
+    "/api/players/<int:player_id>",
+    methods=["PUT"]
+)
+def update_player(player_id):
+
+    if not session.get("admin"):
+
+        return jsonify({
+            "success": False,
+            "message": "Admin login required"
+        }), 403
+
+    player = db.session.get(
+        Player,
+        player_id
+    )
+
+    if player is None:
+
+        return jsonify({
+            "success": False,
+            "message": "Player not found"
+        }), 404
+
+    data = request.json
+
+    player.kills = int(data.get("kills", 0))
+    player.position = int(data.get("position", 0))
+
+    db.session.commit()
+
+    return jsonify({
+
+        "success": True,
+
+        "message": "Player result updated"
+
     })
 
 
