@@ -1,1 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF Tournament Hub</title>
 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .box {
+            max-width: 550px;
+            margin: auto;
+            background: #222;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: none;
+        }
+
+        button {
+            background: orange;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+        }
+
+        #dashboard {
+            display: none;
+        }
+
+        .card {
+            background: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #555;
+            margin: 25px 0;
+        }
+
+        .success {
+            color: #00ff88;
+        }
+
+        .error {
+            color: #ff5555;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1>🔥 FF Tournament Hub</h1>
+
+    <div id="login">
+
+        <h2>🔐 Admin Login</h2>
+
+        <input id="username" placeholder="Username">
+
+        <input
+            id="password"
+            type="password"
+            placeholder="Password"
+        >
+
+        <button onclick="login()">Login</button>
+
+        <p id="loginMessage"></p>
+
+    </div>
+
+
+    <div id="dashboard">
+
+        <h2>🎮 Admin Dashboard</h2>
+
+        <button onclick="logout()">Logout</button>
+
+        <hr>
+
+        <h3>🏆 Create Tournament</h3>
+
+        <input
+            id="name"
+            placeholder="Tournament Name"
+        >
+
+        <input
+            id="entry_fee"
+            type="number"
+            placeholder="Entry Fee"
+        >
+
+        <input
+            id="max_players"
+            type="number"
+            placeholder="Max Players"
+        >
+
+        <input
+            id="kill_reward"
+            type="number"
+            placeholder="Per Kill Reward"
+        >
+
+        <input
+            id="first_prize"
+            type="number"
+            placeholder="1st Prize"
+        >
+
+        <input
+            id="date_time"
+            type="datetime-local"
+        >
+
+        <button onclick="createTournament()">
+            Create Tournament
+        </button>
+
+        <p id="message"></p>
+
+        <hr>
+
+        <h3>👤 Player Registration</h3>
+
+        <select id="playerTournament">
+            <option value="">Select Tournament</option>
+        </select>
+
+        <input
+            id="playerName"
+            placeholder="Player Name"
+        >
+
+        <input
+            id="playerUID"
+            placeholder="Free Fire UID"
+        >
+
+        <button onclick="registerPlayer()">
+            Register Player
+        </button>
+
+        <p id="playerMessage"></p>
+
+        <hr>
+
+        <h3>📋 Tournaments</h3>
+
+        <div id="tournaments"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function login() {
+
+    const response = await fetch("/admin-login", {
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+
+        document.getElementById("login").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+
+        loadTournaments();
+
+    } else {
+
+        document.getElementById("loginMessage").innerText =
+            "❌ Wrong username or password";
+    }
+}
+
+
+function logout() {
+    window.location.href = "/admin-logout";
+}
+
+
+async function createTournament() {
+
+    const response = await fetch("/api/tournaments", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            name: document.getElementById("name").value,
+            entry_fee: document.getElementById("entry_fee").value,
+            max_players: document.getElementById("max_players").value,
+            kill_reward: document.getElementById("kill_reward").value,
+            first_prize: document.getElementById("first_prize").value,
+            date_time: document.getElementById("date_time").value
+
+        })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+
+        document.getElementById("message").innerText =
+            "✅ Tournament created successfully!";
+
+        loadTournaments();
+
+    } else {
+
+        document.getElementById("message").innerText =
+            "❌ " + data.message;
+    }
+}
+
+
+async function loadTournaments() {
+
+    const response = await fetch("/api/tournaments");
+
+    const tournaments = await response.json();
+
+    const box = document.getElementById("tournaments");
+
+    const select = document.getElementById("playerTournament");
+
+    box.innerHTML = "";
+
+    select.innerHTML =
+        '<option value="">Select Tournament</option>';
+
+
+    tournaments.forEach(t => {
+
+        box.innerHTML += `
+
+            <div class="card">
+
+                <b>🎮 ${t.name}</b><br><br>
+
+                💰 Entry: ₹${t.entry_fee}<br>
+
+                👥 Players:
+                ${t.players.length}/${t.max_players}<br>
+
+                🎯 Kill Reward:
+                ₹${t.kill_reward}<br>
+
+                🏆 1st Prize:
+                ₹${t.first_prize}<br>
+
+                📅 Date:
+                ${t.date_time}
+
+            </div>
+
+        `;
+
+
+        select.innerHTML += `
+
+            <option value="${t.id}">
+                ${t.name}
+            </option>
+
+        `;
+    });
+}
+
+
+async function registerPlayer() {
+
+    const tournamentId =
+        document.getElementById("playerTournament").value;
+
+    const name =
+        document.getElementById("playerName").value;
+
+    const uid =
+        document.getElementById("playerUID").value;
+
+
+    if (!tournamentId || !name || !uid) {
+
+        document.getElementById("playerMessage").innerText =
+            "❌ Sab details bharo";
+
+        return;
+    }
+
+
+    const response = await fetch(
+        `/api/tournaments/${tournamentId}/players`,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                name: name,
+                uid: uid
+            })
+        }
+    );
+
+
+    const data = await response.json();
+
+
+    if (data.success) {
+
+        document.getElementById("playerMessage").innerText =
+            "✅ Player registered!";
+
+        document.getElementById("playerName").value = "";
+        document.getElementById("playerUID").value = "";
+
+        loadTournaments();
+
+    } else {
+
+        document.getElementById("playerMessage").innerText =
+            "❌ " + data.message;
+    }
+}
+
+</script>
+
+</body>
+</html>
