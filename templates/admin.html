@@ -30,7 +30,7 @@
             border-radius: 12px;
         }
 
-        input, select, button {
+        input, button {
             padding: 10px;
             margin: 5px;
             border-radius: 6px;
@@ -85,6 +85,19 @@
             color: #00ff88;
             font-weight: bold;
         }
+
+        .saveBtn {
+            background: #00a86b;
+        }
+
+        .saveBtn:hover {
+            background: #00c77d;
+        }
+
+        .saved {
+            color: #00ff88;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -97,6 +110,7 @@
 <div class="container">
 
     <!-- LOGIN -->
+
     <div id="loginBox" class="box login">
 
         <h2>🔐 Admin Login</h2>
@@ -127,6 +141,7 @@
 
 
     <!-- DASHBOARD -->
+
     <div id="dashboard" class="hidden">
 
         <div class="box">
@@ -331,6 +346,70 @@ async function createTournament() {
 }
 
 
+async function savePlayer(playerId) {
+
+    const kills =
+        document.getElementById(
+            "kills-" + playerId
+        ).value;
+
+    const position =
+        document.getElementById(
+            "position-" + playerId
+        ).value;
+
+
+    const response = await fetch(
+        "/api/players/" + playerId,
+        {
+
+            method: "PUT",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                kills: kills,
+                position: position
+
+            })
+
+        }
+    );
+
+
+    const result =
+        await response.json();
+
+
+    if (result.success) {
+
+        document.getElementById(
+            "saved-" + playerId
+        ).innerText =
+            "✅ Saved";
+
+        setTimeout(() => {
+
+            document.getElementById(
+                "saved-" + playerId
+            ).innerText = "";
+
+        }, 2000);
+
+        loadTournaments();
+
+    } else {
+
+        alert(result.message);
+
+    }
+
+}
+
+
 async function loadTournaments() {
 
     const response =
@@ -354,8 +433,18 @@ async function loadTournaments() {
         const prizePool =
             t.first_prize;
 
+        const killCost =
+            t.players.reduce(
+                (total, p) =>
+                    total +
+                    ((p.kills || 0) * t.kill_reward),
+                0
+            );
+
         const profit =
-            revenue - prizePool;
+            revenue -
+            prizePool -
+            killCost;
 
 
         let playersHTML = "";
@@ -375,34 +464,63 @@ async function loadTournaments() {
                         <th>Kills</th>
                         <th>Position</th>
                         <th>Kill Reward</th>
+                        <th>Save</th>
                     </tr>
 
                     ${t.players.map(p => `
 
                         <tr>
 
-                            <td>${p.name}</td>
-
-                            <td>${p.uid}</td>
-
                             <td>
-                                <input
-                                    type="number"
-                                    value="${p.kills || 0}"
-                                    style="width:70px"
-                                >
+                                ${p.name}
                             </td>
 
                             <td>
+                                ${p.uid}
+                            </td>
+
+                            <td>
+
                                 <input
+                                    id="kills-${p.id}"
                                     type="number"
-                                    value="${p.position || 0}"
-                                    style="width:70px"
+                                    min="0"
+                                    value="${p.kills || 0}"
+                                    style="width:60px"
                                 >
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    id="position-${p.id}"
+                                    type="number"
+                                    min="0"
+                                    value="${p.position || 0}"
+                                    style="width:60px"
+                                >
+
                             </td>
 
                             <td>
                                 ₹${(p.kills || 0) * t.kill_reward}
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="saveBtn"
+                                    onclick="savePlayer(${p.id})"
+                                >
+                                    💾 Save
+                                </button>
+
+                                <div
+                                    id="saved-${p.id}"
+                                    class="saved"
+                                ></div>
+
                             </td>
 
                         </tr>
@@ -458,8 +576,13 @@ async function loadTournaments() {
                 </p>
 
                 <p>
-                    🎁 Prize:
+                    🎁 1st Prize:
                     ₹${prizePool}
+                </p>
+
+                <p>
+                    🔫 Total Kill Payout:
+                    ₹${killCost}
                 </p>
 
                 <p class="profit">
