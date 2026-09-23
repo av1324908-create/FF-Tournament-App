@@ -1,8 +1,16 @@
 from flask import Flask, render_template, request, jsonify, session, redirect
-from tournaments import db, Tournament, Player
+from tournaments import (
+    db,
+    Tournament,
+    Player,
+    Wallet,
+    TokenTransaction
+)
 import os
 
+
 app = Flask(__name__)
+
 
 # =========================
 # DATABASE
@@ -11,8 +19,9 @@ app = Flask(__name__)
 database_url = os.environ.get("DATABASE_URL")
 
 if database_url:
-    # Render PostgreSQL
+
     if database_url.startswith("postgres://"):
+
         database_url = database_url.replace(
             "postgres://",
             "postgresql://",
@@ -22,11 +31,14 @@ if database_url:
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 
 else:
-    # Local testing
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tournament.db"
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        "sqlite:///tournament.db"
+    )
 
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 
 # =========================
 # SECRET KEY
@@ -37,10 +49,16 @@ app.secret_key = os.environ.get(
     "change-this-secret-key"
 )
 
+
 db.init_app(app)
 
-# Create database tables
+
+# =========================
+# CREATE DATABASE TABLES
+# =========================
+
 with app.app_context():
+
     db.create_all()
 
 
@@ -50,7 +68,10 @@ with app.app_context():
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+
+    return render_template(
+        "index.html"
+    )
 
 
 # =========================
@@ -59,14 +80,20 @@ def home():
 
 @app.route("/admin")
 def admin():
-    return render_template("admin.html")
+
+    return render_template(
+        "admin.html"
+    )
 
 
 # =========================
 # ADMIN LOGIN
 # =========================
 
-@app.route("/admin-login", methods=["POST"])
+@app.route(
+    "/admin-login",
+    methods=["POST"]
+)
 def admin_login():
 
     data = request.json or {}
@@ -79,18 +106,26 @@ def admin_login():
         data.get("password", "")
     ).strip()
 
+
     if username == "admin" and password == "1234":
 
         session["admin"] = True
 
         return jsonify({
+
             "success": True,
+
             "message": "Login successful"
+
         })
 
+
     return jsonify({
+
         "success": False,
+
         "message": "Wrong username or password"
+
     }), 401
 
 
@@ -101,16 +136,27 @@ def admin_login():
 @app.route("/admin-logout")
 def admin_logout():
 
-    session.pop("admin", None)
+    session.pop(
+        "admin",
+        None
+    )
 
     return redirect("/admin")
+
+
+# ==================================================
+# TOURNAMENT APIs
+# ==================================================
 
 
 # =========================
 # GET ALL TOURNAMENTS
 # =========================
 
-@app.route("/api/tournaments", methods=["GET"])
+@app.route(
+    "/api/tournaments",
+    methods=["GET"]
+)
 def get_tournaments():
 
     tournaments = Tournament.query.order_by(
@@ -119,11 +165,13 @@ def get_tournaments():
 
     result = []
 
+
     for tournament in tournaments:
 
         players = Player.query.filter_by(
             tournament_id=tournament.id
         ).all()
+
 
         result.append({
 
@@ -144,16 +192,25 @@ def get_tournaments():
             "players": [
 
                 {
+
                     "id": player.id,
+
                     "name": player.name,
+
                     "uid": player.uid,
+
                     "kills": player.kills,
+
                     "position": player.position
+
                 }
 
                 for player in players
+
             ]
+
         })
+
 
     return jsonify(result)
 
@@ -162,17 +219,25 @@ def get_tournaments():
 # CREATE TOURNAMENT
 # =========================
 
-@app.route("/api/tournaments", methods=["POST"])
+@app.route(
+    "/api/tournaments",
+    methods=["POST"]
+)
 def add_tournament():
 
     if not session.get("admin"):
 
         return jsonify({
+
             "success": False,
+
             "message": "Admin login required"
+
         }), 403
 
+
     data = request.json or {}
+
 
     name = str(
         data.get("name", "")
@@ -206,48 +271,66 @@ def add_tournament():
     if not name:
 
         return jsonify({
+
             "success": False,
+
             "message": "Tournament name is required."
+
         }), 400
 
 
     if not entry_fee:
 
         return jsonify({
+
             "success": False,
+
             "message": "Entry fee is required."
+
         }), 400
 
 
     if not max_players:
 
         return jsonify({
+
             "success": False,
+
             "message": "Maximum players is required."
+
         }), 400
 
 
     if not kill_reward:
 
         return jsonify({
+
             "success": False,
+
             "message": "Kill reward is required."
+
         }), 400
 
 
     if not first_prize:
 
         return jsonify({
+
             "success": False,
+
             "message": "1st prize is required."
+
         }), 400
 
 
     if not date_time:
 
         return jsonify({
+
             "success": False,
+
             "message": "Date and time is required."
+
         }), 400
 
 
@@ -258,39 +341,65 @@ def add_tournament():
     try:
 
         entry_fee = int(entry_fee)
+
         max_players = int(max_players)
+
         kill_reward = int(kill_reward)
+
         first_prize = int(first_prize)
 
     except ValueError:
 
         return jsonify({
+
             "success": False,
-            "message": "Fee and player values must be numbers."
+
+            "message": (
+                "Fee and player values "
+                "must be numbers."
+            )
+
         }), 400
 
 
     if entry_fee < 0:
 
         return jsonify({
+
             "success": False,
-            "message": "Entry fee cannot be negative."
+
+            "message": (
+                "Entry fee cannot be negative."
+            )
+
         }), 400
 
 
     if max_players <= 0:
 
         return jsonify({
+
             "success": False,
-            "message": "Maximum players must be greater than 0."
+
+            "message": (
+                "Maximum players must "
+                "be greater than 0."
+            )
+
         }), 400
 
 
     if kill_reward < 0 or first_prize < 0:
 
         return jsonify({
+
             "success": False,
-            "message": "Prize values cannot be negative."
+
+            "message": (
+                "Prize values cannot "
+                "be negative."
+            )
+
         }), 400
 
 
@@ -311,9 +420,13 @@ def add_tournament():
         first_prize=first_prize,
 
         date_time=date_time
+
     )
 
-    db.session.add(tournament)
+
+    db.session.add(
+        tournament
+    )
 
     db.session.commit()
 
@@ -322,7 +435,9 @@ def add_tournament():
 
         "success": True,
 
-        "message": "Tournament created successfully.",
+        "message": (
+            "Tournament created successfully."
+        ),
 
         "tournament": {
 
@@ -347,6 +462,7 @@ def add_player(tournament_id):
 
     data = request.json or {}
 
+
     name = str(
         data.get("name", "")
     ).strip()
@@ -364,6 +480,7 @@ def add_player(tournament_id):
         Tournament,
         tournament_id
     )
+
 
     if tournament is None:
 
@@ -397,7 +514,9 @@ def add_player(tournament_id):
 
             "success": False,
 
-            "message": "Please enter your Free Fire UID."
+            "message": (
+                "Please enter your Free Fire UID."
+            )
 
         }), 400
 
@@ -422,8 +541,8 @@ def add_player(tournament_id):
             "success": False,
 
             "message": (
-                "Your ID has already been registered "
-                "for this tournament."
+                "Your ID has already been "
+                "registered for this tournament."
             ),
 
             "registration_id": existing_player.id
@@ -467,22 +586,21 @@ def add_player(tournament_id):
 
     )
 
-    db.session.add(player)
+
+    db.session.add(
+        player
+    )
 
     db.session.commit()
 
-
-    # =========================
-    # SUCCESS RESPONSE
-    # =========================
 
     return jsonify({
 
         "success": True,
 
         "message": (
-            "Your ID has been registered successfully! "
-            "Your slot is booked."
+            "Your ID has been registered "
+            "successfully! Your slot is booked."
         ),
 
         "registration_id": player.id,
@@ -498,6 +616,388 @@ def add_player(tournament_id):
         }
 
     })
+
+
+# ==================================================
+# WALLET APIs
+# ==================================================
+
+
+# =========================
+# GET WALLET
+# =========================
+
+@app.route(
+    "/api/wallet/<uid>",
+    methods=["GET"]
+)
+def get_wallet(uid):
+
+    uid = str(uid).strip()
+
+
+    wallet = Wallet.query.filter_by(
+        player_uid=uid
+    ).first()
+
+
+    if wallet is None:
+
+        return jsonify({
+
+            "success": True,
+
+            "uid": uid,
+
+            "balance": 0
+
+        })
+
+
+    return jsonify({
+
+        "success": True,
+
+        "uid": uid,
+
+        "balance": wallet.balance
+
+    })
+
+
+# =========================
+# ADMIN ADD TOKENS
+# =========================
+
+@app.route(
+    "/api/admin/wallet/add",
+    methods=["POST"]
+)
+def admin_add_tokens():
+
+    if not session.get("admin"):
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Admin login required"
+
+        }), 403
+
+
+    data = request.json or {}
+
+
+    uid = str(
+        data.get("uid", "")
+    ).strip()
+
+
+    try:
+
+        amount = int(
+            data.get("amount", 0)
+        )
+
+    except (ValueError, TypeError):
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Token amount must be a number."
+
+        }), 400
+
+
+    if not uid:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Player UID is required."
+
+        }), 400
+
+
+    if amount <= 0:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": (
+                "Token amount must be greater than 0."
+            )
+
+        }), 400
+
+
+    # =========================
+    # GET OR CREATE WALLET
+    # =========================
+
+    wallet = Wallet.query.filter_by(
+        player_uid=uid
+    ).first()
+
+
+    if wallet is None:
+
+        wallet = Wallet(
+
+            player_uid=uid,
+
+            balance=0
+
+        )
+
+        db.session.add(
+            wallet
+        )
+
+
+    # =========================
+    # ADD TOKENS
+    # =========================
+
+    wallet.balance += amount
+
+
+    transaction = TokenTransaction(
+
+        player_uid=uid,
+
+        amount=amount,
+
+        transaction_type="CREDIT",
+
+        description="Admin token credit"
+
+    )
+
+
+    db.session.add(
+        transaction
+    )
+
+    db.session.commit()
+
+
+    return jsonify({
+
+        "success": True,
+
+        "message": "Tokens added successfully.",
+
+        "uid": uid,
+
+        "balance": wallet.balance
+
+    })
+
+
+# =========================
+# ADMIN REMOVE TOKENS
+# =========================
+
+@app.route(
+    "/api/admin/wallet/remove",
+    methods=["POST"]
+)
+def admin_remove_tokens():
+
+    if not session.get("admin"):
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Admin login required"
+
+        }), 403
+
+
+    data = request.json or {}
+
+
+    uid = str(
+        data.get("uid", "")
+    ).strip()
+
+
+    try:
+
+        amount = int(
+            data.get("amount", 0)
+        )
+
+    except (ValueError, TypeError):
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Token amount must be a number."
+
+        }), 400
+
+
+    if not uid:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Player UID is required."
+
+        }), 400
+
+
+    if amount <= 0:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": (
+                "Token amount must be greater than 0."
+            )
+
+        }), 400
+
+
+    wallet = Wallet.query.filter_by(
+        player_uid=uid
+    ).first()
+
+
+    if wallet is None:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Wallet not found."
+
+        }), 404
+
+
+    if wallet.balance < amount:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Insufficient token balance."
+
+        }), 400
+
+
+    # =========================
+    # REMOVE TOKENS
+    # =========================
+
+    wallet.balance -= amount
+
+
+    transaction = TokenTransaction(
+
+        player_uid=uid,
+
+        amount=-amount,
+
+        transaction_type="DEBIT",
+
+        description="Admin token debit"
+
+    )
+
+
+    db.session.add(
+        transaction
+    )
+
+    db.session.commit()
+
+
+    return jsonify({
+
+        "success": True,
+
+        "message": "Tokens removed successfully.",
+
+        "uid": uid,
+
+        "balance": wallet.balance
+
+    })
+
+
+# =========================
+# TOKEN HISTORY
+# =========================
+
+@app.route(
+    "/api/wallet/<uid>/transactions",
+    methods=["GET"]
+)
+def wallet_transactions(uid):
+
+    uid = str(uid).strip()
+
+
+    transactions = TokenTransaction.query.filter_by(
+
+        player_uid=uid
+
+    ).order_by(
+
+        TokenTransaction.id.desc()
+
+    ).all()
+
+
+    result = []
+
+
+    for transaction in transactions:
+
+        result.append({
+
+            "id": transaction.id,
+
+            "amount": transaction.amount,
+
+            "type": transaction.transaction_type,
+
+            "description": transaction.description,
+
+            "created_at": (
+                transaction.created_at.isoformat()
+                if transaction.created_at
+                else None
+            )
+
+        })
+
+
+    return jsonify({
+
+        "success": True,
+
+        "uid": uid,
+
+        "transactions": result
+
+    })
+
+
+# ==================================================
+# PLAYER RESULT
+# ==================================================
 
 
 # =========================
@@ -522,11 +1022,8 @@ def update_player(player_id):
 
 
     player = db.session.get(
-
         Player,
-
         player_id
-
     )
 
 
@@ -554,13 +1051,16 @@ def update_player(player_id):
             data.get("position", 0)
         )
 
-    except ValueError:
+    except (ValueError, TypeError):
 
         return jsonify({
 
             "success": False,
 
-            "message": "Kills and position must be numbers."
+            "message": (
+                "Kills and position "
+                "must be numbers."
+            )
 
         }), 400
 
@@ -571,7 +1071,10 @@ def update_player(player_id):
 
             "success": False,
 
-            "message": "Kills and position cannot be negative."
+            "message": (
+                "Kills and position "
+                "cannot be negative."
+            )
 
         }), 400
 
