@@ -221,6 +221,52 @@
 
         </div>
 
+
+        <!-- TOKEN WALLET -->
+
+        <div class="box">
+
+            <h2>🪙 Token Wallet</h2>
+
+            <p style="color:#aaa;">
+                Admin yahan player ke tokens manage kar sakta hai.
+            </p>
+
+            <input
+                id="walletUid"
+                type="text"
+                placeholder="Free Fire UID"
+            >
+
+            <input
+                id="walletAmount"
+                type="number"
+                min="1"
+                placeholder="Token Amount"
+            >
+
+            <br>
+
+            <button onclick="checkWalletBalance()">
+                🔍 Check Balance
+            </button>
+
+            <button onclick="addWalletTokens()">
+                ➕ Add Tokens
+            </button>
+
+            <button onclick="removeWalletTokens()">
+                ➖ Remove Tokens
+            </button>
+
+            <h3 id="walletBalance">
+                Balance: —
+            </h3>
+
+            <p id="walletMessage"></p>
+
+        </div>
+
     </div>
 
 </div>
@@ -235,7 +281,6 @@ async function login() {
 
     const password =
         document.getElementById("password").value;
-
 
     const response = await fetch("/admin-login", {
 
@@ -252,9 +297,7 @@ async function login() {
 
     });
 
-
     const data = await response.json();
-
 
     if (data.success) {
 
@@ -309,7 +352,6 @@ async function createTournament() {
 
     };
 
-
     const response = await fetch(
         "/api/tournaments",
         {
@@ -323,9 +365,7 @@ async function createTournament() {
         }
     );
 
-
     const result = await response.json();
-
 
     if (result.success) {
 
@@ -358,7 +398,6 @@ async function savePlayer(playerId) {
             "position-" + playerId
         ).value;
 
-
     const response = await fetch(
         "/api/players/" + playerId,
         {
@@ -379,10 +418,8 @@ async function savePlayer(playerId) {
         }
     );
 
-
     const result =
         await response.json();
-
 
     if (result.success) {
 
@@ -418,12 +455,10 @@ async function loadTournaments() {
     const tournaments =
         await response.json();
 
-
     const container =
         document.getElementById("tournaments");
 
     container.innerHTML = "";
-
 
     tournaments.forEach(t => {
 
@@ -446,9 +481,7 @@ async function loadTournaments() {
             prizePool -
             killCost;
 
-
         let playersHTML = "";
-
 
         if (t.players.length > 0) {
 
@@ -459,12 +492,14 @@ async function loadTournaments() {
                 <table>
 
                     <tr>
+
                         <th>Player</th>
                         <th>UID</th>
                         <th>Kills</th>
                         <th>Position</th>
                         <th>Kill Reward</th>
                         <th>Save</th>
+
                     </tr>
 
                     ${t.players.map(p => `
@@ -600,79 +635,54 @@ async function loadTournaments() {
 
 }
 
-</script>
-<!-- TOKEN WALLET -->
-<div class="box">
 
-    <h2>🪙 Token Wallet</h2>
+/* =========================
+   TOKEN WALLET
+========================= */
 
-    <p style="color:#aaa;">
-        Admin yahan player ke tokens manage kar sakta hai.
-    </p>
-
-    <input
-        id="walletUid"
-        type="text"
-        placeholder="Free Fire UID"
-    >
-
-    <input
-        id="walletAmount"
-        type="number"
-        min="1"
-        placeholder="Token Amount"
-    >
-
-    <br>
-
-    <button onclick="checkWalletBalance()">
-        🔍 Check Balance
-    </button>
-
-    <button onclick="addWalletTokens()">
-        ➕ Add Tokens
-    </button>
-
-    <button onclick="removeWalletTokens()">
-        ➖ Remove Tokens
-    </button>
-
-    <h3 id="walletBalance">
-        Balance: —
-    </h3>
-
-    <p id="walletMessage"></p>
-
-</div>
-
-
-<script>
 
 async function checkWalletBalance() {
 
     const uid =
-        document.getElementById("walletUid").value.trim();
+        document.getElementById("walletUid")
+        .value.trim();
 
     if (!uid) {
+
         alert("UID enter karo.");
+
         return;
     }
 
     const response =
-        await fetch("/api/wallet/" + encodeURIComponent(uid));
+        await fetch(
+            "/api/wallet/" +
+            encodeURIComponent(uid)
+        );
 
     const data =
         await response.json();
 
     if (data.success) {
 
-        document.getElementById("walletBalance").innerText =
-            "Balance: " + data.balance + " Tokens";
+        document.getElementById(
+            "walletBalance"
+        ).innerText =
+            "Balance: " +
+            data.balance +
+            " Tokens";
+
+        document.getElementById(
+            "walletMessage"
+        ).innerText = "";
 
     } else {
 
-        document.getElementById("walletMessage").innerText =
-            data.message || "Something went wrong.";
+        document.getElementById(
+            "walletMessage"
+        ).innerText =
+            data.message ||
+            "Something went wrong.";
 
     }
 
@@ -682,44 +692,60 @@ async function checkWalletBalance() {
 async function addWalletTokens() {
 
     const uid =
-        document.getElementById("walletUid").value.trim();
+        document.getElementById("walletUid")
+        .value.trim();
 
     const amount =
-        Number(document.getElementById("walletAmount").value);
+        Number(
+            document.getElementById("walletAmount")
+            .value
+        );
 
     if (!uid || !amount) {
 
-        alert("UID aur token amount enter karo.");
+        alert(
+            "UID aur token amount enter karo."
+        );
 
         return;
     }
 
     const response =
-        await fetch("/api/admin/wallet/add", {
+        await fetch(
+            "/api/admin/wallet/add",
+            {
 
-            method: "POST",
+                method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
 
-            body: JSON.stringify({
-                uid: uid,
-                amount: amount
-            })
+                body: JSON.stringify({
+                    uid: uid,
+                    amount: amount
+                })
 
-        });
+            }
+        );
 
     const data =
         await response.json();
 
-    document.getElementById("walletMessage").innerText =
+    document.getElementById(
+        "walletMessage"
+    ).innerText =
         data.message || "Done";
 
     if (data.success) {
 
-        document.getElementById("walletBalance").innerText =
-            "Balance: " + data.balance + " Tokens";
+        document.getElementById(
+            "walletBalance"
+        ).innerText =
+            "Balance: " +
+            data.balance +
+            " Tokens";
 
     }
 
@@ -729,49 +755,66 @@ async function addWalletTokens() {
 async function removeWalletTokens() {
 
     const uid =
-        document.getElementById("walletUid").value.trim();
+        document.getElementById("walletUid")
+        .value.trim();
 
     const amount =
-        Number(document.getElementById("walletAmount").value);
+        Number(
+            document.getElementById("walletAmount")
+            .value
+        );
 
     if (!uid || !amount) {
 
-        alert("UID aur token amount enter karo.");
+        alert(
+            "UID aur token amount enter karo."
+        );
 
         return;
     }
 
     const response =
-        await fetch("/api/admin/wallet/remove", {
+        await fetch(
+            "/api/admin/wallet/remove",
+            {
 
-            method: "POST",
+                method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
 
-            body: JSON.stringify({
-                uid: uid,
-                amount: amount
-            })
+                body: JSON.stringify({
+                    uid: uid,
+                    amount: amount
+                })
 
-        });
+            }
+        );
 
     const data =
         await response.json();
 
-    document.getElementById("walletMessage").innerText =
+    document.getElementById(
+        "walletMessage"
+    ).innerText =
         data.message || "Done";
 
     if (data.success) {
 
-        document.getElementById("walletBalance").innerText =
-            "Balance: " + data.balance + " Tokens";
+        document.getElementById(
+            "walletBalance"
+        ).innerText =
+            "Balance: " +
+            data.balance +
+            " Tokens";
 
     }
 
 }
 
 </script>
+
 </body>
 </html>
