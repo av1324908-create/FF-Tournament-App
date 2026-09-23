@@ -22,11 +22,15 @@ if database_url:
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 
 else:
-    # Local development
+    # Local testing
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tournament.db"
 
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# =========================
+# SECRET KEY
+# =========================
 
 app.secret_key = os.environ.get(
     "SECRET_KEY",
@@ -35,12 +39,13 @@ app.secret_key = os.environ.get(
 
 db.init_app(app)
 
+# Create database tables
 with app.app_context():
     db.create_all()
 
 
 # =========================
-# PUBLIC PAGE
+# PUBLIC HOME PAGE
 # =========================
 
 @app.route("/")
@@ -64,17 +69,23 @@ def admin():
 @app.route("/admin-login", methods=["POST"])
 def admin_login():
 
-    data = request.json
+    data = request.json or {}
 
-    if (
-        data.get("username") == "admin"
-        and data.get("password") == "1234"
-    ):
+    username = str(
+        data.get("username", "")
+    ).strip()
+
+    password = str(
+        data.get("password", "")
+    ).strip()
+
+    if username == "admin" and password == "1234":
 
         session["admin"] = True
 
         return jsonify({
-            "success": True
+            "success": True,
+            "message": "Login successful"
         })
 
     return jsonify({
@@ -96,43 +107,51 @@ def admin_logout():
 
 
 # =========================
-# GET TOURNAMENTS
+# GET ALL TOURNAMENTS
 # =========================
 
 @app.route("/api/tournaments", methods=["GET"])
 def get_tournaments():
 
-    tournaments = Tournament.query.all()
+    tournaments = Tournament.query.order_by(
+        Tournament.id.desc()
+    ).all()
 
     result = []
 
-    for t in tournaments:
+    for tournament in tournaments:
 
         players = Player.query.filter_by(
-            tournament_id=t.id
+            tournament_id=tournament.id
         ).all()
 
         result.append({
 
-            "id": t.id,
-            "name": t.name,
-            "entry_fee": t.entry_fee,
-            "max_players": t.max_players,
-            "kill_reward": t.kill_reward,
-            "first_prize": t.first_prize,
-            "date_time": t.date_time,
+            "id": tournament.id,
+
+            "name": tournament.name,
+
+            "entry_fee": tournament.entry_fee,
+
+            "max_players": tournament.max_players,
+
+            "kill_reward": tournament.kill_reward,
+
+            "first_prize": tournament.first_prize,
+
+            "date_time": tournament.date_time,
 
             "players": [
 
                 {
-                    "id": p.id,
-                    "name": p.name,
-                    "uid": p.uid,
-                    "kills": p.kills,
-                    "position": p.position
+                    "id": player.id,
+                    "name": player.name,
+                    "uid": player.uid,
+                    "kills": player.kills,
+                    "position": player.position
                 }
 
-                for p in players
+                for player in players
             ]
         })
 
@@ -153,28 +172,164 @@ def add_tournament():
             "message": "Admin login required"
         }), 403
 
-    data = request.json
+    data = request.json or {}
+
+    name = str(
+        data.get("name", "")
+    ).strip()
+
+    entry_fee = str(
+        data.get("entry_fee", "")
+    ).strip()
+
+    max_players = str(
+        data.get("max_players", "")
+    ).strip()
+
+    kill_reward = str(
+        data.get("kill_reward", "")
+    ).strip()
+
+    first_prize = str(
+        data.get("first_prize", "")
+    ).strip()
+
+    date_time = str(
+        data.get("date_time", "")
+    ).strip()
+
+
+    # =========================
+    # VALIDATION
+    # =========================
+
+    if not name:
+
+        return jsonify({
+            "success": False,
+            "message": "Tournament name is required."
+        }), 400
+
+
+    if not entry_fee:
+
+        return jsonify({
+            "success": False,
+            "message": "Entry fee is required."
+        }), 400
+
+
+    if not max_players:
+
+        return jsonify({
+            "success": False,
+            "message": "Maximum players is required."
+        }), 400
+
+
+    if not kill_reward:
+
+        return jsonify({
+            "success": False,
+            "message": "Kill reward is required."
+        }), 400
+
+
+    if not first_prize:
+
+        return jsonify({
+            "success": False,
+            "message": "1st prize is required."
+        }), 400
+
+
+    if not date_time:
+
+        return jsonify({
+            "success": False,
+            "message": "Date and time is required."
+        }), 400
+
+
+    # =========================
+    # NUMBER VALIDATION
+    # =========================
+
+    try:
+
+        entry_fee = int(entry_fee)
+        max_players = int(max_players)
+        kill_reward = int(kill_reward)
+        first_prize = int(first_prize)
+
+    except ValueError:
+
+        return jsonify({
+            "success": False,
+            "message": "Fee and player values must be numbers."
+        }), 400
+
+
+    if entry_fee < 0:
+
+        return jsonify({
+            "success": False,
+            "message": "Entry fee cannot be negative."
+        }), 400
+
+
+    if max_players <= 0:
+
+        return jsonify({
+            "success": False,
+            "message": "Maximum players must be greater than 0."
+        }), 400
+
+
+    if kill_reward < 0 or first_prize < 0:
+
+        return jsonify({
+            "success": False,
+            "message": "Prize values cannot be negative."
+        }), 400
+
+
+    # =========================
+    # CREATE TOURNAMENT
+    # =========================
 
     tournament = Tournament(
 
-        name=data["name"],
-        entry_fee=int(data["entry_fee"]),
-        max_players=int(data["max_players"]),
-        kill_reward=int(data["kill_reward"]),
-        first_prize=int(data["first_prize"]),
-        date_time=data["date_time"]
+        name=name,
+
+        entry_fee=entry_fee,
+
+        max_players=max_players,
+
+        kill_reward=kill_reward,
+
+        first_prize=first_prize,
+
+        date_time=date_time
     )
 
     db.session.add(tournament)
 
     db.session.commit()
 
+
     return jsonify({
 
         "success": True,
 
+        "message": "Tournament created successfully.",
+
         "tournament": {
-            "id": tournament.id
+
+            "id": tournament.id,
+
+            "name": tournament.name
+
         }
 
     })
@@ -201,7 +356,10 @@ def add_player(tournament_id):
     ).strip()
 
 
-    # Tournament check
+    # =========================
+    # TOURNAMENT CHECK
+    # =========================
+
     tournament = db.session.get(
         Tournament,
         tournament_id
@@ -212,27 +370,50 @@ def add_player(tournament_id):
         return jsonify({
 
             "success": False,
-            "message": "Tournament not found"
+
+            "message": "Tournament not found."
 
         }), 404
 
 
-    # Empty fields
-    if not name or not uid:
+    # =========================
+    # EMPTY FIELD CHECK
+    # =========================
+
+    if not name:
 
         return jsonify({
 
             "success": False,
-            "message": "Please enter your name and Free Fire UID."
+
+            "message": "Please enter your name."
 
         }), 400
 
 
-    # Duplicate UID
+    if not uid:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Please enter your Free Fire UID."
+
+        }), 400
+
+
+    # =========================
+    # DUPLICATE UID CHECK
+    # =========================
+
     existing_player = Player.query.filter_by(
+
         tournament_id=tournament_id,
+
         uid=uid
+
     ).first()
+
 
     if existing_player:
 
@@ -250,26 +431,38 @@ def add_player(tournament_id):
         }), 409
 
 
-    # Tournament full
-    count = Player.query.filter_by(
+    # =========================
+    # TOURNAMENT FULL CHECK
+    # =========================
+
+    player_count = Player.query.filter_by(
+
         tournament_id=tournament_id
+
     ).count()
 
-    if count >= tournament.max_players:
+
+    if player_count >= tournament.max_players:
 
         return jsonify({
 
             "success": False,
+
             "message": "Tournament is full."
 
         }), 400
 
 
-    # Create player
+    # =========================
+    # CREATE PLAYER
+    # =========================
+
     player = Player(
 
         name=name,
+
         uid=uid,
+
         tournament_id=tournament_id
 
     )
@@ -279,7 +472,10 @@ def add_player(tournament_id):
     db.session.commit()
 
 
-    # Success
+    # =========================
+    # SUCCESS RESPONSE
+    # =========================
+
     return jsonify({
 
         "success": True,
@@ -294,7 +490,9 @@ def add_player(tournament_id):
         "player": {
 
             "id": player.id,
+
             "name": player.name,
+
             "uid": player.uid
 
         }
@@ -317,21 +515,27 @@ def update_player(player_id):
         return jsonify({
 
             "success": False,
+
             "message": "Admin login required"
 
         }), 403
 
 
     player = db.session.get(
+
         Player,
+
         player_id
+
     )
+
 
     if player is None:
 
         return jsonify({
 
             "success": False,
+
             "message": "Player not found"
 
         }), 404
@@ -339,13 +543,42 @@ def update_player(player_id):
 
     data = request.json or {}
 
-    player.kills = int(
-        data.get("kills", 0)
-    )
 
-    player.position = int(
-        data.get("position", 0)
-    )
+    try:
+
+        kills = int(
+            data.get("kills", 0)
+        )
+
+        position = int(
+            data.get("position", 0)
+        )
+
+    except ValueError:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Kills and position must be numbers."
+
+        }), 400
+
+
+    if kills < 0 or position < 0:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Kills and position cannot be negative."
+
+        }), 400
+
+
+    player.kills = kills
+
+    player.position = position
 
     db.session.commit()
 
@@ -353,7 +586,8 @@ def update_player(player_id):
     return jsonify({
 
         "success": True,
-        "message": "Player result updated"
+
+        "message": "Player result updated."
 
     })
 
@@ -365,7 +599,11 @@ def update_player(player_id):
 if __name__ == "__main__":
 
     app.run(
+
         host="0.0.0.0",
+
         port=5000,
+
         debug=True
+
     )
