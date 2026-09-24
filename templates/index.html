@@ -373,25 +373,57 @@ async function loadTournaments() {
                 PAST = COMPLETED
             */
 
-            if (tournamentDate > now) {
+if (tournamentDate > now) {
 
-                upcomingBox.innerHTML +=
-                    tournamentCard;
+    upcomingBox.innerHTML += tournamentCard;
+    upcomingCount++;
 
-                upcomingCount++;
+} else {
 
-            } else {
+    const completedCard = `
+        <div class="card completed-card">
 
-                completedBox.innerHTML +=
-                    tournamentCard.replace(
-                        'class="card"',
-                        'class="card completed-card"'
-                    );
+            <h2>🎮 ${t.name}</h2>
 
-                completedCount++;
+            <div class="info">
 
-            }
+                💰 Entry Fee:
+                ₹${t.entry_fee}
 
+                <br>
+
+                🏆 1st Prize:
+                ₹${t.first_prize}
+
+                <br>
+
+                🎯 Per Kill:
+                ₹${t.kill_reward}
+
+                <br>
+
+                👥 Players:
+                ${t.players.length}/${t.max_players}
+
+                <br>
+
+                📅 Date:
+                ${t.date_time}
+
+                <br>
+
+                🔴 Status:
+                Tournament Completed
+
+            </div>
+
+        </div>
+    `;
+
+    completedBox.innerHTML += completedCard;
+    completedCount++;
+
+}
         });
 
 
