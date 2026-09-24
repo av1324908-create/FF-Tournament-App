@@ -106,6 +106,20 @@
             padding: 30px;
         }
 
+        .completed-title {
+            color: #ff5555;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .completed-card {
+            opacity: 0.75;
+        }
+
+        .completed-card h2 {
+            color: #999;
+        }
+
     </style>
 
 </head>
@@ -125,10 +139,23 @@
 
     <h2 class="title">🏆 Upcoming Tournaments</h2>
 
-    <div id="tournaments">
+    <div id="upcomingTournaments">
 
         <div class="empty">
             Loading tournaments...
+        </div>
+
+    </div>
+
+
+    <h2 class="completed-title">
+        🔴 Completed Tournaments
+    </h2>
+
+    <div id="completedTournaments">
+
+        <div class="empty">
+            Loading...
         </div>
 
     </div>
@@ -138,38 +165,107 @@
 
 <script>
 
+
+function parseTournamentDate(dateString) {
+
+    if (!dateString) {
+        return null;
+    }
+
+    /*
+        Expected format:
+        DD/MM/YY HH:MM
+
+        Example:
+        24/09/26 12:00
+    */
+
+    const parts = dateString.trim().split(" ");
+
+    if (parts.length < 2) {
+        return null;
+    }
+
+    const dateParts = parts[0].split("/");
+    const timeParts = parts[1].split(":");
+
+    if (dateParts.length !== 3 || timeParts.length !== 2) {
+        return null;
+    }
+
+    const day = Number(dateParts[0]);
+    const month = Number(dateParts[1]) - 1;
+    const year = 2000 + Number(dateParts[2]);
+
+    const hour = Number(timeParts[0]);
+    const minute = Number(timeParts[1]);
+
+    const date = new Date(
+        year,
+        month,
+        day,
+        hour,
+        minute
+    );
+
+    return date;
+}
+
+
 async function loadTournaments() {
 
     try {
 
-        const response = await fetch("/api/tournaments");
+        const response =
+            await fetch("/api/tournaments");
 
-        const tournaments = await response.json();
-
-        const box = document.getElementById("tournaments");
-
-        box.innerHTML = "";
+        const tournaments =
+            await response.json();
 
 
-        if (tournaments.length === 0) {
+        const upcomingBox =
+            document.getElementById(
+                "upcomingTournaments"
+            );
 
-            box.innerHTML = `
-                <div class="empty">
-                    😔 Abhi koi tournament available nahi hai.
-                </div>
-            `;
+        const completedBox =
+            document.getElementById(
+                "completedTournaments"
+            );
 
-            return;
-        }
+
+        upcomingBox.innerHTML = "";
+        completedBox.innerHTML = "";
+
+
+        const now = new Date();
+
+
+        let upcomingCount = 0;
+        let completedCount = 0;
 
 
         tournaments.forEach(t => {
+
+            const tournamentDate =
+                parseTournamentDate(t.date_time);
+
+
+            /*
+                Agar date invalid hai to tournament
+                ko upcoming me nahi daalenge.
+            */
+
+            if (!tournamentDate) {
+                return;
+            }
+
 
             const available =
                 t.max_players - t.players.length;
 
 
-            box.innerHTML += `
+            const tournamentCard = `
 
                 <div class="card">
 
@@ -212,9 +308,13 @@ async function loadTournaments() {
                         available > 0
 
                         ? `
-                            <button onclick="showForm(${t.id})">
+
+                            <button
+                                onclick="showForm(${t.id})"
+                            >
                                 📝 Join Tournament
                             </button>
+
 
                             <div
                                 class="form-box"
@@ -225,15 +325,18 @@ async function loadTournaments() {
                                     👤 Player Registration
                                 </h3>
 
+
                                 <input
                                     id="name-${t.id}"
                                     placeholder="Player Name"
                                 >
 
+
                                 <input
                                     id="uid-${t.id}"
                                     placeholder="Free Fire UID"
                                 >
+
 
                                 <button
                                     onclick="registerPlayer(${t.id})"
@@ -241,18 +344,22 @@ async function loadTournaments() {
                                     ✅ Register Now
                                 </button>
 
+
                                 <div
                                     class="message"
                                     id="message-${t.id}"
                                 ></div>
 
                             </div>
+
                         `
 
                         : `
+
                             <button disabled>
                                 ❌ Tournament Full
                             </button>
+
                         `
                     }
 
@@ -260,16 +367,75 @@ async function loadTournaments() {
 
             `;
 
+
+            /*
+                FUTURE = UPCOMING
+                PAST = COMPLETED
+            */
+
+            if (tournamentDate > now) {
+
+                upcomingBox.innerHTML +=
+                    tournamentCard;
+
+                upcomingCount++;
+
+            } else {
+
+                completedBox.innerHTML +=
+                    tournamentCard.replace(
+                        'class="card"',
+                        'class="card completed-card"'
+                    );
+
+                completedCount++;
+
+            }
+
         });
+
+
+        if (upcomingCount === 0) {
+
+            upcomingBox.innerHTML = `
+
+                <div class="empty">
+
+                    😔 Abhi koi upcoming tournament nahi hai.
+
+                </div>
+
+            `;
+
+        }
+
+
+        if (completedCount === 0) {
+
+            completedBox.innerHTML = `
+
+                <div class="empty">
+
+                    Abhi koi completed tournament nahi hai.
+
+                </div>
+
+            `;
+
+        }
 
     }
 
     catch (error) {
 
-        document.getElementById("tournaments").innerHTML = `
+        document.getElementById(
+            "upcomingTournaments"
+        ).innerHTML = `
 
             <div class="empty">
+
                 ❌ Tournaments load nahi ho paaye.
+
             </div>
 
         `;
@@ -282,13 +448,18 @@ async function loadTournaments() {
 function showForm(id) {
 
     const form =
-        document.getElementById(`form-${id}`);
+        document.getElementById(
+            `form-${id}`
+        );
+
 
     if (form.style.display === "block") {
 
         form.style.display = "none";
 
-    } else {
+    }
+
+    else {
 
         form.style.display = "block";
 
@@ -300,13 +471,21 @@ function showForm(id) {
 async function registerPlayer(id) {
 
     const name =
-        document.getElementById(`name-${id}`).value.trim();
+        document.getElementById(
+            `name-${id}`
+        ).value.trim();
+
 
     const uid =
-        document.getElementById(`uid-${id}`).value.trim();
+        document.getElementById(
+            `uid-${id}`
+        ).value.trim();
+
 
     const message =
-        document.getElementById(`message-${id}`);
+        document.getElementById(
+            `message-${id}`
+        );
 
 
     if (!name || !uid) {
@@ -315,6 +494,7 @@ async function registerPlayer(id) {
             "❌ Name aur UID dono bharo.";
 
         return;
+
     }
 
 
@@ -325,23 +505,32 @@ async function registerPlayer(id) {
     try {
 
         const response = await fetch(
+
             `/api/tournaments/${id}/players`,
+
             {
+
                 method: "POST",
 
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type":
+                        "application/json"
                 },
 
                 body: JSON.stringify({
+
                     name: name,
                     uid: uid
+
                 })
+
             }
+
         );
 
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
 
         if (data.success) {
@@ -349,20 +538,25 @@ async function registerPlayer(id) {
             message.innerText =
                 "✅ Registration successful!";
 
+
             document.getElementById(
                 `name-${id}`
             ).value = "";
 
+
             document.getElementById(
                 `uid-${id}`
             ).value = "";
+
 
             setTimeout(
                 loadTournaments,
                 1000
             );
 
-        } else {
+        }
+
+        else {
 
             message.innerText =
                 "❌ " + data.message;
@@ -383,7 +577,9 @@ async function registerPlayer(id) {
 
 loadTournaments();
 
+
 </script>
 
 </body>
+
 </html>
