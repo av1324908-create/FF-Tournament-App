@@ -1,3 +1,4 @@
+```python
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -85,6 +86,13 @@ class User(db.Model):
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow
+    )
+
+    # User token balance
+    token_balance = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
     )
 
 
@@ -198,4 +206,4 @@ class AdminAccount(db.Model):
         db.DateTime,
         default=datetime.utcnow
     )
-    
+```
