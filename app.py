@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session, redirect
+from datetime import datetime
 from tournaments import (
     db,
     Tournament,
@@ -485,18 +485,36 @@ def add_player(tournament_id):
     if tournament is None:
 
         return jsonify({
-
             "success": False,
-
             "message": "Tournament not found."
-
         }), 404
+
+
+    # =========================
+    # TOURNAMENT DATE CHECK
+    # =========================
+
+    try:
+        tournament_date = datetime.strptime(
+            tournament.date_time,
+            "%d/%m/%y %H:%M"
+        )
+    except (ValueError, TypeError):
+        return jsonify({
+            "success": False,
+            "message": "Tournament date/time is invalid."
+        }), 400
+
+    if tournament_date <= datetime.now():
+        return jsonify({
+            "success": False,
+            "message": "Tournament registration is closed."
+        }), 400
 
 
     # =========================
     # EMPTY FIELD CHECK
     # =========================
-
     if not name:
 
         return jsonify({
