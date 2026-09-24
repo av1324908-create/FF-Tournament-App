@@ -198,3 +198,4 @@ class AdminAccount(db.Model):
         db.DateTime,
         default=datetime.utcnow
     )
+    
