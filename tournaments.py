@@ -9,61 +9,63 @@ db = SQLAlchemy()
 # =========================
 
 class Tournament(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
 
-    id = db.Column(
+    name = db.Column(db.String(100), nullable=False)
+
+    entry_fee = db.Column(db.Integer, default=0)
+
+    max_players = db.Column(db.Integer, default=0)
+
+    kill_reward = db.Column(db.Integer, default=0)
+
+    first_prize = db.Column(db.Integer, default=0)
+
+    date_time = db.Column(db.String(50))
+
+    # Room details
+    room_id = db.Column(db.String(100), default="")
+
+    room_password = db.Column(db.String(100), default="")
+
+
+# =========================
+# PLAYER
+# =========================
+
+class Player(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.String(100), nullable=False)
+
+    uid = db.Column(db.String(50), nullable=False)
+
+    kills = db.Column(db.Integer, default=0)
+
+    position = db.Column(db.Integer, default=0)
+
+    tournament_id = db.Column(
         db.Integer,
-        primary_key=True
-    )
-
-    name = db.Column(
-        db.String(100),
+        db.ForeignKey("tournament.id"),
         nullable=False
     )
 
-    entry_fee = db.Column(
-        db.Integer,
-        default=0
-    )
-
-    max_players = db.Column(
-        db.Integer,
-        default=0
-    )
-
-    kill_reward = db.Column(
-        db.Integer,
-        default=0
-    )
-
-    first_prize = db.Column(
-        db.Integer,
-        default=0
-    )
-
-    date_time = db.Column(
-        db.String(50)
-    )
-
 
 # =========================
-# PLAYER ACCOUNT
+# USER ACCOUNT
 # =========================
 
 class User(db.Model):
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(
-        db.String(50),
+        db.String(100),
         unique=True,
         nullable=False
     )
 
     email = db.Column(
-        db.String(120),
+        db.String(150),
         unique=True,
         nullable=False
     )
@@ -73,6 +75,7 @@ class User(db.Model):
         nullable=False
     )
 
+    # Free Fire UID linked with account
     uid = db.Column(
         db.String(50),
         unique=True,
@@ -86,59 +89,11 @@ class User(db.Model):
 
 
 # =========================
-# PLAYER
-# Existing tournament player
-# =========================
-
-class Player(db.Model):
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
-    name = db.Column(
-        db.String(100),
-        nullable=False
-    )
-
-    uid = db.Column(
-        db.String(50),
-        nullable=False
-    )
-
-    kills = db.Column(
-        db.Integer,
-        default=0
-    )
-
-    position = db.Column(
-        db.Integer,
-        default=0
-    )
-
-    tournament_id = db.Column(
-        db.Integer,
-        db.ForeignKey("tournament.id"),
-        nullable=False
-    )
-
-
-# =========================
 # USER TOURNAMENT REGISTRATION
 # =========================
-# Ye table account ko tournament
-# registration se link karegi.
-#
-# Isse same account ko same tournament
-# me dobara register hone se roka ja sakta hai.
 
 class UserTournamentRegistration(db.Model):
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
 
     user_id = db.Column(
         db.Integer,
@@ -165,15 +120,11 @@ class UserTournamentRegistration(db.Model):
 
 
 # =========================
-# PLAYER WALLET
+# TOKEN WALLET
 # =========================
 
 class Wallet(db.Model):
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
 
     player_uid = db.Column(
         db.String(50),
@@ -194,15 +145,11 @@ class Wallet(db.Model):
 
 
 # =========================
-# TOKEN TRANSACTION
+# TOKEN TRANSACTIONS
 # =========================
 
 class TokenTransaction(db.Model):
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
 
     player_uid = db.Column(
         db.String(50),
@@ -232,19 +179,12 @@ class TokenTransaction(db.Model):
 # =========================
 # ADMIN ACCOUNT
 # =========================
-# Admin password database me store hogi.
-# Baad me current password verify karke
-# new password change kar sakenge.
 
 class AdminAccount(db.Model):
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(
-        db.String(50),
+        db.String(100),
         unique=True,
         nullable=False
     )
