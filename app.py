@@ -3,7 +3,7 @@ import os
 
 from flask import Flask, render_template, request, jsonify, session, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import or_
+from sqlalchemy import or_, text, inspect
 
 from tournaments import (
     db,
@@ -57,8 +57,44 @@ with app.app_context():
 
     db.create_all()
 
-    # Agar admin account pehle se nahi hai
-    # to default admin create hoga.
+    # -----------------------------------------
+    # Add room columns to old tournament table
+    # -----------------------------------------
+
+    try:
+        inspector = inspect(db.engine)
+
+        columns = [
+            column["name"]
+            for column in inspector.get_columns("tournament")
+        ]
+
+        if "room_id" not in columns:
+            with db.engine.begin() as connection:
+                connection.execute(
+                    text(
+                        "ALTER TABLE tournament "
+                        "ADD COLUMN room_id VARCHAR(100)"
+                    )
+                )
+
+        if "room_password" not in columns:
+            with db.engine.begin() as connection:
+                connection.execute(
+                    text(
+                        "ALTER TABLE tournament "
+                        "ADD COLUMN room_password VARCHAR(100)"
+                    )
+                )
+
+    except Exception as e:
+        print("Room column migration warning:", e)
+
+
+    # -----------------------------------------
+    # Create default admin if needed
+    # -----------------------------------------
+
     admin = AdminAccount.query.filter_by(
         username="admin"
     ).first()
@@ -143,10 +179,6 @@ def signup():
     ).strip()
 
 
-    # -------------------------
-    # BASIC VALIDATION
-    # -------------------------
-
     if not username:
         return jsonify({
             "success": False,
@@ -203,57 +235,38 @@ def signup():
         }), 400
 
 
-    # -------------------------
-    # DUPLICATE USERNAME
-    # -------------------------
-
     existing_username = User.query.filter_by(
         username=username
     ).first()
 
     if existing_username:
-
         return jsonify({
             "success": False,
             "message": "Ye username already registered hai."
         }), 400
 
 
-    # -------------------------
-    # DUPLICATE EMAIL
-    # -------------------------
-
     existing_email = User.query.filter_by(
         email=email
     ).first()
 
     if existing_email:
-
         return jsonify({
             "success": False,
             "message": "Ye email already registered hai."
         }), 400
 
 
-    # -------------------------
-    # DUPLICATE FREE FIRE UID
-    # -------------------------
-
     existing_uid = User.query.filter_by(
         uid=uid
     ).first()
 
     if existing_uid:
-
         return jsonify({
             "success": False,
             "message": "Ye Free Fire UID already kisi account me registered hai."
         }), 400
 
-
-    # -------------------------
-    # CREATE USER
-    # -------------------------
 
     user = User(
         username=username,
@@ -265,7 +278,6 @@ def signup():
     db.session.add(user)
 
     try:
-
         db.session.commit()
 
     except Exception:
@@ -278,7 +290,6 @@ def signup():
         }), 500
 
 
-    # Automatically login
     session["user_id"] = user.id
     session["username"] = user.username
 
@@ -560,7 +571,6 @@ def change_admin_password():
         }), 401
 
 
-    # Old password verify
     if not check_password_hash(
         admin.password_hash,
         current_password
@@ -572,7 +582,6 @@ def change_admin_password():
         }), 400
 
 
-    # New password save
     admin.password_hash = generate_password_hash(
         new_password
     )
@@ -600,14 +609,12 @@ def get_tournaments():
 
     user = get_current_user()
 
-
     result = []
 
 
     for tournament in tournaments:
 
         registered = False
-
 
         if user:
 
@@ -616,10 +623,13 @@ def get_tournaments():
                 tournament_id=tournament.id
             ).first()
 
-
             if existing_registration:
-
                 registered = True
+
+
+        players = Player.query.filter_by(
+            tournament_id=tournament.id
+        ).all()
 
 
         result.append({
@@ -638,7 +648,20 @@ def get_tournaments():
 
             "date_time": tournament.date_time,
 
-            "registered": registered
+            "registered": registered,
+
+            "players_count": len(players),
+
+            "players": [
+                {
+                    "id": player.id,
+                    "name": player.name,
+                    "uid": player.uid,
+                    "kills": player.kills,
+                    "position": player.position
+                }
+                for player in players
+            ]
         })
 
 
@@ -666,6 +689,7 @@ def create_tournament():
     name = str(
         data.get("name", "")
     ).strip()
+
 
     date_time = str(
         data.get("date_time", "")
@@ -750,11 +774,16 @@ def create_tournament():
 
         first_prize=first_prize,
 
-        date_time=date_time
+        date_time=date_time,
+
+        room_id="",
+
+        room_password=""
     )
 
 
     db.session.add(tournament)
+
     db.session.commit()
 
 
@@ -765,13 +794,24 @@ def create_tournament():
         "message": "Tournament successfully create ho gaya.",
 
         "tournament": {
+
             "id": tournament.id,
+
             "name": tournament.name,
+
             "entry_fee": tournament.entry_fee,
+
             "max_players": tournament.max_players,
+
             "kill_reward": tournament.kill_reward,
+
             "first_prize": tournament.first_prize,
-            "date_time": tournament.date_time
+
+            "date_time": tournament.date_time,
+
+            "room_id": tournament.room_id,
+
+            "room_password": tournament.room_password
         }
     })
 
@@ -780,7 +820,10 @@ def create_tournament():
 # DELETE TOURNAMENT
 # =========================================================
 
-@app.route("/api/tournaments/<int:tournament_id>", methods=["DELETE"])
+@app.route(
+    "/api/tournaments/<int:tournament_id>",
+    methods=["DELETE"]
+)
 def delete_tournament(tournament_id):
 
     if not is_admin_logged_in():
@@ -805,7 +848,6 @@ def delete_tournament(tournament_id):
         }), 404
 
 
-    # Pehle user registrations delete
     UserTournamentRegistration.query.filter_by(
         tournament_id=tournament_id
     ).delete(
@@ -813,7 +855,6 @@ def delete_tournament(tournament_id):
     )
 
 
-    # Phir players delete
     Player.query.filter_by(
         tournament_id=tournament_id
     ).delete(
@@ -821,7 +862,6 @@ def delete_tournament(tournament_id):
     )
 
 
-    # Finally tournament delete
     db.session.delete(tournament)
 
     db.session.commit()
@@ -843,7 +883,6 @@ def delete_tournament(tournament_id):
 )
 def register_player(tournament_id):
 
-    # Login required
     user = get_current_user()
 
 
@@ -869,18 +908,31 @@ def register_player(tournament_id):
         }), 404
 
 
-    # -------------------------
+    # -----------------------------------------
     # DATE CHECK
-    # -------------------------
+    # -----------------------------------------
 
-    try:
+    tournament_date = None
 
-        tournament_date = datetime.strptime(
-            tournament.date_time,
-            "%d/%m/%y %H:%M"
-        )
+    for date_format in (
+        "%d/%m/%y %H:%M",
+        "%d-%m-%y %H:%M"
+    ):
 
-    except (ValueError, TypeError):
+        try:
+
+            tournament_date = datetime.strptime(
+                tournament.date_time,
+                date_format
+            )
+
+            break
+
+        except (ValueError, TypeError):
+            pass
+
+
+    if tournament_date is None:
 
         return jsonify({
             "success": False,
@@ -917,9 +969,6 @@ def register_player(tournament_id):
         }), 400
 
 
-    # Account ka UID hi use hoga.
-    # Koi dusra UID submit nahi kar sakta.
-
     if requested_uid and requested_uid != user.uid:
 
         return jsonify({
@@ -931,9 +980,9 @@ def register_player(tournament_id):
     uid = user.uid
 
 
-    # -------------------------
+    # -----------------------------------------
     # SAME ACCOUNT CHECK
-    # -------------------------
+    # -----------------------------------------
 
     already_registered = UserTournamentRegistration.query.filter_by(
 
@@ -952,9 +1001,9 @@ def register_player(tournament_id):
         }), 400
 
 
-    # -------------------------
+    # -----------------------------------------
     # SAME UID CHECK
-    # -------------------------
+    # -----------------------------------------
 
     existing_player = Player.query.filter_by(
 
@@ -973,9 +1022,9 @@ def register_player(tournament_id):
         }), 400
 
 
-    # -------------------------
+    # -----------------------------------------
     # MAX PLAYERS CHECK
-    # -------------------------
+    # -----------------------------------------
 
     current_players = Player.query.filter_by(
         tournament_id=tournament_id
@@ -990,9 +1039,9 @@ def register_player(tournament_id):
         }), 400
 
 
-    # -------------------------
+    # -----------------------------------------
     # CREATE PLAYER
-    # -------------------------
+    # -----------------------------------------
 
     player = Player(
 
@@ -1013,9 +1062,9 @@ def register_player(tournament_id):
     db.session.flush()
 
 
-    # -------------------------
-    # CREATE USER REGISTRATION
-    # -------------------------
+    # -----------------------------------------
+    # CREATE REGISTRATION
+    # -----------------------------------------
 
     registration = UserTournamentRegistration(
 
@@ -1047,6 +1096,189 @@ def register_player(tournament_id):
             "uid": player.uid,
 
             "tournament_id": player.tournament_id
+        }
+    })
+
+
+# =========================================================
+# ADMIN SET / UPDATE ROOM DETAILS
+# =========================================================
+
+@app.route(
+    "/api/admin/tournaments/<int:tournament_id>/room",
+    methods=["POST"]
+)
+def update_room_details(tournament_id):
+
+    if not is_admin_logged_in():
+
+        return jsonify({
+            "success": False,
+            "message": "Admin login required."
+        }), 401
+
+
+    tournament = db.session.get(
+        Tournament,
+        tournament_id
+    )
+
+
+    if tournament is None:
+
+        return jsonify({
+            "success": False,
+            "message": "Tournament nahi mila."
+        }), 404
+
+
+    data = request.get_json() or {}
+
+
+    room_id = str(
+        data.get("room_id", "")
+    ).strip()
+
+
+    room_password = str(
+        data.get("room_password", "")
+    ).strip()
+
+
+    tournament.room_id = room_id
+
+    tournament.room_password = room_password
+
+
+    db.session.commit()
+
+
+    return jsonify({
+
+        "success": True,
+
+        "message": "Room details successfully save ho gaye.",
+
+        "room": {
+
+            "room_id": tournament.room_id,
+
+            "room_password": tournament.room_password
+        }
+    })
+
+
+# =========================================================
+# ADMIN GET ROOM DETAILS
+# =========================================================
+
+@app.route(
+    "/api/admin/tournaments/<int:tournament_id>/room",
+    methods=["GET"]
+)
+def admin_get_room_details(tournament_id):
+
+    if not is_admin_logged_in():
+
+        return jsonify({
+            "success": False,
+            "message": "Admin login required."
+        }), 401
+
+
+    tournament = db.session.get(
+        Tournament,
+        tournament_id
+    )
+
+
+    if tournament is None:
+
+        return jsonify({
+            "success": False,
+            "message": "Tournament nahi mila."
+        }), 404
+
+
+    return jsonify({
+
+        "success": True,
+
+        "room": {
+
+            "room_id": tournament.room_id or "",
+
+            "room_password": tournament.room_password or ""
+        }
+    })
+
+
+# =========================================================
+# PLAYER GET ROOM DETAILS
+# =========================================================
+
+@app.route(
+    "/api/tournaments/<int:tournament_id>/room",
+    methods=["GET"]
+)
+def player_get_room_details(tournament_id):
+
+    user = get_current_user()
+
+
+    if user is None:
+
+        return jsonify({
+            "success": False,
+            "message": "Pehle login karo."
+        }), 401
+
+
+    tournament = db.session.get(
+        Tournament,
+        tournament_id
+    )
+
+
+    if tournament is None:
+
+        return jsonify({
+            "success": False,
+            "message": "Tournament nahi mila."
+        }), 404
+
+
+    registration = UserTournamentRegistration.query.filter_by(
+
+        user_id=user.id,
+
+        tournament_id=tournament_id
+
+    ).first()
+
+
+    if registration is None:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Room details sirf registered players ke liye available hain."
+
+        }), 403
+
+
+    return jsonify({
+
+        "success": True,
+
+        "registered": True,
+
+        "room": {
+
+            "room_id": tournament.room_id or "",
+
+            "room_password": tournament.room_password or ""
         }
     })
 
@@ -1252,9 +1484,7 @@ def remove_wallet_tokens():
     if wallet is None:
 
         return jsonify({
-
             "success": False,
-
             "message": "Wallet nahi mila."
         }), 404
 
@@ -1262,9 +1492,7 @@ def remove_wallet_tokens():
     if wallet.balance < amount:
 
         return jsonify({
-
             "success": False,
-
             "message": "Wallet me enough tokens nahi hain."
         }), 400
 
@@ -1412,16 +1640,15 @@ def update_player(player_id):
 
 
     if kills < 0:
-
         kills = 0
 
 
     if position < 0:
-
         position = 0
 
 
     player.kills = kills
+
     player.position = position
 
 
@@ -1526,12 +1753,15 @@ def get_tournament_players(tournament_id):
 if __name__ == "__main__":
 
     app.run(
+
         host="0.0.0.0",
+
         port=int(
             os.environ.get(
                 "PORT",
                 5000
             )
         ),
+
         debug=True
     )
