@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 import os
 
 from flask import Flask, render_template, request, jsonify, session, redirect
@@ -99,6 +100,45 @@ def get_current_user():
         return None
 
     return db.session.get(User, user_id)
+
+
+def parse_tournament_datetime(date_string):
+    """Tournament date/time ko India time (Asia/Kolkata) me parse karta hai."""
+    if not date_string:
+        return None
+
+    date_string = str(date_string).strip()
+
+    for fmt in ("%d/%m/%y %H:%M", "%d-%m-%y %H:%M"):
+        try:
+            naive = datetime.strptime(date_string, fmt)
+            return naive.replace(tzinfo=ZoneInfo("Asia/Kolkata"))
+        except (ValueError, TypeError):
+            pass
+
+    return None
+
+
+def tournament_status(tournament):
+    """
+    Start se pehle      -> upcoming
+    Start se 15 min tak -> live
+    15 min ke baad      -> completed
+    """
+    start_time = parse_tournament_datetime(tournament.date_time)
+
+    if start_time is None:
+        return "unknown"
+
+    now = datetime.now(ZoneInfo("Asia/Kolkata"))
+
+    if now < start_time:
+        return "upcoming"
+
+    if now < start_time + timedelta(minutes=15):
+        return "live"
+
+    return "completed"
 
 
 # =========================================================
@@ -559,6 +599,12 @@ def get_tournaments():
             tournament_id=tournament.id
         ).order_by(Player.id.asc()).all()
 
+        status = tournament_status(tournament)
+
+        # Admin ko results hamesha milenge.
+        # Normal users ko results sirf 15 min ke baad, yani Completed par.
+        show_results = admin_view or status == "completed"
+
         players_data = [
             {
                 "id": p.id,
@@ -568,7 +614,7 @@ def get_tournaments():
                 "position": p.position or 0
             }
             for p in players
-        ]
+        ] if show_results else []
 
         item = {
             "id": tournament.id,
@@ -580,6 +626,8 @@ def get_tournaments():
             "date_time": tournament.date_time,
             "rules": tournament.rules or "",
             "registered": registered,
+            "status": status,
+            "results_visible": show_results,
             "players": players_data
         }
 
@@ -852,31 +900,19 @@ def register_player(tournament_id):
     # DATE CHECK
     # -----------------------------------------------------
 
-    try:
+    tournament_date = parse_tournament_datetime(
+        tournament.date_time
+    )
 
-        tournament_date = datetime.strptime(
-            tournament.date_time,
-            "%d/%m/%y %H:%M"
-        )
+    if tournament_date is None:
 
-    except (ValueError, TypeError):
-
-        try:
-
-            tournament_date = datetime.strptime(
-                tournament.date_time,
-                "%d-%m-%y %H:%M"
-            )
-
-        except (ValueError, TypeError):
-
-            return jsonify({
-                "success": False,
-                "message": "Tournament date/time is invalid."
-            }), 400
+        return jsonify({
+            "success": False,
+            "message": "Tournament date/time is invalid."
+        }), 400
 
 
-    if tournament_date <= datetime.now():
+    if tournament_date <= datetime.now(ZoneInfo("Asia/Kolkata")):
 
         return jsonify({
             "success": False,
