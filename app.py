@@ -3,7 +3,7 @@ import os
 
 from flask import Flask, render_template, request, jsonify, session, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import or_, text, inspect
+from sqlalchemy import or_, text
 
 from tournaments import (
     db,
@@ -26,7 +26,9 @@ app = Flask(__name__)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
+
     if DATABASE_URL.startswith("postgres://"):
+
         DATABASE_URL = DATABASE_URL.replace(
             "postgres://",
             "postgresql://",
@@ -36,7 +38,9 @@ if DATABASE_URL:
     app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 
 else:
+
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tournament.db"
+
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -56,46 +60,49 @@ with app.app_context():
 
     db.create_all()
 
-    # Existing database me agar rules column nahi hai,
-    # to automatically add karne ki koshish karega.
+    # Existing database me rules column automatically add karega.
     try:
 
-        inspector = inspect(db.engine)
+        inspector = db.inspect(db.engine)
 
-        columns = [
-            column["name"]
-            for column in inspector.get_columns("tournament")
-        ]
+        tables = inspector.get_table_names()
 
-        if "rules" not in columns:
+        if "tournament" in tables:
 
-            if db.engine.dialect.name == "postgresql":
+            columns = [
+                column["name"]
+                for column in inspector.get_columns("tournament")
+            ]
 
-                db.session.execute(
-                    text(
-                        'ALTER TABLE tournament '
-                        'ADD COLUMN rules TEXT NOT NULL DEFAULT \'\''
-                    )
-                )
+            if "rules" not in columns:
 
-            elif db.engine.dialect.name == "sqlite":
+                with db.engine.begin() as connection:
 
-                db.session.execute(
-                    text(
-                        'ALTER TABLE tournament '
-                        'ADD COLUMN rules TEXT NOT NULL DEFAULT \'\''
-                    )
-                )
+                    if db.engine.dialect.name == "postgresql":
 
-            db.session.commit()
+                        connection.execute(
+                            text(
+                                "ALTER TABLE tournament "
+                                "ADD COLUMN rules TEXT DEFAULT ''"
+                            )
+                        )
 
-    except Exception as e:
+                    else:
 
-        db.session.rollback()
+                        connection.execute(
+                            text(
+                                "ALTER TABLE tournament "
+                                "ADD COLUMN rules TEXT DEFAULT ''"
+                            )
+                        )
+
+                print("Tournament rules column added successfully.")
+
+    except Exception as error:
 
         print(
-            "Rules column migration warning:",
-            e
+            "Tournament rules schema check failed:",
+            error
         )
 
 
@@ -111,6 +118,7 @@ with app.app_context():
         )
 
         db.session.add(admin)
+
         db.session.commit()
 
 
@@ -130,6 +138,7 @@ def get_current_user():
     user_id = session.get("user_id")
 
     if not user_id:
+
         return None
 
     return db.session.get(
@@ -239,7 +248,10 @@ def signup():
 
         return jsonify({
             "success": False,
-            "message": "Username minimum 3 characters ka hona chahiye."
+            "message": (
+                "Username minimum 3 characters "
+                "ka hona chahiye."
+            )
         }), 400
 
 
@@ -247,7 +259,10 @@ def signup():
 
         return jsonify({
             "success": False,
-            "message": "Password minimum 6 characters ka hona chahiye."
+            "message": (
+                "Password minimum 6 characters "
+                "ka hona chahiye."
+            )
         }), 400
 
 
@@ -255,7 +270,9 @@ def signup():
 
         return jsonify({
             "success": False,
-            "message": "Passwords match nahi kar rahe."
+            "message": (
+                "Passwords match nahi kar rahe."
+            )
         }), 400
 
 
@@ -265,7 +282,9 @@ def signup():
 
         return jsonify({
             "success": False,
-            "message": "Ye username already registered hai."
+            "message": (
+                "Ye username already registered hai."
+            )
         }), 400
 
 
@@ -275,7 +294,9 @@ def signup():
 
         return jsonify({
             "success": False,
-            "message": "Ye email already registered hai."
+            "message": (
+                "Ye email already registered hai."
+            )
         }), 400
 
 
@@ -285,18 +306,24 @@ def signup():
 
         return jsonify({
             "success": False,
-            "message": "Ye Free Fire UID already kisi account me registered hai."
+            "message": (
+                "Ye Free Fire UID already "
+                "kisi account me registered hai."
+            )
         }), 400
 
 
     user = User(
         username=username,
         email=email,
-        password_hash=generate_password_hash(password),
+        password_hash=generate_password_hash(
+            password
+        ),
         uid=uid
     )
 
     db.session.add(user)
+
 
     try:
 
@@ -308,7 +335,9 @@ def signup():
 
         return jsonify({
             "success": False,
-            "message": "Account create nahi ho paya."
+            "message": (
+                "Account create nahi ho paya."
+            )
         }), 500
 
 
@@ -320,7 +349,9 @@ def signup():
 
         "success": True,
 
-        "message": "Account successfully create ho gaya.",
+        "message": (
+            "Account successfully create ho gaya."
+        ),
 
         "user": {
 
@@ -347,6 +378,8 @@ def login():
 
     data = request.get_json() or {}
 
+    # Dono names support karega:
+    # identifier + login
     identifier = str(
         data.get(
             "identifier",
@@ -363,7 +396,10 @@ def login():
 
         return jsonify({
             "success": False,
-            "message": "Username/email aur password required hai."
+            "message": (
+                "Username/email aur password "
+                "required hai."
+            )
         }), 400
 
 
@@ -513,7 +549,10 @@ def admin_login():
 
             "success": False,
 
-            "message": "Username aur password required hai."
+            "message": (
+                "Username aur password "
+                "required hai."
+            )
         }), 400
 
 
@@ -528,7 +567,9 @@ def admin_login():
 
             "success": False,
 
-            "message": "Admin account nahi mila."
+            "message": (
+                "Admin account nahi mila."
+            )
         }), 401
 
 
@@ -541,11 +582,14 @@ def admin_login():
 
             "success": False,
 
-            "message": "Admin password galat hai."
+            "message": (
+                "Admin password galat hai."
+            )
         }), 401
 
 
     session["admin_id"] = admin.id
+
     session["admin_username"] = admin.username
 
 
@@ -553,7 +597,9 @@ def admin_login():
 
         "success": True,
 
-        "message": "Admin login successful."
+        "message": (
+            "Admin login successful."
+        )
     })
 
 
@@ -593,11 +639,14 @@ def change_admin_password():
 
             "success": False,
 
-            "message": "Admin login required."
+            "message": (
+                "Admin login required."
+            )
         }), 401
 
 
     data = request.get_json() or {}
+
 
     current_password = str(
         data.get(
@@ -627,7 +676,9 @@ def change_admin_password():
 
             "success": False,
 
-            "message": "Current password required."
+            "message": (
+                "Current password required."
+            )
         }), 400
 
 
@@ -637,7 +688,9 @@ def change_admin_password():
 
             "success": False,
 
-            "message": "New password required."
+            "message": (
+                "New password required."
+            )
         }), 400
 
 
@@ -647,7 +700,10 @@ def change_admin_password():
 
             "success": False,
 
-            "message": "New passwords match nahi kar rahe."
+            "message": (
+                "New passwords match "
+                "nahi kar rahe."
+            )
         }), 400
 
 
@@ -657,7 +713,10 @@ def change_admin_password():
 
             "success": False,
 
-            "message": "New password minimum 6 characters ka hona chahiye."
+            "message": (
+                "New password minimum "
+                "6 characters ka hona chahiye."
+            )
         }), 400
 
 
@@ -678,7 +737,9 @@ def change_admin_password():
 
             "success": False,
 
-            "message": "Admin account nahi mila."
+            "message": (
+                "Admin account nahi mila."
+            )
         }), 401
 
 
@@ -691,7 +752,9 @@ def change_admin_password():
 
             "success": False,
 
-            "message": "Current password galat hai."
+            "message": (
+                "Current password galat hai."
+            )
         }), 400
 
 
@@ -706,7 +769,10 @@ def change_admin_password():
 
         "success": True,
 
-        "message": "Admin password successfully change ho gaya."
+        "message": (
+            "Admin password successfully "
+            "change ho gaya."
+        )
     })
 
 
@@ -724,6 +790,7 @@ def get_tournaments():
         Tournament.id.desc()
     ).all()
 
+
     user = get_current_user()
 
     result = []
@@ -733,13 +800,16 @@ def get_tournaments():
 
         registered = False
 
+
         if user:
 
             existing_registration = (
-                UserTournamentRegistration.query.filter_by(
+                UserTournamentRegistration.query
+                .filter_by(
                     user_id=user.id,
                     tournament_id=tournament.id
-                ).first()
+                )
+                .first()
             )
 
             if existing_registration:
@@ -787,6 +857,7 @@ def get_tournaments():
 
             "date_time": tournament.date_time,
 
+            # NEW
             "rules": tournament.rules or "",
 
             "registered": registered,
@@ -795,10 +866,13 @@ def get_tournaments():
         }
 
 
-        # Room details sirf admin ya registered
-        # player ko milenge.
+        # Room details sirf admin ya
+        # registered player ko milenge.
 
-        if is_admin_logged_in() or registered:
+        if (
+            is_admin_logged_in()
+            or registered
+        ):
 
             tournament_data["room_id"] = (
                 tournament.room_id or ""
@@ -811,6 +885,7 @@ def get_tournaments():
         else:
 
             tournament_data["room_id"] = ""
+
             tournament_data["room_password"] = ""
 
 
@@ -830,7 +905,9 @@ def get_tournaments():
     "/api/admin/tournaments/<int:tournament_id>/room",
     methods=["POST"]
 )
-def save_room_details(tournament_id):
+def save_room_details(
+    tournament_id
+):
 
     if not is_admin_logged_in():
 
@@ -838,7 +915,9 @@ def save_room_details(tournament_id):
 
             "success": False,
 
-            "message": "Admin login required."
+            "message": (
+                "Admin login required."
+            )
         }), 401
 
 
@@ -854,7 +933,9 @@ def save_room_details(tournament_id):
 
             "success": False,
 
-            "message": "Tournament nahi mila."
+            "message": (
+                "Tournament nahi mila."
+            )
         }), 404
 
 
@@ -877,7 +958,9 @@ def save_room_details(tournament_id):
 
 
     tournament.room_id = room_id
+
     tournament.room_password = room_password
+
 
     db.session.commit()
 
@@ -886,7 +969,10 @@ def save_room_details(tournament_id):
 
         "success": True,
 
-        "message": "Room details successfully save ho gaye."
+        "message": (
+            "Room details successfully "
+            "save ho gaye."
+        )
     })
 
 
@@ -898,7 +984,9 @@ def save_room_details(tournament_id):
     "/api/admin/tournaments/<int:tournament_id>/rules",
     methods=["POST"]
 )
-def save_tournament_rules(tournament_id):
+def save_tournament_rules(
+    tournament_id
+):
 
     if not is_admin_logged_in():
 
@@ -906,7 +994,9 @@ def save_tournament_rules(tournament_id):
 
             "success": False,
 
-            "message": "Admin login required."
+            "message": (
+                "Admin login required."
+            )
         }), 401
 
 
@@ -922,7 +1012,9 @@ def save_tournament_rules(tournament_id):
 
             "success": False,
 
-            "message": "Tournament nahi mila."
+            "message": (
+                "Tournament nahi mila."
+            )
         }), 404
 
 
@@ -939,16 +1031,35 @@ def save_tournament_rules(tournament_id):
 
     tournament.rules = rules
 
-    db.session.commit()
+
+    try:
+
+        db.session.commit()
+
+    except Exception:
+
+        db.session.rollback()
+
+        return jsonify({
+
+            "success": False,
+
+            "message": (
+                "Rules save nahi ho paaye."
+            )
+        }), 500
 
 
     return jsonify({
 
         "success": True,
 
-        "message": "Full Map Rules successfully save ho gaye.",
+        "message": (
+            "Tournament rules successfully "
+            "save ho gaye."
+        ),
 
-        "rules": tournament.rules
+        "rules": tournament.rules or ""
     })
 
 
@@ -968,7 +1079,9 @@ def create_tournament():
 
             "success": False,
 
-            "message": "Admin login required."
+            "message": (
+                "Admin login required."
+            )
         }), 401
 
 
@@ -991,6 +1104,7 @@ def create_tournament():
     ).strip()
 
 
+    # NEW
     rules = str(
         data.get(
             "rules",
@@ -1038,7 +1152,9 @@ def create_tournament():
 
             "success": False,
 
-            "message": "Numeric values galat hain."
+            "message": (
+                "Numeric values galat hain."
+            )
         }), 400
 
 
@@ -1048,7 +1164,9 @@ def create_tournament():
 
             "success": False,
 
-            "message": "Tournament name required."
+            "message": (
+                "Tournament name required."
+            )
         }), 400
 
 
@@ -1058,7 +1176,9 @@ def create_tournament():
 
             "success": False,
 
-            "message": "Tournament date/time required."
+            "message": (
+                "Tournament date/time required."
+            )
         }), 400
 
 
@@ -1068,7 +1188,10 @@ def create_tournament():
 
             "success": False,
 
-            "message": "Entry fee negative nahi ho sakti."
+            "message": (
+                "Entry fee negative "
+                "nahi ho sakti."
+            )
         }), 400
 
 
@@ -1078,17 +1201,26 @@ def create_tournament():
 
             "success": False,
 
-            "message": "Max players 0 se zyada hona chahiye."
+            "message": (
+                "Max players 0 se zyada "
+                "hona chahiye."
+            )
         }), 400
 
 
-    if kill_reward < 0 or first_prize < 0:
+    if (
+        kill_reward < 0
+        or first_prize < 0
+    ):
 
         return jsonify({
 
             "success": False,
 
-            "message": "Prize negative nahi ho sakta."
+            "message": (
+                "Prize negative "
+                "nahi ho sakta."
+            )
         }), 400
 
 
@@ -1106,11 +1238,14 @@ def create_tournament():
 
         date_time=date_time,
 
+        # NEW
         rules=rules
     )
 
 
-    db.session.add(tournament)
+    db.session.add(
+        tournament
+    )
 
     db.session.commit()
 
@@ -1119,7 +1254,10 @@ def create_tournament():
 
         "success": True,
 
-        "message": "Tournament successfully create ho gaya.",
+        "message": (
+            "Tournament successfully "
+            "create ho gaya."
+        ),
 
         "tournament": {
 
@@ -1137,7 +1275,7 @@ def create_tournament():
 
             "date_time": tournament.date_time,
 
-            "rules": tournament.rules
+            "rules": tournament.rules or ""
         }
     })
 
@@ -1150,7 +1288,9 @@ def create_tournament():
     "/api/tournaments/<int:tournament_id>",
     methods=["DELETE"]
 )
-def delete_tournament(tournament_id):
+def delete_tournament(
+    tournament_id
+):
 
     if not is_admin_logged_in():
 
@@ -1158,7 +1298,9 @@ def delete_tournament(tournament_id):
 
             "success": False,
 
-            "message": "Admin login required."
+            "message": (
+                "Admin login required."
+            )
         }), 401
 
 
@@ -1174,7 +1316,9 @@ def delete_tournament(tournament_id):
 
             "success": False,
 
-            "message": "Tournament nahi mila."
+            "message": (
+                "Tournament nahi mila."
+            )
         }), 404
 
 
@@ -1203,7 +1347,10 @@ def delete_tournament(tournament_id):
 
         "success": True,
 
-        "message": "Tournament successfully delete ho gaya."
+        "message": (
+            "Tournament successfully "
+            "delete ho gaya."
+        )
     })
 
 
@@ -1215,7 +1362,9 @@ def delete_tournament(tournament_id):
     "/api/tournaments/<int:tournament_id>/players",
     methods=["POST"]
 )
-def register_player(tournament_id):
+def register_player(
+    tournament_id
+):
 
     user = get_current_user()
 
@@ -1226,7 +1375,9 @@ def register_player(tournament_id):
 
             "success": False,
 
-            "message": "Pehle login karo."
+            "message": (
+                "Pehle login karo."
+            )
         }), 401
 
 
@@ -1242,7 +1393,9 @@ def register_player(tournament_id):
 
             "success": False,
 
-            "message": "Tournament nahi mila."
+            "message": (
+                "Tournament nahi mila."
+            )
         }), 404
 
 
@@ -1274,7 +1427,10 @@ def register_player(tournament_id):
 
                 "success": False,
 
-                "message": "Tournament date/time is invalid."
+                "message": (
+                    "Tournament date/time "
+                    "is invalid."
+                )
             }), 400
 
 
@@ -1284,7 +1440,10 @@ def register_player(tournament_id):
 
             "success": False,
 
-            "message": "Tournament registration is closed."
+            "message": (
+                "Tournament registration "
+                "is closed."
+            )
         }), 400
 
 
@@ -1313,11 +1472,16 @@ def register_player(tournament_id):
 
             "success": False,
 
-            "message": "Player name required."
+            "message": (
+                "Player name required."
+            )
         }), 400
 
 
-    if requested_uid and requested_uid != user.uid:
+    if (
+        requested_uid
+        and requested_uid != user.uid
+    ):
 
         return jsonify({
 
@@ -1325,7 +1489,8 @@ def register_player(tournament_id):
 
             "message": (
                 "Aap sirf apne account wale "
-                "Free Fire UID se register kar sakte ho."
+                "Free Fire UID se register "
+                "kar sakte ho."
             )
         }), 400
 
@@ -1334,10 +1499,12 @@ def register_player(tournament_id):
 
 
     already_registered = (
-        UserTournamentRegistration.query.filter_by(
+        UserTournamentRegistration.query
+        .filter_by(
             user_id=user.id,
             tournament_id=tournament_id
-        ).first()
+        )
+        .first()
     )
 
 
@@ -1347,7 +1514,10 @@ def register_player(tournament_id):
 
             "success": False,
 
-            "message": "Aap is tournament me already registered ho."
+            "message": (
+                "Aap is tournament me "
+                "already registered ho."
+            )
         }), 400
 
 
@@ -1364,8 +1534,8 @@ def register_player(tournament_id):
             "success": False,
 
             "message": (
-                "Ye UID is tournament ka slot "
-                "already book kar chuki hai."
+                "Ye UID is tournament ka "
+                "slot already book kar chuki hai."
             )
         }), 400
 
@@ -1381,13 +1551,12 @@ def register_player(tournament_id):
 
             "success": False,
 
-            "message": "Tournament ke saare slots full ho gaye hain."
+            "message": (
+                "Tournament ke saare "
+                "slots full ho gaye hain."
+            )
         }), 400
 
-
-    # =====================================================
-    # WALLET / TOKEN CHECK
-    # =====================================================
 
     entry_fee = int(
         tournament.entry_fee or 0
@@ -1400,8 +1569,11 @@ def register_player(tournament_id):
 
 
     current_balance = (
+
         wallet.balance
+
         if wallet is not None
+
         else 0
     )
 
@@ -1415,19 +1587,15 @@ def register_player(tournament_id):
             "message": (
                 f"Insufficient tokens. "
                 f"Entry fee: {entry_fee} tokens, "
-                f"your balance: {current_balance} tokens."
+                f"your balance: "
+                f"{current_balance} tokens."
             ),
 
             "entry_fee": entry_fee,
 
             "balance": current_balance
-
         }), 400
 
-
-    # =====================================================
-    # CREATE PLAYER
-    # =====================================================
 
     player = Player(
 
@@ -1443,14 +1611,12 @@ def register_player(tournament_id):
     )
 
 
-    db.session.add(player)
+    db.session.add(
+        player
+    )
 
     db.session.flush()
 
-
-    # =====================================================
-    # CREATE USER REGISTRATION
-    # =====================================================
 
     registration = UserTournamentRegistration(
 
@@ -1467,10 +1633,6 @@ def register_player(tournament_id):
     )
 
 
-    # =====================================================
-    # DEDUCT ENTRY FEE
-    # =====================================================
-
     if entry_fee > 0:
 
         if wallet is None:
@@ -1481,7 +1643,11 @@ def register_player(tournament_id):
 
                 "success": False,
 
-                "message": "Wallet error. Registration cancel kar di gayi."
+                "message": (
+                    "Wallet error. "
+                    "Registration cancel "
+                    "kar di gayi."
+                )
             }), 500
 
 
@@ -1494,10 +1660,12 @@ def register_player(tournament_id):
 
             amount=-entry_fee,
 
-            transaction_type="TOURNAMENT_ENTRY",
+            transaction_type=(
+                "TOURNAMENT_ENTRY"
+            ),
 
             description=(
-                f"Entry fee for tournament: "
+                "Entry fee for tournament: "
                 f"{tournament.name}"
             )
         )
@@ -1521,16 +1689,19 @@ def register_player(tournament_id):
             "success": False,
 
             "message": (
-                "Registration save nahi ho payi. "
-                "Tokens deduct nahi hue."
+                "Registration save nahi "
+                "ho payi. Tokens deduct "
+                "nahi hue."
             )
-
         }), 500
 
 
     remaining_balance = (
+
         wallet.balance
+
         if wallet is not None
+
         else 0
     )
 
@@ -1540,7 +1711,8 @@ def register_player(tournament_id):
         "success": True,
 
         "message": (
-            "Tournament registration successful. "
+            "Tournament registration "
+            "successful. "
             f"{entry_fee} tokens deduct hue."
         ),
 
@@ -1556,7 +1728,9 @@ def register_player(tournament_id):
 
             "uid": player.uid,
 
-            "tournament_id": player.tournament_id
+            "tournament_id": (
+                player.tournament_id
+            )
         }
     })
 
@@ -1571,7 +1745,9 @@ def register_player(tournament_id):
 )
 def get_wallet(uid):
 
-    uid = str(uid).strip()
+    uid = str(
+        uid
+    ).strip()
 
 
     wallet = Wallet.query.filter_by(
@@ -1617,7 +1793,9 @@ def add_wallet_tokens():
 
             "success": False,
 
-            "message": "Admin login required."
+            "message": (
+                "Admin login required."
+            )
         }), 401
 
 
@@ -1650,7 +1828,9 @@ def add_wallet_tokens():
 
             "success": False,
 
-            "message": "Token amount invalid."
+            "message": (
+                "Token amount invalid."
+            )
         }), 400
 
 
@@ -1660,7 +1840,9 @@ def add_wallet_tokens():
 
             "success": False,
 
-            "message": "UID required."
+            "message": (
+                "UID required."
+            )
         }), 400
 
 
@@ -1670,7 +1852,10 @@ def add_wallet_tokens():
 
             "success": False,
 
-            "message": "Amount 0 se zyada hona chahiye."
+            "message": (
+                "Amount 0 se zyada "
+                "hona chahiye."
+            )
         }), 400
 
 
@@ -1682,11 +1867,15 @@ def add_wallet_tokens():
     if wallet is None:
 
         wallet = Wallet(
+
             player_uid=uid,
+
             balance=0
         )
 
-        db.session.add(wallet)
+        db.session.add(
+            wallet
+        )
 
 
     wallet.balance += amount
@@ -1700,13 +1889,16 @@ def add_wallet_tokens():
 
         transaction_type="ADD",
 
-        description="Admin added tokens"
+        description=(
+            "Admin added tokens"
+        )
     )
 
 
     db.session.add(
         transaction
     )
+
 
     db.session.commit()
 
@@ -1715,7 +1907,9 @@ def add_wallet_tokens():
 
         "success": True,
 
-        "message": "Tokens successfully added.",
+        "message": (
+            "Tokens successfully added."
+        ),
 
         "uid": uid,
 
@@ -1739,7 +1933,9 @@ def remove_wallet_tokens():
 
             "success": False,
 
-            "message": "Admin login required."
+            "message": (
+                "Admin login required."
+            )
         }), 401
 
 
@@ -1772,7 +1968,9 @@ def remove_wallet_tokens():
 
             "success": False,
 
-            "message": "Token amount invalid."
+            "message": (
+                "Token amount invalid."
+            )
         }), 400
 
 
@@ -1782,7 +1980,9 @@ def remove_wallet_tokens():
 
             "success": False,
 
-            "message": "UID required."
+            "message": (
+                "UID required."
+            )
         }), 400
 
 
@@ -1792,7 +1992,10 @@ def remove_wallet_tokens():
 
             "success": False,
 
-            "message": "Amount 0 se zyada hona chahiye."
+            "message": (
+                "Amount 0 se zyada "
+                "hona chahiye."
+            )
         }), 400
 
 
@@ -1807,7 +2010,9 @@ def remove_wallet_tokens():
 
             "success": False,
 
-            "message": "Wallet nahi mila."
+            "message": (
+                "Wallet nahi mila."
+            )
         }), 404
 
 
@@ -1817,7 +2022,10 @@ def remove_wallet_tokens():
 
             "success": False,
 
-            "message": "Wallet me enough tokens nahi hain."
+            "message": (
+                "Wallet me enough "
+                "tokens nahi hain."
+            )
         }), 400
 
 
@@ -1832,13 +2040,16 @@ def remove_wallet_tokens():
 
         transaction_type="REMOVE",
 
-        description="Admin removed tokens"
+        description=(
+            "Admin removed tokens"
+        )
     )
 
 
     db.session.add(
         transaction
     )
+
 
     db.session.commit()
 
@@ -1847,7 +2058,10 @@ def remove_wallet_tokens():
 
         "success": True,
 
-        "message": "Tokens successfully removed.",
+        "message": (
+            "Tokens successfully "
+            "removed."
+        ),
 
         "uid": uid,
 
@@ -1865,15 +2079,20 @@ def remove_wallet_tokens():
 )
 def wallet_transactions(uid):
 
-    uid = str(uid).strip()
+    uid = str(
+        uid
+    ).strip()
 
 
     transactions = (
-        TokenTransaction.query.filter_by(
+        TokenTransaction.query
+        .filter_by(
             player_uid=uid
-        ).order_by(
+        )
+        .order_by(
             TokenTransaction.id.desc()
-        ).all()
+        )
+        .all()
     )
 
 
@@ -1888,13 +2107,20 @@ def wallet_transactions(uid):
 
             "amount": transaction.amount,
 
-            "transaction_type": transaction.transaction_type,
+            "transaction_type": (
+                transaction.transaction_type
+            ),
 
-            "description": transaction.description,
+            "description": (
+                transaction.description
+            ),
 
             "created_at": (
+
                 transaction.created_at.isoformat()
+
                 if transaction.created_at
+
                 else None
             )
         })
@@ -1926,7 +2152,9 @@ def update_player(player_id):
 
             "success": False,
 
-            "message": "Admin login required."
+            "message": (
+                "Admin login required."
+            )
         }), 401
 
 
@@ -1942,7 +2170,9 @@ def update_player(player_id):
 
             "success": False,
 
-            "message": "Player nahi mila."
+            "message": (
+                "Player nahi mila."
+            )
         }), 404
 
 
@@ -1974,19 +2204,26 @@ def update_player(player_id):
 
             "success": False,
 
-            "message": "Kills/position invalid hai."
+            "message": (
+                "Kills/position invalid hai."
+            )
         }), 400
 
 
     if kills < 0:
+
         kills = 0
 
+
     if position < 0:
+
         position = 0
 
 
     player.kills = kills
+
     player.position = position
+
 
     db.session.commit()
 
@@ -1995,7 +2232,9 @@ def update_player(player_id):
 
         "success": True,
 
-        "message": "Player result updated.",
+        "message": (
+            "Player result updated."
+        ),
 
         "player": {
 
@@ -2009,7 +2248,9 @@ def update_player(player_id):
 
             "position": player.position,
 
-            "tournament_id": player.tournament_id
+            "tournament_id": (
+                player.tournament_id
+            )
         }
     })
 
@@ -2022,7 +2263,9 @@ def update_player(player_id):
     "/api/tournaments/<int:tournament_id>/players",
     methods=["GET"]
 )
-def get_tournament_players(tournament_id):
+def get_tournament_players(
+    tournament_id
+):
 
     tournament = db.session.get(
         Tournament,
@@ -2036,17 +2279,22 @@ def get_tournament_players(tournament_id):
 
             "success": False,
 
-            "message": "Tournament nahi mila."
+            "message": (
+                "Tournament nahi mila."
+            )
         }), 404
 
 
     players = (
-        Player.query.filter_by(
+        Player.query
+        .filter_by(
             tournament_id=tournament_id
-        ).order_by(
+        )
+        .order_by(
             Player.position.asc(),
             Player.kills.desc()
-        ).all()
+        )
+        .all()
     )
 
 
@@ -2067,7 +2315,9 @@ def get_tournament_players(tournament_id):
 
             "position": player.position,
 
-            "tournament_id": player.tournament_id
+            "tournament_id": (
+                player.tournament_id
+            )
         })
 
 
