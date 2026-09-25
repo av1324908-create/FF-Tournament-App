@@ -481,6 +481,52 @@ def admin_login():
 
 
 # =========================================================
+# ADMIN SESSION CHECK (FRONTEND COMPATIBILITY)
+# =========================================================
+
+@app.route("/api/admin/me", methods=["GET"])
+def current_admin():
+    if not is_admin_logged_in():
+        return jsonify({
+            "success": True,
+            "logged_in": False
+        })
+
+    admin = db.session.get(
+        AdminAccount,
+        session.get("admin_id")
+    )
+
+    if admin is None:
+        session.pop("admin_id", None)
+        session.pop("admin_username", None)
+
+        return jsonify({
+            "success": True,
+            "logged_in": False
+        })
+
+    return jsonify({
+        "success": True,
+        "logged_in": True,
+        "admin": {
+            "id": admin.id,
+            "username": admin.username
+        }
+    })
+
+
+# =========================================================
+# ADMIN LOGIN
+# API COMPATIBILITY ALIAS
+# =========================================================
+
+@app.route("/api/admin/login", methods=["POST"])
+def api_admin_login():
+    return admin_login()
+
+
+# =========================================================
 # ADMIN LOGOUT
 # =========================================================
 
@@ -491,6 +537,22 @@ def admin_logout():
     session.pop("admin_username", None)
 
     return redirect("/admin")
+
+
+# =========================================================
+# ADMIN LOGOUT
+# API COMPATIBILITY ALIAS
+# =========================================================
+
+@app.route("/api/admin/logout", methods=["POST"])
+def api_admin_logout():
+    session.pop("admin_id", None)
+    session.pop("admin_username", None)
+
+    return jsonify({
+        "success": True,
+        "message": "Admin logout successful."
+    })
 
 
 # =========================================================
@@ -1887,6 +1949,18 @@ def update_player(player_id):
             "tournament_id": player.tournament_id
         }
     })
+
+
+# =========================================================
+# ADMIN PLAYER RESULT API COMPATIBILITY ALIAS
+# =========================================================
+
+@app.route(
+    "/api/admin/players/<int:player_id>",
+    methods=["PUT"]
+)
+def admin_update_player(player_id):
+    return update_player(player_id)
 
 
 # =========================================================
