@@ -11,22 +11,54 @@ db = SQLAlchemy()
 class Tournament(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
 
-    entry_fee = db.Column(db.Integer, default=0)
+    entry_fee = db.Column(
+        db.Integer,
+        default=0
+    )
 
-    max_players = db.Column(db.Integer, default=0)
+    max_players = db.Column(
+        db.Integer,
+        default=0
+    )
 
-    kill_reward = db.Column(db.Integer, default=0)
+    kill_reward = db.Column(
+        db.Integer,
+        default=0
+    )
 
-    first_prize = db.Column(db.Integer, default=0)
+    first_prize = db.Column(
+        db.Integer,
+        default=0
+    )
 
-    date_time = db.Column(db.String(50))
+    date_time = db.Column(
+        db.String(50)
+    )
 
-    # Room details
-    room_id = db.Column(db.String(100), default="")
+    room_id = db.Column(
+        db.String(100),
+        default=""
+    )
 
-    room_password = db.Column(db.String(100), default="")
+    room_password = db.Column(
+        db.String(100),
+        default=""
+    )
+
+    # =========================
+    # FULL MAP RULES
+    # =========================
+
+    rules = db.Column(
+        db.Text,
+        default="",
+        nullable=False
+    )
 
 
 # =========================
@@ -36,13 +68,25 @@ class Tournament(db.Model):
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
 
-    uid = db.Column(db.String(50), nullable=False)
+    uid = db.Column(
+        db.String(50),
+        nullable=False
+    )
 
-    kills = db.Column(db.Integer, default=0)
+    kills = db.Column(
+        db.Integer,
+        default=0
+    )
 
-    position = db.Column(db.Integer, default=0)
+    position = db.Column(
+        db.Integer,
+        default=0
+    )
 
     tournament_id = db.Column(
         db.Integer,
@@ -56,7 +100,10 @@ class Player(db.Model):
 # =========================
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     username = db.Column(
         db.String(100),
@@ -75,7 +122,6 @@ class User(db.Model):
         nullable=False
     )
 
-    # Free Fire UID linked with account
     uid = db.Column(
         db.String(50),
         unique=True,
@@ -87,13 +133,22 @@ class User(db.Model):
         default=datetime.utcnow
     )
 
+    token_balance = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
+    )
+
 
 # =========================
 # USER TOURNAMENT REGISTRATION
 # =========================
 
 class UserTournamentRegistration(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     user_id = db.Column(
         db.Integer,
@@ -124,7 +179,10 @@ class UserTournamentRegistration(db.Model):
 # =========================
 
 class Wallet(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     player_uid = db.Column(
         db.String(50),
@@ -149,7 +207,10 @@ class Wallet(db.Model):
 # =========================
 
 class TokenTransaction(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     player_uid = db.Column(
         db.String(50),
@@ -181,7 +242,10 @@ class TokenTransaction(db.Model):
 # =========================
 
 class AdminAccount(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     username = db.Column(
         db.String(100),
