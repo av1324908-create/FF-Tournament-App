@@ -2,142 +2,252 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>FF Tournament Hub</title>
 
 <style>
 
-* {
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
 }
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0d0d0d;
-    color: white;
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#0d0d0d;
+    color:white;
 }
 
-header {
-    background: linear-gradient(135deg,#ff8c00,#ff4500);
-    padding: 25px 20px;
-    text-align: center;
+header{
+    background:linear-gradient(135deg,#ff8c00,#ff4500);
+    padding:25px 20px;
+    text-align:center;
 }
 
-header h1 {
-    margin: 0;
+header h1{
+    margin:0;
+    font-size:30px;
 }
 
-.container {
-    max-width: 700px;
-    margin: auto;
-    padding: 20px;
+header p{
+    margin-bottom:0;
 }
 
-.card {
-    background: #1c1c1c;
-    border-radius: 15px;
-    padding: 18px;
-    margin: 15px 0;
-    border: 1px solid #333;
+.container{
+    max-width:700px;
+    margin:auto;
+    padding:20px;
 }
 
-.card h2 {
-    color: orange;
+.card{
+    background:#1c1c1c;
+    border-radius:15px;
+    padding:18px;
+    margin:15px 0;
+    border:1px solid #333;
 }
 
-.info {
-    line-height: 1.8;
+.card h2{
+    color:orange;
 }
 
-button {
-    width: 100%;
-    padding: 13px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 9px;
-    background: orange;
-    color: black;
-    font-weight: bold;
-    cursor: pointer;
+.info{
+    line-height:1.9;
 }
 
-button:hover {
-    background: #ffb000;
+button{
+    width:100%;
+    padding:13px;
+    margin-top:10px;
+    border:none;
+    border-radius:9px;
+    background:orange;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:15px;
 }
 
-input {
-    width: 100%;
-    padding: 13px;
-    margin: 7px 0;
-    border: none;
-    border-radius: 8px;
+button:hover{
+    background:#ffb000;
 }
 
-.box {
-    background: #202020;
-    padding: 18px;
-    border-radius: 15px;
-    margin-bottom: 20px;
+button:disabled{
+    opacity:.8;
+    cursor:not-allowed;
 }
 
-.hidden {
-    display: none;
+input{
+    width:100%;
+    padding:13px;
+    margin:7px 0;
+    border:none;
+    border-radius:8px;
+    font-size:15px;
 }
 
-.message {
-    text-align: center;
-    margin-top: 10px;
+.box{
+    background:#202020;
+    padding:18px;
+    border-radius:15px;
+    margin-bottom:20px;
 }
 
-.room {
-    background: #102b18;
-    border: 1px solid #00c853;
-    padding: 12px;
-    border-radius: 10px;
-    margin-top: 12px;
+.hidden{
+    display:none;
 }
 
-.room b {
-    color: #00ff88;
+.message{
+    text-align:center;
+    margin-top:10px;
 }
 
-.logout {
-    background: #444;
-    color: white;
+.room{
+    background:#102b18;
+    border:1px solid #00c853;
+    padding:12px;
+    border-radius:10px;
+    margin-top:12px;
+    line-height:1.8;
 }
 
-.completed-title {
-    color: #ff5555;
-    text-align: center;
-    margin-top: 40px;
+.room b{
+    color:#00ff88;
 }
 
-.completed-card {
-    opacity: .7;
+.logout{
+    background:#444;
+    color:white;
 }
 
-.empty {
-    text-align: center;
-    color: #aaa;
-    padding: 25px;
+.completed-title{
+    color:#ff5555;
+    text-align:center;
+    margin-top:40px;
 }
 
-.small {
-    color: #aaa;
-    font-size: 14px;
+.completed-card{
+    opacity:.92;
+}
+
+.empty{
+    text-align:center;
+    color:#aaa;
+    padding:25px;
+}
+
+.small{
+    color:#aaa;
+    font-size:14px;
+}
+
+/* =========================
+   RULES
+========================= */
+
+.rules-box{
+    margin-top:18px;
+    background:#101010;
+    border:2px solid #ff8c00;
+    border-radius:14px;
+    padding:17px;
+}
+
+.rules-title{
+    margin:0 0 13px;
+    color:#ffb000;
+    font-size:21px;
+}
+
+.rules-text{
+    white-space:pre-wrap;
+    line-height:1.85;
+    color:#f1f1f1;
+    font-size:16px;
+}
+
+/* =========================
+   LIVE
+========================= */
+
+.live-badge{
+    display:inline-block;
+    background:#b00020;
+    color:white;
+    padding:7px 13px;
+    border-radius:20px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.live-card{
+    border:2px solid #ff3333;
+}
+
+/* =========================
+   RESULTS
+========================= */
+
+.results-box{
+    margin-top:18px;
+    background:#101010;
+    border:1px solid #555;
+    border-radius:12px;
+    padding:14px;
+}
+
+.result-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:11px 4px;
+    border-bottom:1px solid #333;
+}
+
+.result-row:last-child{
+    border-bottom:none;
+}
+
+.result-position{
+    font-weight:bold;
+    color:#ffb000;
+}
+
+.wallet{
+    margin-top:15px;
+    background:#151515;
+    border:1px solid #333;
+    border-radius:12px;
+    padding:15px;
+    text-align:center;
+}
+
+.wallet-title{
+    font-size:15px;
+    color:#aaa;
+}
+
+.wallet-balance{
+    font-size:28px;
+    font-weight:bold;
+    color:#00ff88;
+    margin-top:5px;
+}
+
+.section-title{
+    text-align:center;
 }
 
 </style>
 
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -151,7 +261,9 @@ input {
 <div class="container">
 
 
-<!-- ACCOUNT -->
+<!-- =========================
+     ACCOUNT
+========================= -->
 
 <div class="box">
 
@@ -170,38 +282,24 @@ input {
 </div>
 
 
-<div id="loggedIn"
-class="hidden">
+<div id="loggedIn" class="hidden">
 
 <h2>👤 My Account</h2>
 
 <p id="accountInfo"></p>
 
-<button class="logout"
-onclick="logout()">
+<button class="logout" onclick="logout()">
 🚪 Logout
 </button>
 
-<!-- TOKEN WALLET -->
 
-<div id="walletBox"
-class="hidden"
-style="margin-top:15px;
-background:#151515;
-border:1px solid #333;
-border-radius:12px;
-padding:15px;
-text-align:center;">
+<div id="walletBox" class="wallet hidden">
 
-<div style="font-size:15px;color:#aaa;">
+<div class="wallet-title">
 💰 My Token Balance
 </div>
 
-<div id="walletBalance"
-style="font-size:28px;
-font-weight:bold;
-color:#00ff88;
-margin-top:5px;">
+<div id="walletBalance" class="wallet-balance">
 0 Tokens
 </div>
 
@@ -216,75 +314,84 @@ margin-top:5px;">
 </div>
 
 
-<!-- LOGIN -->
+<!-- =========================
+     LOGIN
+========================= -->
 
-<div id="loginBox"
-class="box hidden">
+<div id="loginBox" class="box hidden">
 
 <h2>🔐 Login</h2>
 
 <input
 id="loginValue"
-placeholder="Username or Email">
+placeholder="Username or Email"
+>
 
 <input
 id="loginPassword"
 type="password"
-placeholder="Password">
+placeholder="Password"
+>
 
 <button onclick="login()">
 Login
 </button>
 
-<p id="loginMsg"
-class="message"></p>
+<p id="loginMsg" class="message"></p>
 
 </div>
 
 
-<!-- SIGNUP -->
+<!-- =========================
+     SIGNUP
+========================= -->
 
-<div id="signupBox"
-class="box hidden">
+<div id="signupBox" class="box hidden">
 
 <h2>📝 Create Account</h2>
 
 <input
 id="signupUsername"
-placeholder="Username">
+placeholder="Username"
+>
 
 <input
 id="signupEmail"
 type="email"
-placeholder="Email">
+placeholder="Email"
+>
 
 <input
 id="signupPassword"
 type="password"
-placeholder="Password">
+placeholder="Password"
+>
 
 <input
 id="signupConfirm"
 type="password"
-placeholder="Confirm Password">
+placeholder="Confirm Password"
+>
 
 <input
 id="signupUid"
-placeholder="Free Fire UID">
+placeholder="Free Fire UID"
+>
 
 <button onclick="signup()">
 Create Account
 </button>
 
-<p id="signupMsg"
-class="message"></p>
+<p id="signupMsg" class="message"></p>
 
 </div>
 
 
-<!-- UPCOMING TOURNAMENTS -->
+<!-- =========================
+     UPCOMING
+========================= -->
 
-<h2 style="text-align:center;">
+<h2 class="section-title">
 🏆 Upcoming Tournaments
 </h2>
 
@@ -297,10 +404,36 @@ Loading tournaments...
 </div>
 
 
-<!-- COMPLETED TOURNAMENTS -->
+<!-- =========================
+     LIVE
+========================= -->
+
+<h2
+style="
+text-align:center;
+color:#ff4444;
+margin-top:35px;
+">
+
+🔴 Live Tournaments
+
+</h2>
+
+<div id="liveTournaments">
+
+<div class="empty">
+Abhi koi live tournament nahi hai.
+</div>
+
+</div>
+
+
+<!-- =========================
+     COMPLETED
+========================= -->
 
 <h2 class="completed-title">
-🔴 Completed Tournaments
+✅ Completed Tournaments
 </h2>
 
 <div id="completedTournaments">
@@ -324,14 +457,18 @@ let currentUser = null;
    DATE PARSER
 ========================= */
 
-function parseTournamentDate(dateString) {
+function parseTournamentDate(dateString){
 
-    if (!dateString) return null;
+    if(!dateString){
+        return null;
+    }
 
     const parts =
         dateString.trim().split(" ");
 
-    if (parts.length < 2) return null;
+    if(parts.length < 2){
+        return null;
+    }
 
     const dateParts =
         parts[0].includes("/")
@@ -341,10 +478,10 @@ function parseTournamentDate(dateString) {
     const timeParts =
         parts[1].split(":");
 
-    if (
+    if(
         dateParts.length !== 3 ||
         timeParts.length !== 2
-    ) {
+    ){
         return null;
     }
 
@@ -371,13 +508,16 @@ function parseTournamentDate(dateString) {
    LOGIN BOX
 ========================= */
 
-function showLogin() {
+function showLogin(){
 
-    document.getElementById("loginBox")
+    document
+        .getElementById("loginBox")
         .classList.remove("hidden");
 
-    document.getElementById("signupBox")
+    document
+        .getElementById("signupBox")
         .classList.add("hidden");
+
 }
 
 
@@ -385,13 +525,16 @@ function showLogin() {
    SIGNUP BOX
 ========================= */
 
-function showSignup() {
+function showSignup(){
 
-    document.getElementById("signupBox")
+    document
+        .getElementById("signupBox")
         .classList.remove("hidden");
 
-    document.getElementById("loginBox")
+    document
+        .getElementById("loginBox")
         .classList.add("hidden");
+
 }
 
 
@@ -399,54 +542,85 @@ function showSignup() {
    CHECK USER
 ========================= */
 
-async function checkUser() {
+async function checkUser(){
 
-    const response =
-        await fetch("/api/auth/me");
+    try{
 
-    const data =
-        await response.json();
+        const response =
+            await fetch(
+                "/api/auth/me",
+                {
+                    method:"GET",
+                    credentials:"same-origin"
+                }
+            );
 
-    if (data.logged_in) {
+        const data =
+            await response.json();
 
-        currentUser =
-            data.user;
+        if(data.logged_in){
 
-        document.getElementById("loggedOut")
-            .classList.add("hidden");
+            currentUser =
+                data.user;
 
-        document.getElementById("loggedIn")
-            .classList.remove("hidden");
+            document
+                .getElementById("loggedOut")
+                .classList.add("hidden");
 
-        document.getElementById("loginBox")
-            .classList.add("hidden");
+            document
+                .getElementById("loggedIn")
+                .classList.remove("hidden");
 
-        document.getElementById("signupBox")
-            .classList.add("hidden");
+            document
+                .getElementById("loginBox")
+                .classList.add("hidden");
 
-        document.getElementById("accountInfo")
-            .innerHTML =
-            `<b>${data.user.username}</b><br>
-             UID: ${data.user.uid}<br>
-             Email: ${data.user.email}`;
+            document
+                .getElementById("signupBox")
+                .classList.add("hidden");
 
-        loadMyWallet();
+            document
+                .getElementById("accountInfo")
+                .innerHTML =
+                `<b>${data.user.username}</b><br>
+                 UID: ${data.user.uid}<br>
+                 Email: ${data.user.email}`;
 
-    } else {
+            await loadMyWallet();
 
-        currentUser = null;
+        }
 
-        document.getElementById("loggedOut")
-            .classList.remove("hidden");
+        else{
 
-        document.getElementById("loggedIn")
-            .classList.add("hidden");
+            currentUser = null;
 
-        document.getElementById("walletBox")
-            .classList.add("hidden");
+            document
+                .getElementById("loggedOut")
+                .classList.remove("hidden");
+
+            document
+                .getElementById("loggedIn")
+                .classList.add("hidden");
+
+            document
+                .getElementById("walletBox")
+                .classList.add("hidden");
+
+        }
+
+        await loadTournaments();
+
     }
 
-    loadTournaments();
+    catch(error){
+
+        console.log(
+            "Check user error:",
+            error
+        );
+
+    }
+
 }
 
 
@@ -454,102 +628,121 @@ async function checkUser() {
    SIGNUP
 ========================= */
 
-async function signup() {
+async function signup(){
 
     const username =
-        document.getElementById(
-            "signupUsername"
-        ).value.trim();
+        document
+        .getElementById("signupUsername")
+        .value.trim();
 
     const email =
-        document.getElementById(
-            "signupEmail"
-        ).value.trim();
+        document
+        .getElementById("signupEmail")
+        .value.trim();
 
     const password =
-        document.getElementById(
-            "signupPassword"
-        ).value;
+        document
+        .getElementById("signupPassword")
+        .value;
 
     const confirm =
-        document.getElementById(
-            "signupConfirm"
-        ).value;
+        document
+        .getElementById("signupConfirm")
+        .value;
 
     const uid =
-        document.getElementById(
-            "signupUid"
-        ).value.trim();
+        document
+        .getElementById("signupUid")
+        .value.trim();
 
     const msg =
-        document.getElementById(
-            "signupMsg"
-        );
+        document
+        .getElementById("signupMsg");
 
-    if (
+
+    if(
         !username ||
         !email ||
         !password ||
         !confirm ||
         !uid
-    ) {
+    ){
 
         msg.innerText =
             "❌ Sabhi fields bharo.";
 
         return;
+
     }
+
 
     msg.innerText =
         "⏳ Creating account...";
 
-    const response =
-        await fetch(
-            "/api/auth/signup",
-            {
 
-                method: "POST",
+    try{
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+        const response =
+            await fetch(
+                "/api/auth/signup",
+                {
+                    method:"POST",
+                    credentials:"same-origin",
 
-                body: JSON.stringify({
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                    username:
-                        username,
+                    body:JSON.stringify({
 
-                    email:
-                        email,
+                        username:username,
 
-                    password:
-                        password,
+                        email:email,
 
-                    confirm_password:
-                        confirm,
+                        password:password,
 
-                    uid:
-                        uid
-                })
-            }
-        );
+                        confirm_password:confirm,
 
-    const data =
-        await response.json();
+                        uid:uid
 
-    if (data.success) {
+                    })
 
-        msg.innerText =
-            "✅ Account created!";
+                }
+            );
 
-        checkUser();
 
-    } else {
+        const data =
+            await response.json();
 
-        msg.innerText =
-            "❌ " + data.message;
+
+        if(data.success){
+
+            msg.innerText =
+                "✅ Account created!";
+
+            await checkUser();
+
+        }
+
+        else{
+
+            msg.innerText =
+                "❌ " + data.message;
+
+        }
+
     }
+
+    catch(error){
+
+        msg.innerText =
+            "❌ Server error. Dobara try karo.";
+
+        console.log(error);
+
+    }
+
 }
 
 
@@ -557,64 +750,104 @@ async function signup() {
    LOGIN
 ========================= */
 
-async function login() {
+async function login(){
 
     const loginValue =
-        document.getElementById(
-            "loginValue"
-        ).value.trim();
+        document
+        .getElementById("loginValue")
+        .value.trim();
 
     const password =
-        document.getElementById(
-            "loginPassword"
-        ).value;
+        document
+        .getElementById("loginPassword")
+        .value;
 
     const msg =
-        document.getElementById(
-            "loginMsg"
-        );
+        document
+        .getElementById("loginMsg");
+
+
+    if(!loginValue || !password){
+
+        msg.innerText =
+            "❌ Username/Email aur password bharo.";
+
+        return;
+
+    }
+
 
     msg.innerText =
         "⏳ Logging in...";
 
-    const response =
-        await fetch(
-            "/api/auth/login",
-            {
 
-                method: "POST",
+    try{
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+        const response =
+            await fetch(
+                "/api/auth/login",
+                {
+                    method:"POST",
+                    credentials:"same-origin",
 
-                body: JSON.stringify({
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                    login:
-                        loginValue,
+                    body:JSON.stringify({
 
-                    password:
-                        password
-                })
-            }
-        );
+                        identifier:
+                            loginValue,
 
-    const data =
-        await response.json();
+                        password:
+                            password
 
-    if (data.success) {
+                    })
 
-        msg.innerText =
-            "✅ Login successful!";
+                }
+            );
 
-        checkUser();
 
-    } else {
+        const data =
+            await response.json();
 
-        msg.innerText =
-            "❌ " + data.message;
+
+        if(data.success){
+
+            msg.innerText =
+                "✅ Login successful!";
+
+            document
+                .getElementById("loginValue")
+                .value = "";
+
+            document
+                .getElementById("loginPassword")
+                .value = "";
+
+            await checkUser();
+
+        }
+
+        else{
+
+            msg.innerText =
+                "❌ " + data.message;
+
+        }
+
     }
+
+    catch(error){
+
+        msg.innerText =
+            "❌ Server error. Dobara try karo.";
+
+        console.log(error);
+
+    }
+
 }
 
 
@@ -622,52 +855,229 @@ async function login() {
    LOGOUT
 ========================= */
 
-async function logout() {
+async function logout(){
 
-    await fetch(
-        "/api/auth/logout"
-    );
-
-    currentUser = null;
-
-    checkUser();
-}
-
-
-/* =========================
-   MY TOKEN WALLET
-========================= */
-
-async function loadMyWallet() {
-
-    if (!currentUser) return;
-
-    try {
+    try{
 
         const response =
             await fetch(
-                `/api/wallet/${currentUser.uid}`
+                "/api/auth/logout",
+                {
+                    method:"POST",
+                    credentials:"same-origin"
+                }
             );
 
         const data =
             await response.json();
 
-        document.getElementById(
-            "walletBox"
-        ).classList.remove("hidden");
+        if(data.success){
 
-        document.getElementById(
-            "walletBalance"
-        ).innerText =
-            `${data.balance || 0} Tokens`;
+            currentUser = null;
 
-    } catch (error) {
+            document
+                .getElementById("walletBox")
+                .classList.add("hidden");
+
+            await checkUser();
+
+        }
+
+    }
+
+    catch(error){
 
         console.log(
-            "Wallet load error:",
+            "Logout error:",
             error
         );
+
     }
+
+}
+
+
+/* =========================
+   WALLET
+========================= */
+
+async function loadMyWallet(){
+
+    if(!currentUser){
+        return;
+    }
+
+    try{
+
+        const response =
+            await fetch(
+                `/api/wallet/${currentUser.uid}`,
+                {
+                    credentials:"same-origin"
+                }
+            );
+
+        const data =
+            await response.json();
+
+
+        document
+            .getElementById("walletBox")
+            .classList.remove("hidden");
+
+
+        document
+            .getElementById("walletBalance")
+            .innerText =
+            `${data.balance || 0} Tokens`;
+
+    }
+
+    catch(error){
+
+        console.log(
+            "Wallet error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================
+   RULES HTML
+========================= */
+
+function rulesHTML(rules){
+
+    if(!rules){
+        return "";
+    }
+
+    return `
+
+        <div class="rules-box">
+
+            <h3 class="rules-title">
+                📜 Tournament Rules
+            </h3>
+
+            <div class="rules-text">
+${rules}
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================
+   RESULTS HTML
+========================= */
+
+function resultsHTML(t){
+
+    if(
+        !t.results_visible ||
+        !t.players ||
+        !t.players.length
+    ){
+
+        return `
+
+            <div class="results-box">
+
+                <b>🏆 Final Results</b>
+
+                <p class="small">
+                    Results abhi available nahi hain.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+
+    const players =
+        [...t.players].sort(
+            (a,b)=>{
+
+                const pa =
+                    Number(a.position || 999999);
+
+                const pb =
+                    Number(b.position || 999999);
+
+                if(pa !== pb){
+                    return pa - pb;
+                }
+
+                return Number(b.kills || 0)
+                     - Number(a.kills || 0);
+
+            }
+        );
+
+
+    return `
+
+        <div class="results-box">
+
+            <h3
+            style="
+            color:#00ff88;
+            margin-top:0;
+            ">
+
+                🏆 Final Results
+
+            </h3>
+
+            ${
+                players.map(
+                    (p,index)=>`
+
+                    <div class="result-row">
+
+                        <span>
+
+                            <span class="result-position">
+
+                                ${
+                                    p.position > 0
+                                    ? "#" + p.position
+                                    : "#" + (index + 1)
+                                }
+
+                            </span>
+
+                            &nbsp;
+
+                            ${p.name}
+
+                        </span>
+
+                        <span>
+
+                            🎯 ${p.kills || 0} Kills
+
+                        </span>
+
+                    </div>
+
+                `
+                ).join("")
+            }
+
+        </div>
+
+    `;
+
 }
 
 
@@ -675,145 +1085,231 @@ async function loadMyWallet() {
    LOAD TOURNAMENTS
 ========================= */
 
-async function loadTournaments() {
+async function loadTournaments(){
 
-    try {
+    try{
 
         const response =
             await fetch(
-                "/api/tournaments"
+                "/api/tournaments",
+                {
+                    credentials:"same-origin"
+                }
             );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Tournament API failed"
+            );
+
+        }
+
 
         const tournaments =
             await response.json();
 
+
         const upcomingBox =
-            document.getElementById(
+            document
+            .getElementById(
                 "upcomingTournaments"
             );
 
+        const liveBox =
+            document
+            .getElementById(
+                "liveTournaments"
+            );
+
         const completedBox =
-            document.getElementById(
+            document
+            .getElementById(
                 "completedTournaments"
             );
 
-        upcomingBox.innerHTML = "";
 
+        upcomingBox.innerHTML = "";
+        liveBox.innerHTML = "";
         completedBox.innerHTML = "";
+
 
         const now =
             new Date();
 
-        let upcomingCount = 0;
 
+        let upcomingCount = 0;
+        let liveCount = 0;
         let completedCount = 0;
 
 
-        tournaments.forEach(t => {
+        tournaments.forEach(t=>{
 
             const tournamentDate =
                 parseTournamentDate(
                     t.date_time
                 );
 
-            if (!tournamentDate)
+
+            if(!tournamentDate){
                 return;
+            }
 
 
             const playerCount =
-                t.players.length;
+                t.players
+                ? t.players.length
+                : 0;
 
 
             const available =
-                t.max_players -
-                playerCount;
+                Math.max(
+                    0,
+                    t.max_players -
+                    playerCount
+                );
 
 
             let actionHTML = "";
 
 
             /* =========================
+               LIVE
+            ========================= */
+
+            if(t.status === "live"){
+
+                actionHTML = `
+
+                    <button disabled
+                    style="
+                    background:#555;
+                    color:white;
+                    ">
+
+                        🔴 Tournament LIVE
+                        — Registration Closed
+
+                    </button>
+
+                `;
+
+            }
+
+
+            /* =========================
+               COMPLETED
+            ========================= */
+
+            else if(t.status === "completed"){
+
+                actionHTML = `
+
+                    <button disabled
+                    style="
+                    background:#555;
+                    color:white;
+                    ">
+
+                        ✅ Tournament Completed
+
+                    </button>
+
+                `;
+
+            }
+
+
+            /* =========================
                NOT LOGGED IN
             ========================= */
 
-            if (!currentUser) {
+            else if(!currentUser){
 
                 actionHTML = `
 
                     <button
                     onclick="showLogin()">
 
-                    🔐 Login to Join
+                        🔐 Login to Join
 
                     </button>
 
                 `;
 
+            }
+
 
             /* =========================
-               ALREADY REGISTERED
+               REGISTERED
             ========================= */
 
-            } else if (t.registered) {
+            else if(t.registered){
 
                 actionHTML = `
 
                     <button disabled>
 
-                    ✅ Already Registered
+                        ✅ Already Registered
 
                     </button>
 
                 `;
 
 
-                if (t.room_id) {
+                if(t.room_id){
 
                     actionHTML += `
 
-                    <div class="room">
+                        <div class="room">
 
-                        🎮
-                        <b>Room ID:</b>
-                        ${t.room_id}
+                            🎮
+                            <b>Room ID:</b>
+                            ${t.room_id}
 
-                        <br>
+                            <br>
 
-                        🔐
-                        <b>Password:</b>
-                        ${t.room_password}
+                            🔐
+                            <b>Password:</b>
+                            ${t.room_password}
 
-                    </div>
-
-                    `;
-
-                } else {
-
-                    actionHTML += `
-
-                    <p class="small">
-
-                    ⏳ Room details abhi
-                    admin ne add nahi kiye.
-
-                    </p>
+                        </div>
 
                     `;
+
                 }
+
+                else{
+
+                    actionHTML += `
+
+                        <p class="small">
+
+                            ⏳ Room details abhi
+                            admin ne add nahi kiye.
+
+                        </p>
+
+                    `;
+
+                }
+
+            }
 
 
             /* =========================
-               AVAILABLE SLOTS
+               AVAILABLE
             ========================= */
 
-            } else if (available > 0) {
+            else if(available > 0){
 
                 actionHTML = `
 
                     <button
                     onclick="showForm(${t.id})">
 
-                    📝 Join Tournament
+                        📝 Join Tournament
 
                     </button>
 
@@ -823,9 +1319,7 @@ async function loadTournaments() {
                     class="box hidden">
 
                         <h3>
-
-                        👤 Player Registration
-
+                            👤 Player Registration
                         </h3>
 
 
@@ -843,7 +1337,7 @@ async function loadTournaments() {
                         <button
                         onclick="registerPlayer(${t.id})">
 
-                        ✅ Register Now
+                            ✅ Register Now
 
                         </button>
 
@@ -851,34 +1345,36 @@ async function loadTournaments() {
                         <p
                         id="message-${t.id}"
                         class="message">
-
                         </p>
 
                     </div>
 
                 `;
 
+            }
+
 
             /* =========================
                FULL
             ========================= */
 
-            } else {
+            else{
 
                 actionHTML = `
 
                     <button disabled>
 
-                    ❌ Tournament Full
+                        ❌ Tournament Full
 
                     </button>
 
                 `;
+
             }
 
 
             /* =========================
-               TOURNAMENT CARD
+               UPCOMING CARD
             ========================= */
 
             const card = `
@@ -897,30 +1393,25 @@ async function loadTournaments() {
 
                         <br>
 
-
                         🏆 1st Prize:
                         ₹${t.first_prize}
 
                         <br>
-
 
                         🎯 Per Kill:
                         ₹${t.kill_reward}
 
                         <br>
 
-
                         👥 Slots:
                         ${playerCount}/${t.max_players}
 
                         <br>
 
-
                         🟢 Available:
                         ${available}
 
                         <br>
-
 
                         📅 Date:
                         ${t.date_time}
@@ -928,44 +1419,7 @@ async function loadTournaments() {
                     </div>
 
 
-                    <!-- RULES -->
-
-                    ${t.rules ? `
-
-                        <div
-                        style="
-                        margin-top:14px;
-                        background:#151515;
-                        border:1px solid #444;
-                        border-radius:10px;
-                        padding:12px;
-                        ">
-
-                            <h3
-                            style="
-                            margin:0 0 8px;
-                            color:#ffb000;
-                            ">
-
-                                📜 Tournament Rules
-
-                            </h3>
-
-
-                            <div
-                            style="
-                            white-space:pre-wrap;
-                            line-height:1.6;
-                            color:#ddd;
-                            ">
-
-                                ${t.rules}
-
-                            </div>
-
-                        </div>
-
-                    ` : ""}
+                    ${rulesHTML(t.rules)}
 
 
                     ${actionHTML}
@@ -979,31 +1433,95 @@ async function loadTournaments() {
                UPCOMING
             ========================= */
 
-            if (
-                tournamentDate > now
-            ) {
+            if(
+                t.status === "upcoming"
+            ){
 
                 upcomingBox.innerHTML +=
                     card;
 
                 upcomingCount++;
 
+            }
+
+
+            /* =========================
+               LIVE
+            ========================= */
+
+            else if(
+                t.status === "live"
+            ){
+
+                liveBox.innerHTML += `
+
+                    <div
+                    class="card live-card">
+
+                        <div class="live-badge">
+                            🔴 LIVE NOW
+                        </div>
+
+
+                        <h2>
+                            🎮 ${t.name}
+                        </h2>
+
+
+                        <div class="info">
+
+                            💰 Entry Fee:
+                            ₹${t.entry_fee}
+
+                            <br>
+
+                            🏆 1st Prize:
+                            ₹${t.first_prize}
+
+                            <br>
+
+                            🎯 Per Kill:
+                            ₹${t.kill_reward}
+
+                            <br>
+
+                            👥 Players:
+                            ${playerCount}/${t.max_players}
+
+                            <br>
+
+                            📅 Start Time:
+                            ${t.date_time}
+
+                        </div>
+
+
+                        ${rulesHTML(t.rules)}
+
+
+                        ${actionHTML}
+
+                    </div>
+
+                `;
+
+                liveCount++;
+
+            }
+
 
             /* =========================
                COMPLETED
             ========================= */
 
-            } else {
+            else{
 
                 completedBox.innerHTML += `
 
-                    <div
-                    class="card completed-card">
+                    <div class="card completed-card">
 
                         <h2>
-
                             🎮 ${t.name}
-
                         </h2>
 
 
@@ -1014,87 +1532,48 @@ async function loadTournaments() {
 
                             <br>
 
-
                             🏆 1st Prize:
                             ₹${t.first_prize}
 
                             <br>
-
 
                             👥 Players:
                             ${playerCount}/${t.max_players}
 
                             <br>
 
-
                             📅 Date:
                             ${t.date_time}
 
                             <br>
 
-
-                            🔴 Status:
+                            ✅ Status:
                             Tournament Completed
 
                         </div>
 
 
-                        <!-- COMPLETED TOURNAMENT RULES -->
-
-                        ${t.rules ? `
-
-                            <div
-                            style="
-                            margin-top:14px;
-                            background:#151515;
-                            border:1px solid #444;
-                            border-radius:10px;
-                            padding:12px;
-                            ">
-
-                                <h3
-                                style="
-                                margin:0 0 8px;
-                                color:#ffb000;
-                                ">
-
-                                    📜 Tournament Rules
-
-                                </h3>
+                        ${rulesHTML(t.rules)}
 
 
-                                <div
-                                style="
-                                white-space:pre-wrap;
-                                line-height:1.6;
-                                color:#ddd;
-                                ">
-
-                                    ${t.rules}
-
-                                </div>
-
-                            </div>
-
-                        ` : ""}
+                        ${resultsHTML(t)}
 
                     </div>
 
                 `;
 
                 completedCount++;
+
             }
 
         });
 
 
         /* =========================
-           NO UPCOMING
+           EMPTY UPCOMING
         ========================= */
 
-        if (
-            upcomingCount === 0
-        ) {
+        if(upcomingCount === 0){
 
             upcomingBox.innerHTML = `
 
@@ -1106,16 +1585,35 @@ async function loadTournaments() {
                 </div>
 
             `;
+
         }
 
 
         /* =========================
-           NO COMPLETED
+           EMPTY LIVE
         ========================= */
 
-        if (
-            completedCount === 0
-        ) {
+        if(liveCount === 0){
+
+            liveBox.innerHTML = `
+
+                <div class="empty">
+
+                    Abhi koi live
+                    tournament nahi hai.
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =========================
+           EMPTY COMPLETED
+        ========================= */
+
+        if(completedCount === 0){
 
             completedBox.innerHTML = `
 
@@ -1127,14 +1625,24 @@ async function loadTournaments() {
                 </div>
 
             `;
+
         }
 
+    }
 
-    } catch (error) {
+    catch(error){
 
-        document.getElementById(
+        console.log(
+            "Tournament load error:",
+            error
+        );
+
+
+        document
+        .getElementById(
             "upcomingTournaments"
-        ).innerHTML = `
+        )
+        .innerHTML = `
 
             <div class="empty">
 
@@ -1144,7 +1652,9 @@ async function loadTournaments() {
             </div>
 
         `;
+
     }
+
 }
 
 
@@ -1152,16 +1662,21 @@ async function loadTournaments() {
    SHOW REGISTRATION FORM
 ========================= */
 
-function showForm(id) {
+function showForm(id){
 
     const form =
         document.getElementById(
             `form-${id}`
         );
 
-    form.classList.toggle(
-        "hidden"
-    );
+    if(form){
+
+        form.classList.toggle(
+            "hidden"
+        );
+
+    }
+
 }
 
 
@@ -1169,32 +1684,47 @@ function showForm(id) {
    REGISTER PLAYER
 ========================= */
 
-async function registerPlayer(id) {
+async function registerPlayer(id){
+
+    if(!currentUser){
+
+        showLogin();
+
+        return;
+
+    }
+
 
     const name =
-        document.getElementById(
+        document
+        .getElementById(
             `name-${id}`
-        ).value.trim();
+        )
+        .value.trim();
 
 
     const uid =
-        document.getElementById(
+        document
+        .getElementById(
             `uid-${id}`
-        ).value.trim();
+        )
+        .value.trim();
 
 
     const message =
-        document.getElementById(
+        document
+        .getElementById(
             `message-${id}`
         );
 
 
-    if (!name) {
+    if(!name){
 
         message.innerText =
             "❌ Player Name bharo.";
 
         return;
+
     }
 
 
@@ -1202,57 +1732,66 @@ async function registerPlayer(id) {
         "⏳ Registering...";
 
 
-    const response =
-        await fetch(
-            `/api/tournaments/${id}/players`,
-            {
+    try{
 
-                method: "POST",
+        const response =
+            await fetch(
+                `/api/tournaments/${id}/players`,
+                {
+                    method:"POST",
+                    credentials:"same-origin",
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                body: JSON.stringify({
+                    body:JSON.stringify({
 
-                    name:
-                        name,
+                        name:name,
 
-                    uid:
-                        uid
-                })
-            }
-        );
+                        uid:uid
 
+                    })
 
-    const data =
-        await response.json();
+                }
+            );
 
 
-    if (data.success) {
-
-        message.innerText =
-            "✅ Registration successful!";
+        const data =
+            await response.json();
 
 
-        setTimeout(
-            async () => {
+        if(data.success){
 
-                await loadTournaments();
-
-                await loadMyWallet();
-
-            },
-            700
-        );
+            message.innerText =
+                "✅ Registration successful!";
 
 
-    } else {
+            await loadTournaments();
 
-        message.innerText =
-            "❌ " + data.message;
+            await loadMyWallet();
+
+        }
+
+        else{
+
+            message.innerText =
+                "❌ " + data.message;
+
+        }
+
     }
+
+    catch(error){
+
+        message.innerText =
+            "❌ Server error. Dobara try karo.";
+
+        console.log(error);
+
+    }
+
 }
 
 
@@ -1262,7 +1801,27 @@ async function registerPlayer(id) {
 
 checkUser();
 
+
+/*
+   Har 15 second me page ka tournament
+   status refresh hoga.
+
+   Example:
+   10:00 → LIVE
+   10:15 → COMPLETED
+*/
+
+setInterval(
+    () => {
+
+        loadTournaments();
+
+    },
+    15000
+);
+
 </script>
+
 
 </body>
 
