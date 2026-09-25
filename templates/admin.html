@@ -33,7 +33,9 @@ header {
     border-radius: 12px;
 }
 
-input, button {
+input,
+textarea,
+button {
     padding: 10px;
     margin: 5px;
     border-radius: 6px;
@@ -42,6 +44,17 @@ input, button {
 
 input {
     min-width: 180px;
+}
+
+textarea {
+    width: 95%;
+    min-height: 150px;
+    resize: vertical;
+    background: #111;
+    color: white;
+    border: 1px solid #555;
+    padding: 12px;
+    font-family: Arial, sans-serif;
 }
 
 button {
@@ -90,7 +103,8 @@ table {
     margin-top: 15px;
 }
 
-th, td {
+th,
+td {
     padding: 10px;
     border-bottom: 1px solid #444;
     text-align: center;
@@ -111,6 +125,29 @@ th {
     padding: 15px;
     border-radius: 10px;
     margin-top: 15px;
+}
+
+.rulesBox {
+    background: #171717;
+    border: 1px solid #ff8c00;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.rulesBox h3 {
+    color: #ff9d00;
+}
+
+.rulesTextarea {
+    width: 100%;
+    min-height: 180px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.message {
+    margin: 8px 5px;
 }
 
 </style>
@@ -180,7 +217,7 @@ class="hidden">
 </div>
 
 
-<!-- CREATE -->
+<!-- CREATE TOURNAMENT -->
 
 <div class="box">
 
@@ -213,6 +250,36 @@ placeholder="1st Prize">
 <input
 id="dateTime"
 placeholder="24/09/26 13:00">
+
+<br>
+
+<h3>📜 Full Map Rules</h3>
+
+<p style="color:#aaa;">
+Yahan is tournament ke complete rules likho.
+Example: map, weapon restrictions, zone rules,
+points system, cheating rules, etc.
+</p>
+
+<textarea
+id="tRules"
+placeholder="Example:
+
+📍 Map: Bermuda
+
+🎮 Mode: Squad
+
+🚫 No hacks / third-party apps
+
+🔫 Weapon rules:
+...
+
+📜 General Rules:
+...
+
+⚠️ Room me late entry allowed nahi hogi.
+
+🏆 Result admin ke decision ke according final hoga."></textarea>
 
 <br>
 
@@ -321,6 +388,10 @@ Balance: —
 <script>
 
 
+// =========================================================
+// LOGIN
+// =========================================================
+
 async function login() {
 
     const username =
@@ -332,6 +403,7 @@ async function login() {
         document.getElementById(
             "password"
         ).value;
+
 
     const response =
         await fetch(
@@ -351,8 +423,10 @@ async function login() {
             }
         );
 
+
     const data =
         await response.json();
+
 
     if (data.success) {
 
@@ -360,9 +434,11 @@ async function login() {
             "loginBox"
         ).classList.add("hidden");
 
+
         document.getElementById(
             "dashboard"
         ).classList.remove("hidden");
+
 
         loadTournaments();
 
@@ -376,6 +452,10 @@ async function login() {
 }
 
 
+// =========================================================
+// LOGOUT
+// =========================================================
+
 async function logout() {
 
     await fetch(
@@ -385,6 +465,10 @@ async function logout() {
     location.reload();
 }
 
+
+// =========================================================
+// CREATE TOURNAMENT
+// =========================================================
 
 async function createTournament() {
 
@@ -418,6 +502,11 @@ async function createTournament() {
         date_time:
             document.getElementById(
                 "dateTime"
+            ).value,
+
+        rules:
+            document.getElementById(
+                "tRules"
             ).value
     };
 
@@ -437,8 +526,10 @@ async function createTournament() {
             }
         );
 
+
     const result =
         await response.json();
+
 
     document.getElementById(
         "createMsg"
@@ -447,12 +538,46 @@ async function createTournament() {
         ? "✅ Tournament created!"
         : "❌ " + result.message;
 
+
     if (result.success) {
+
+        document.getElementById(
+            "tName"
+        ).value = "";
+
+        document.getElementById(
+            "entryFee"
+        ).value = "";
+
+        document.getElementById(
+            "maxPlayers"
+        ).value = "";
+
+        document.getElementById(
+            "killReward"
+        ).value = "";
+
+        document.getElementById(
+            "firstPrize"
+        ).value = "";
+
+        document.getElementById(
+            "dateTime"
+        ).value = "";
+
+        document.getElementById(
+            "tRules"
+        ).value = "";
+
 
         loadTournaments();
     }
 }
 
+
+// =========================================================
+// CHANGE PASSWORD
+// =========================================================
 
 async function changePassword() {
 
@@ -470,6 +595,7 @@ async function changePassword() {
         document.getElementById(
             "confirmPassword"
         ).value;
+
 
     const response =
         await fetch(
@@ -496,8 +622,10 @@ async function changePassword() {
             }
         );
 
+
     const data =
         await response.json();
+
 
     document.getElementById(
         "passwordMsg"
@@ -505,6 +633,7 @@ async function changePassword() {
         data.success
         ? "✅ " + data.message
         : "❌ " + data.message;
+
 
     if (data.success) {
 
@@ -523,17 +652,25 @@ async function changePassword() {
 }
 
 
-async function saveRoom(tournamentId) {
+// =========================================================
+// SAVE ROOM
+// =========================================================
+
+async function saveRoom(
+    tournamentId
+) {
 
     const roomId =
         document.getElementById(
             "room-" + tournamentId
         ).value.trim();
 
+
     const roomPassword =
         document.getElementById(
             "roompass-" + tournamentId
         ).value.trim();
+
 
     const response =
         await fetch(
@@ -556,14 +693,17 @@ async function saveRoom(tournamentId) {
             }
         );
 
+
     const data =
         await response.json();
+
 
     alert(
         data.success
         ? "✅ Room details saved!"
         : "❌ " + data.message
     );
+
 
     if (data.success) {
 
@@ -572,12 +712,92 @@ async function saveRoom(tournamentId) {
 }
 
 
-async function deleteTournament(id) {
+// =========================================================
+// SAVE RULES
+// =========================================================
+
+async function saveRules(
+    tournamentId
+) {
+
+    const rulesElement =
+        document.getElementById(
+            "rules-" + tournamentId
+        );
+
+
+    const rules =
+        rulesElement.value;
+
+
+    const response =
+        await fetch(
+            `/api/admin/tournaments/${tournamentId}/rules`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    rules: rules
+                })
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    const messageElement =
+        document.getElementById(
+            "rules-message-" + tournamentId
+        );
+
+
+    if (data.success) {
+
+        messageElement.innerText =
+            "✅ Rules saved successfully.";
+
+        messageElement.style.color =
+            "#00ff88";
+
+    } else {
+
+        messageElement.innerText =
+            "❌ " + data.message;
+
+        messageElement.style.color =
+            "#ff5555";
+    }
+
+
+    setTimeout(() => {
+
+        messageElement.innerText = "";
+
+    }, 3000);
+}
+
+
+// =========================================================
+// DELETE TOURNAMENT
+// =========================================================
+
+async function deleteTournament(
+    id
+) {
 
     const ok =
         confirm(
             "⚠️ Kya tum ye tournament delete karna chahte ho?"
         );
+
 
     if (!ok) return;
 
@@ -590,8 +810,10 @@ async function deleteTournament(id) {
             }
         );
 
+
     const data =
         await response.json();
+
 
     if (data.success) {
 
@@ -610,12 +832,19 @@ async function deleteTournament(id) {
 }
 
 
-async function savePlayer(playerId) {
+// =========================================================
+// SAVE PLAYER
+// =========================================================
+
+async function savePlayer(
+    playerId
+) {
 
     const kills =
         document.getElementById(
             "kills-" + playerId
         ).value;
+
 
     const position =
         document.getElementById(
@@ -635,14 +864,18 @@ async function savePlayer(playerId) {
                 },
 
                 body: JSON.stringify({
+
                     kills: kills,
+
                     position: position
                 })
             }
         );
 
+
     const result =
         await response.json();
+
 
     if (result.success) {
 
@@ -650,6 +883,7 @@ async function savePlayer(playerId) {
             "saved-" + playerId
         ).innerText =
             "✅ Saved";
+
 
         setTimeout(() => {
 
@@ -668,6 +902,10 @@ async function savePlayer(playerId) {
 }
 
 
+// =========================================================
+// LOAD TOURNAMENTS
+// =========================================================
+
 async function loadTournaments() {
 
     const response =
@@ -675,25 +913,31 @@ async function loadTournaments() {
             "/api/tournaments"
         );
 
+
     const tournaments =
         await response.json();
+
 
     const container =
         document.getElementById(
             "tournaments"
         );
 
+
     container.innerHTML = "";
 
 
     tournaments.forEach(t => {
 
+
         const revenue =
             t.players.length *
             t.entry_fee;
 
+
         const prizePool =
             t.first_prize;
+
 
         const killCost =
             t.players.reduce(
@@ -703,6 +947,7 @@ async function loadTournaments() {
                     t.kill_reward),
                 0
             );
+
 
         const profit =
             revenue -
@@ -724,10 +969,15 @@ async function loadTournaments() {
                     <tr>
 
                         <th>Player</th>
+
                         <th>UID</th>
+
                         <th>Kills</th>
+
                         <th>Position</th>
+
                         <th>Kill Reward</th>
+
                         <th>Save</th>
 
                     </tr>
@@ -737,11 +987,11 @@ async function loadTournaments() {
                         <tr>
 
                             <td>
-                                ${p.name}
+                                ${escapeHtml(p.name)}
                             </td>
 
                             <td>
-                                ${p.uid}
+                                ${escapeHtml(p.uid)}
                             </td>
 
                             <td>
@@ -792,6 +1042,7 @@ async function loadTournaments() {
                     `).join("")}
 
                 </table>
+
             `;
 
         } else {
@@ -806,7 +1057,7 @@ async function loadTournaments() {
             <div class="tournament">
 
                 <h2>
-                    🏆 ${t.name}
+                    🏆 ${escapeHtml(t.name)}
                 </h2>
 
                 <p>
@@ -830,11 +1081,49 @@ async function loadTournaments() {
                 </p>
 
                 <p>
-                    📅 ${t.date_time}
+                    📅 ${escapeHtml(t.date_time)}
                 </p>
 
                 <hr>
 
+
+                <!-- RULES -->
+
+                <div class="rulesBox">
+
+                    <h3>
+                        📜 Full Map Rules
+                    </h3>
+
+                    <textarea
+                    id="rules-${t.id}"
+                    class="rulesTextarea"
+                    placeholder="Is tournament ke full rules yahan likho...">${escapeHtml(t.rules || "")}</textarea>
+
+                    <br>
+
+                    <button
+                    class="saveBtn"
+                    onclick="saveRules(${t.id})">
+
+                    💾 Save Rules
+
+                    </button>
+
+                    <span
+                    id="rules-message-${t.id}"
+                    class="message">
+                    </span>
+
+                    <p style="color:#aaa;">
+                    Ye rules sirf isi tournament ke liye hain.
+                    Save karne ke baad players ko bhi dikhai denge.
+                    </p>
+
+                </div>
+
+
+                <!-- ROOM -->
 
                 <div class="roomBox">
 
@@ -844,12 +1133,12 @@ async function loadTournaments() {
 
                     <input
                     id="room-${t.id}"
-                    value="${t.room_id || ""}"
+                    value="${escapeHtml(t.room_id || "")}"
                     placeholder="Room ID">
 
                     <input
                     id="roompass-${t.id}"
-                    value="${t.room_password || ""}"
+                    value="${escapeHtml(t.room_password || "")}"
                     placeholder="Room Password">
 
                     <button
@@ -868,6 +1157,7 @@ async function loadTournaments() {
 
 
                 <hr>
+
 
                 <p>
                     💵 Revenue:
@@ -902,6 +1192,7 @@ async function loadTournaments() {
                 </button>
 
             </div>
+
         `;
 
     });
@@ -915,10 +1206,24 @@ async function loadTournaments() {
 }
 
 
-/* =========================
-   WALLET
-========================= */
+// =========================================================
+// HTML ESCAPE
+// =========================================================
 
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+// =========================================================
+// WALLET - CHECK BALANCE
+// =========================================================
 
 async function checkWalletBalance() {
 
@@ -926,6 +1231,7 @@ async function checkWalletBalance() {
         document.getElementById(
             "walletUid"
         ).value.trim();
+
 
     if (!uid) {
 
@@ -936,14 +1242,17 @@ async function checkWalletBalance() {
         return;
     }
 
+
     const response =
         await fetch(
             "/api/wallet/" +
             encodeURIComponent(uid)
         );
 
+
     const data =
         await response.json();
+
 
     if (data.success) {
 
@@ -965,6 +1274,10 @@ async function checkWalletBalance() {
 }
 
 
+// =========================================================
+// WALLET - ADD
+// =========================================================
+
 async function addWalletTokens() {
 
     const uid =
@@ -972,12 +1285,14 @@ async function addWalletTokens() {
             "walletUid"
         ).value.trim();
 
+
     const amount =
         Number(
             document.getElementById(
                 "walletAmount"
             ).value
         );
+
 
     if (!uid || !amount) {
 
@@ -1001,14 +1316,18 @@ async function addWalletTokens() {
                 },
 
                 body: JSON.stringify({
+
                     uid: uid,
+
                     amount: amount
                 })
             }
         );
 
+
     const data =
         await response.json();
+
 
     document.getElementById(
         "walletMessage"
@@ -1028,6 +1347,10 @@ async function addWalletTokens() {
 }
 
 
+// =========================================================
+// WALLET - REMOVE
+// =========================================================
+
 async function removeWalletTokens() {
 
     const uid =
@@ -1035,12 +1358,14 @@ async function removeWalletTokens() {
             "walletUid"
         ).value.trim();
 
+
     const amount =
         Number(
             document.getElementById(
                 "walletAmount"
             ).value
         );
+
 
     if (!uid || !amount) {
 
@@ -1064,14 +1389,18 @@ async function removeWalletTokens() {
                 },
 
                 body: JSON.stringify({
+
                     uid: uid,
+
                     amount: amount
                 })
             }
         );
 
+
     const data =
         await response.json();
+
 
     document.getElementById(
         "walletMessage"
@@ -1093,4 +1422,5 @@ async function removeWalletTokens() {
 </script>
 
 </body>
+
 </html>
