@@ -40,6 +40,12 @@ class Tournament(db.Model):
         db.String(50)
     )
 
+    # Tournament ke full rules / map rules
+    rules = db.Column(
+        db.Text,
+        default=""
+    )
+
     room_id = db.Column(
         db.String(100),
         default=""
@@ -50,23 +56,16 @@ class Tournament(db.Model):
         default=""
     )
 
-    # =========================
-    # FULL MAP RULES
-    # =========================
-
-    rules = db.Column(
-        db.Text,
-        default="",
-        nullable=False
-    )
-
 
 # =========================
 # PLAYER
 # =========================
 
 class Player(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     name = db.Column(
         db.String(100),
