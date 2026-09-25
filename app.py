@@ -530,13 +530,11 @@ def get_tournaments():
 
     result = []
 
-
     for tournament in tournaments:
 
         registered = False
 
         if user:
-
             existing_registration = UserTournamentRegistration.query.filter_by(
                 user_id=user.id,
                 tournament_id=tournament.id
@@ -545,9 +543,22 @@ def get_tournaments():
             if existing_registration:
                 registered = True
 
+        players = Player.query.filter_by(
+            tournament_id=tournament.id
+        ).all()
 
-        result.append({
+        players_data = []
 
+        for player in players:
+            players_data.append({
+                "id": player.id,
+                "name": player.name,
+                "uid": player.uid,
+                "kills": player.kills or 0,
+                "position": player.position or 0
+            })
+
+        tournament_data = {
             "id": tournament.id,
             "name": tournament.name,
             "entry_fee": tournament.entry_fee,
@@ -555,11 +566,69 @@ def get_tournaments():
             "kill_reward": tournament.kill_reward,
             "first_prize": tournament.first_prize,
             "date_time": tournament.date_time,
-            "registered": registered
-        })
+            "registered": registered,
+            "players": players_data
+        }
 
+        # Room details sirf admin ya registered player ko milenge.
+        if is_admin_logged_in() or registered:
+            tournament_data["room_id"] = tournament.room_id or ""
+            tournament_data["room_password"] = tournament.room_password or ""
+        else:
+            tournament_data["room_id"] = ""
+            tournament_data["room_password"] = ""
+
+        result.append(tournament_data)
 
     return jsonify(result)
+
+
+# =========================================================
+# ADMIN SAVE ROOM DETAILS
+# =========================================================
+
+@app.route(
+    "/api/admin/tournaments/<int:tournament_id>/room",
+    methods=["POST"]
+)
+def save_room_details(tournament_id):
+
+    if not is_admin_logged_in():
+        return jsonify({
+            "success": False,
+            "message": "Admin login required."
+        }), 401
+
+    tournament = db.session.get(
+        Tournament,
+        tournament_id
+    )
+
+    if tournament is None:
+        return jsonify({
+            "success": False,
+            "message": "Tournament nahi mila."
+        }), 404
+
+    data = request.get_json() or {}
+
+    room_id = str(
+        data.get("room_id", "")
+    ).strip()
+
+    room_password = str(
+        data.get("room_password", "")
+    ).strip()
+
+    tournament.room_id = room_id
+    tournament.room_password = room_password
+
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Room details successfully save ho gaye."
+    })
 
 
 # =========================================================
