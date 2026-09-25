@@ -135,41 +135,45 @@ input {
 
 
 /* =========================
-   FULL MAP RULES
+   TOURNAMENT RULES
 ========================= */
 
-.rulesSection {
+.rulesBox {
+    background: #171717;
+    border: 1px solid #ff8c00;
+    border-radius: 10px;
     margin-top: 15px;
+    overflow: hidden;
+}
+
+.rulesHeader {
+    padding: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.rulesHeader h3 {
+    margin: 0;
+    color: #ff9d00;
 }
 
 .rulesButton {
-    background: #292929;
-    color: #ff9d00;
-    border: 1px solid #ff6a00;
-}
-
-.rulesButton:hover {
-    background: #353535;
+    width: auto;
+    margin: 0;
+    padding: 8px 14px;
+    background: #ff6a00;
+    color: white;
 }
 
 .rulesContent {
-    display: none;
-    background: #151515;
-    border: 1px solid #555;
-    border-radius: 10px;
-    padding: 14px;
-    margin-top: 10px;
+    padding: 15px;
+    border-top: 1px solid #444;
+    color: #ddd;
     line-height: 1.7;
     white-space: normal;
-}
-
-.rulesContent.show {
-    display: block;
-}
-
-.rulesTitle {
-    color: #ff9d00;
-    margin-top: 0;
+    word-wrap: break-word;
 }
 
 .noRules {
@@ -177,11 +181,31 @@ input {
     font-size: 14px;
 }
 
+
+/* =========================
+   WALLET
+========================= */
+
+.walletBox {
+    background: #191919;
+    border: 1px solid #444;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.walletBalance {
+    color: #ffd000;
+    font-size: 20px;
+    font-weight: bold;
+}
+
 </style>
 
 </head>
 
 <body>
+
 
 <header>
 
@@ -221,6 +245,19 @@ class="hidden">
 
 <p id="accountInfo"></p>
 
+<div class="walletBox">
+
+<div class="walletBalance"
+id="walletBalance">
+🪙 Tokens: 0
+</div>
+
+<p class="small">
+Tournament join karne ke liye tokens use honge.
+</p>
+
+</div>
+
 <button class="logout"
 onclick="logout()">
 🚪 Logout
@@ -238,10 +275,12 @@ class="box hidden">
 
 <h2>🔐 Login</h2>
 
-<input id="loginValue"
+<input
+id="loginValue"
 placeholder="Username or Email">
 
-<input id="loginPassword"
+<input
+id="loginPassword"
 type="password"
 placeholder="Password">
 
@@ -262,22 +301,27 @@ class="box hidden">
 
 <h2>📝 Create Account</h2>
 
-<input id="signupUsername"
+<input
+id="signupUsername"
 placeholder="Username">
 
-<input id="signupEmail"
+<input
+id="signupEmail"
 type="email"
 placeholder="Email">
 
-<input id="signupPassword"
+<input
+id="signupPassword"
 type="password"
 placeholder="Password">
 
-<input id="signupConfirm"
+<input
+id="signupConfirm"
 type="password"
 placeholder="Confirm Password">
 
-<input id="signupUid"
+<input
+id="signupUid"
 placeholder="Free Fire UID">
 
 <button onclick="signup()">
@@ -321,10 +365,17 @@ Loading...
 
 <script>
 
+
 let currentUser = null;
 
 
-function parseTournamentDate(dateString) {
+// =========================================================
+// DATE PARSER
+// =========================================================
+
+function parseTournamentDate(
+    dateString
+) {
 
     if (!dateString) return null;
 
@@ -350,6 +401,7 @@ function parseTournamentDate(dateString) {
         dateParts.length !== 3 ||
         timeParts.length !== 2
     ) {
+
         return null;
     }
 
@@ -357,46 +409,80 @@ function parseTournamentDate(dateString) {
     const day =
         Number(dateParts[0]);
 
-
     const month =
         Number(dateParts[1]) - 1;
-
 
     const year =
         2000 + Number(dateParts[2]);
 
 
     return new Date(
+
         year,
+
         month,
+
         day,
+
         Number(timeParts[0]),
+
         Number(timeParts[1])
     );
 }
 
 
-function showLogin() {
+// =========================================================
+// HTML ESCAPE
+// =========================================================
 
-    document.getElementById("loginBox")
-        .classList.remove("hidden");
+function escapeHtml(value) {
 
-
-    document.getElementById("signupBox")
-        .classList.add("hidden");
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
+
+// =========================================================
+// SHOW LOGIN
+// =========================================================
+
+function showLogin() {
+
+    document.getElementById(
+        "loginBox"
+    ).classList.remove("hidden");
+
+
+    document.getElementById(
+        "signupBox"
+    ).classList.add("hidden");
+}
+
+
+// =========================================================
+// SHOW SIGNUP
+// =========================================================
 
 function showSignup() {
 
-    document.getElementById("signupBox")
-        .classList.remove("hidden");
+    document.getElementById(
+        "signupBox"
+    ).classList.remove("hidden");
 
 
-    document.getElementById("loginBox")
-        .classList.add("hidden");
+    document.getElementById(
+        "loginBox"
+    ).classList.add("hidden");
 }
 
+
+// =========================================================
+// CHECK USER
+// =========================================================
 
 async function checkUser() {
 
@@ -412,48 +498,64 @@ async function checkUser() {
 
     if (data.logged_in) {
 
-        currentUser = data.user;
+        currentUser =
+            data.user;
 
 
-        document.getElementById("loggedOut")
-            .classList.add("hidden");
+        document.getElementById(
+            "loggedOut"
+        ).classList.add("hidden");
 
 
-        document.getElementById("loggedIn")
-            .classList.remove("hidden");
+        document.getElementById(
+            "loggedIn"
+        ).classList.remove("hidden");
 
 
-        document.getElementById("loginBox")
-            .classList.add("hidden");
+        document.getElementById(
+            "loginBox"
+        ).classList.add("hidden");
 
 
-        document.getElementById("signupBox")
-            .classList.add("hidden");
+        document.getElementById(
+            "signupBox"
+        ).classList.add("hidden");
 
 
-        document.getElementById("accountInfo")
-            .innerHTML =
-            `<b>${escapeHTML(data.user.username)}</b><br>
-             UID: ${escapeHTML(data.user.uid)}<br>
-             Email: ${escapeHTML(data.user.email)}`;
+        document.getElementById(
+            "accountInfo"
+        ).innerHTML =
+
+            `<b>${escapeHtml(data.user.username)}</b><br>
+             UID: ${escapeHtml(data.user.uid)}<br>
+             Email: ${escapeHtml(data.user.email)}`;
+
+
+        loadWallet();
 
     } else {
 
         currentUser = null;
 
 
-        document.getElementById("loggedOut")
-            .classList.remove("hidden");
+        document.getElementById(
+            "loggedOut"
+        ).classList.remove("hidden");
 
 
-        document.getElementById("loggedIn")
-            .classList.add("hidden");
+        document.getElementById(
+            "loggedIn"
+        ).classList.add("hidden");
     }
 
 
     loadTournaments();
 }
 
+
+// =========================================================
+// SIGNUP
+// =========================================================
 
 async function signup() {
 
@@ -561,6 +663,10 @@ async function signup() {
 }
 
 
+// =========================================================
+// LOGIN
+// =========================================================
+
 async function login() {
 
     const loginValue =
@@ -599,11 +705,9 @@ async function login() {
 
                 body: JSON.stringify({
 
-                    identifier:
-                        loginValue,
+                    login: loginValue,
 
-                    password:
-                        password
+                    password: password
                 })
             }
         );
@@ -629,6 +733,10 @@ async function login() {
 }
 
 
+// =========================================================
+// LOGOUT
+// =========================================================
+
 async function logout() {
 
     await fetch(
@@ -638,105 +746,104 @@ async function logout() {
 
     currentUser = null;
 
+
     checkUser();
 }
 
 
-function escapeHTML(value) {
+// =========================================================
+// LOAD WALLET
+// =========================================================
 
-    return String(value || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
+async function loadWallet() {
+
+    if (!currentUser) return;
 
 
-function formatRules(rules) {
+    try {
 
-    if (!rules || !rules.trim()) {
-
-        return `
-            <p class="noRules">
-                📜 Is tournament ke rules abhi add nahi kiye gaye.
-            </p>
-        `;
-    }
-
-
-    return escapeHTML(rules)
-        .replace(/\r?\n/g, "<br>");
-}
+        const response =
+            await fetch(
+                "/api/wallet/" +
+                encodeURIComponent(
+                    currentUser.uid
+                )
+            );
 
 
-function toggleRules(id) {
+        const data =
+            await response.json();
 
-    const box =
-        document.getElementById(
-            `rules-content-${id}`
+
+        if (data.success) {
+
+            document.getElementById(
+                "walletBalance"
+            ).innerText =
+                "🪙 Tokens: " +
+                data.balance;
+        }
+
+    } catch (error) {
+
+        console.log(
+            "Wallet load error:",
+            error
         );
+    }
+}
 
 
-    if (!box) return;
+// =========================================================
+// TOGGLE RULES
+// =========================================================
 
+function toggleRules(
+    tournamentId
+) {
 
-    box.classList.toggle("show");
+    const content =
+        document.getElementById(
+            "rules-content-" +
+            tournamentId
+        );
 
 
     const button =
         document.getElementById(
-            `rules-button-${id}`
+            "rules-button-" +
+            tournamentId
         );
 
 
     if (
-        button &&
-        box.classList.contains("show")
+        content.classList.contains(
+            "hidden"
+        )
     ) {
 
-        button.innerText =
-            "📕 Hide Full Map Rules";
+        content.classList.remove(
+            "hidden"
+        );
 
-    } else if (button) {
+        button.innerText =
+            "🔼 Hide Rules";
+
+    } else {
+
+        content.classList.add(
+            "hidden"
+        );
 
         button.innerText =
-            "📜 Full Map Rules";
+            "📜 Show Rules";
     }
 }
 
 
-function rulesHTML(t) {
-
-    return `
-
-        <div class="rulesSection">
-
-            <button
-            id="rules-button-${t.id}"
-            class="rulesButton"
-            onclick="toggleRules(${t.id})">
-
-            📜 Full Map Rules
-
-            </button>
-
-            <div
-            id="rules-content-${t.id}"
-            class="rulesContent">
-
-                <h3 class="rulesTitle">
-                    📜 Full Map Rules
-                </h3>
-
-                ${formatRules(t.rules)}
-
-            </div>
-
-        </div>
-    `;
-}
-
+// =========================================================
+// LOAD TOURNAMENTS
+// =========================================================
 
 async function loadTournaments() {
 
@@ -765,6 +872,7 @@ async function loadTournaments() {
 
 
         upcomingBox.innerHTML = "";
+
         completedBox.innerHTML = "";
 
 
@@ -773,218 +881,273 @@ async function loadTournaments() {
 
 
         let upcomingCount = 0;
+
         let completedCount = 0;
 
 
-        tournaments.forEach(t => {
+        tournaments.forEach(
+            t => {
 
-            const tournamentDate =
-                parseTournamentDate(
-                    t.date_time
-                );
-
-
-            if (!tournamentDate) return;
+                const tournamentDate =
+                    parseTournamentDate(
+                        t.date_time
+                    );
 
 
-            const playerCount =
-                t.players.length;
+                if (!tournamentDate)
+                    return;
 
 
-            const available =
-                t.max_players -
-                playerCount;
+                const playerCount =
+                    t.players.length;
 
 
-            let actionHTML = "";
+                const available =
+                    t.max_players -
+                    playerCount;
 
 
-            if (!currentUser) {
-
-                actionHTML = `
-
-                    <button
-                    onclick="showLogin()">
-
-                    🔐 Login to Join
-
-                    </button>
-                `;
-
-            } else if (t.registered) {
-
-                actionHTML = `
-
-                    <button disabled>
-
-                    ✅ Already Registered
-
-                    </button>
-                `;
+                let actionHTML =
+                    "";
 
 
-                if (t.room_id) {
+                // =========================
+                // ACTION BUTTONS
+                // =========================
 
-                    actionHTML += `
+                if (!currentUser) {
 
-                    <div class="room">
-
-                        🎮 <b>Room ID:</b>
-                        ${escapeHTML(t.room_id)}
-
-                        <br>
-
-                        🔐 <b>Password:</b>
-                        ${escapeHTML(t.room_password)}
-
-                    </div>
-                    `;
-
-                } else {
-
-                    actionHTML += `
-
-                    <p class="small">
-
-                    ⏳ Room details abhi admin ne add nahi kiye.
-
-                    </p>
-                    `;
-                }
-
-            } else if (available > 0) {
-
-                actionHTML = `
-
-                    <button
-                    onclick="showForm(${t.id})">
-
-                    📝 Join Tournament
-
-                    </button>
-
-
-                    <div
-                    id="form-${t.id}"
-                    class="box hidden">
-
-                        <h3>
-                        👤 Player Registration
-                        </h3>
-
-
-                        <input
-                        id="name-${t.id}"
-                        placeholder="Player Name">
-
-
-                        <input
-                        id="uid-${t.id}"
-                        value="${escapeHTML(currentUser.uid)}"
-                        readonly>
-
+                    actionHTML = `
 
                         <button
-                        onclick="registerPlayer(${t.id})">
+                        onclick="showLogin()">
 
-                        ✅ Register Now
+                        🔐 Login to Join
+
+                        </button>
+
+                    `;
+
+                }
+
+                else if (t.registered) {
+
+                    actionHTML = `
+
+                        <button disabled>
+
+                        ✅ Already Registered
+
+                        </button>
+
+                    `;
+
+
+                    if (t.room_id) {
+
+                        actionHTML += `
+
+                        <div class="room">
+
+                            🎮 <b>Room ID:</b>
+                            ${escapeHtml(t.room_id)}
+
+                            <br>
+
+                            🔐 <b>Password:</b>
+                            ${escapeHtml(
+                                t.room_password
+                            )}
+
+                        </div>
+
+                        `;
+
+                    } else {
+
+                        actionHTML += `
+
+                        <p class="small">
+
+                        ⏳ Room details abhi admin
+                        ne add nahi kiye.
+
+                        </p>
+
+                        `;
+                    }
+
+                }
+
+                else if (available > 0) {
+
+                    actionHTML = `
+
+                        <button
+                        onclick="showForm(${t.id})">
+
+                        📝 Join Tournament
 
                         </button>
 
 
-                        <p
-                        id="message-${t.id}"
-                        class="message">
+                        <div
+                        id="form-${t.id}"
+                        class="box hidden">
 
-                        </p>
+                            <h3>
+                            👤 Player Registration
+                            </h3>
 
-                    </div>
-                `;
+                            <input
+                            id="name-${t.id}"
+                            placeholder="Player Name">
 
-            } else {
-
-                actionHTML = `
-
-                    <button disabled>
-
-                    ❌ Tournament Full
-
-                    </button>
-                `;
-            }
+                            <input
+                            id="uid-${t.id}"
+                            value="${escapeHtml(
+                                currentUser.uid
+                            )}"
+                            readonly>
 
 
-            const card = `
+                            <button
+                            onclick="registerPlayer(${t.id})">
 
-                <div class="card">
+                            ✅ Register Now
 
-                    <h2>
-                        🎮 ${escapeHTML(t.name)}
-                    </h2>
-
-
-                    <div class="info">
-
-                        💰 Entry Fee:
-                        ${t.entry_fee} Tokens
-
-                        <br>
-
-                        🏆 1st Prize:
-                        ₹${t.first_prize}
-
-                        <br>
-
-                        🎯 Per Kill:
-                        ₹${t.kill_reward}
-
-                        <br>
-
-                        👥 Slots:
-                        ${playerCount}/${t.max_players}
-
-                        <br>
-
-                        🟢 Available:
-                        ${available}
-
-                        <br>
-
-                        📅 Date:
-                        ${escapeHTML(t.date_time)}
-
-                    </div>
+                            </button>
 
 
-                    ${rulesHTML(t)}
+                            <p
+                            id="message-${t.id}"
+                            class="message">
+                            </p>
+
+                        </div>
+
+                    `;
+
+                }
+
+                else {
+
+                    actionHTML = `
+
+                        <button disabled>
+
+                        ❌ Tournament Full
+
+                        </button>
+
+                    `;
+                }
 
 
-                    ${actionHTML}
+                // =========================
+                // RULES
+                // =========================
 
-                </div>
-            `;
+                let rulesHTML = "";
 
 
-            if (tournamentDate > now) {
+                if (
+                    t.rules &&
+                    t.rules.trim()
+                ) {
 
-                upcomingBox.innerHTML += card;
+                    const safeRules =
+                        escapeHtml(
+                            t.rules
+                        ).replace(
+                            /\r?\n/g,
+                            "<br>"
+                        );
 
-                upcomingCount++;
 
-            } else {
+                    rulesHTML = `
 
-                completedBox.innerHTML += `
+                        <div class="rulesBox">
 
-                    <div class="card completed-card">
+                            <div
+                            class="rulesHeader">
+
+                                <h3>
+                                📜 Tournament Rules
+                                </h3>
+
+                                <button
+                                id="rules-button-${t.id}"
+                                class="rulesButton"
+                                onclick="toggleRules(${t.id})">
+
+                                📜 Show Rules
+
+                                </button>
+
+                            </div>
+
+
+                            <div
+                            id="rules-content-${t.id}"
+                            class="rulesContent hidden">
+
+                                ${safeRules}
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                } else {
+
+                    rulesHTML = `
+
+                        <div class="rulesBox">
+
+                            <div
+                            class="rulesHeader">
+
+                                <h3>
+                                📜 Tournament Rules
+                                </h3>
+
+                            </div>
+
+                            <div
+                            class="rulesContent">
+
+                                <span class="noRules">
+
+                                Rules abhi admin ne add nahi kiye.
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    `;
+                }
+
+
+                // =========================
+                // UPCOMING CARD
+                // =========================
+
+                const card = `
+
+                    <div class="card">
 
                         <h2>
-                        🎮 ${escapeHTML(t.name)}
+                        🎮 ${escapeHtml(t.name)}
                         </h2>
 
 
                         <div class="info">
 
-                            💰 Entry:
+                            💰 Entry Fee:
                             ${t.entry_fee} Tokens
 
                             <br>
@@ -994,60 +1157,155 @@ async function loadTournaments() {
 
                             <br>
 
-                            👥 Players:
+                            🎯 Per Kill:
+                            ₹${t.kill_reward}
+
+                            <br>
+
+                            👥 Slots:
                             ${playerCount}/${t.max_players}
 
                             <br>
 
-                            📅 Date:
-                            ${escapeHTML(t.date_time)}
+                            🟢 Available:
+                            ${available}
 
                             <br>
 
-                            🔴 Status:
-                            Tournament Completed
+                            📅 Date:
+                            ${escapeHtml(
+                                t.date_time
+                            )}
 
                         </div>
 
 
-                        ${rulesHTML(t)}
+                        ${rulesHTML}
+
+
+                        ${actionHTML}
 
                     </div>
+
                 `;
 
 
-                completedCount++;
+                if (
+                    tournamentDate > now
+                ) {
+
+                    upcomingBox.innerHTML +=
+                        card;
+
+                    upcomingCount++;
+
+                }
+
+                else {
+
+                    // =========================
+                    // COMPLETED CARD
+                    // =========================
+
+                    completedBox.innerHTML += `
+
+                        <div class="card completed-card">
+
+                            <h2>
+                            🎮 ${escapeHtml(t.name)}
+                            </h2>
+
+
+                            <div class="info">
+
+                                💰 Entry:
+                                ${t.entry_fee} Tokens
+
+                                <br>
+
+                                🏆 1st Prize:
+                                ₹${t.first_prize}
+
+                                <br>
+
+                                🎯 Per Kill:
+                                ₹${t.kill_reward}
+
+                                <br>
+
+                                👥 Players:
+                                ${playerCount}/${t.max_players}
+
+                                <br>
+
+                                📅 Date:
+                                ${escapeHtml(
+                                    t.date_time
+                                )}
+
+                                <br>
+
+                                🔴 Status:
+                                Tournament Completed
+
+                            </div>
+
+
+                            ${rulesHTML}
+
+                        </div>
+
+                    `;
+
+
+                    completedCount++;
+                }
+
             }
+        );
 
-        });
 
-
-        if (upcomingCount === 0) {
+        if (
+            upcomingCount === 0
+        ) {
 
             upcomingBox.innerHTML = `
 
                 <div class="empty">
 
-                    😔 Abhi koi upcoming tournament nahi hai.
+                    😔 Abhi koi upcoming
+                    tournament nahi hai.
 
                 </div>
+
             `;
         }
 
 
-        if (completedCount === 0) {
+        if (
+            completedCount === 0
+        ) {
 
             completedBox.innerHTML = `
 
                 <div class="empty">
 
-                    Abhi koi completed tournament nahi hai.
+                    Abhi koi completed
+                    tournament nahi hai.
 
                 </div>
+
             `;
         }
 
-    } catch (error) {
+    }
+
+    catch (error) {
+
+        console.error(
+            error
+        );
+
 
         document.getElementById(
             "upcomingTournaments"
@@ -1055,13 +1313,19 @@ async function loadTournaments() {
 
             <div class="empty">
 
-                ❌ Tournaments load nahi ho paaye.
+                ❌ Tournaments
+                load nahi ho paaye.
 
             </div>
+
         `;
     }
 }
 
+
+// =========================================================
+// SHOW REGISTRATION FORM
+// =========================================================
 
 function showForm(id) {
 
@@ -1071,16 +1335,19 @@ function showForm(id) {
         );
 
 
-    if (form) {
-
-        form.classList.toggle(
-            "hidden"
-        );
-    }
+    form.classList.toggle(
+        "hidden"
+    );
 }
 
 
-async function registerPlayer(id) {
+// =========================================================
+// REGISTER PLAYER
+// =========================================================
+
+async function registerPlayer(
+    id
+) {
 
     const name =
         document.getElementById(
@@ -1145,6 +1412,19 @@ async function registerPlayer(id) {
             "✅ Registration successful!";
 
 
+        if (
+            typeof data.balance !==
+            "undefined"
+        ) {
+
+            document.getElementById(
+                "walletBalance"
+            ).innerText =
+                "🪙 Tokens: " +
+                data.balance;
+        }
+
+
         setTimeout(
             loadTournaments,
             700
@@ -1157,6 +1437,10 @@ async function registerPlayer(id) {
     }
 }
 
+
+// =========================================================
+// START
+// =========================================================
 
 checkUser();
 
