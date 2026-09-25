@@ -19,6 +19,25 @@ from tournaments import (
 
 
 # =========================================================
+# NOTICE BOARD MODEL
+# =========================================================
+
+class Notice(db.Model):
+    __tablename__ = "notice"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    active = db.Column(db.Boolean, default=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
+
+
+# =========================================================
 # FLASK APP
 # =========================================================
 
@@ -755,6 +774,278 @@ def create_tournament():
             "date_time": tournament.date_time,
             "rules": tournament.rules or ""
         }
+    })
+
+
+
+# =========================================================
+# EDIT TOURNAMENT
+# =========================================================
+
+@app.route("/api/tournaments/<int:tournament_id>", methods=["PUT"])
+def edit_tournament(tournament_id):
+
+    if not is_admin_logged_in():
+        return jsonify({
+            "success": False,
+            "message": "Admin login required."
+        }), 401
+
+    tournament = db.session.get(Tournament, tournament_id)
+
+    if tournament is None:
+        return jsonify({
+            "success": False,
+            "message": "Tournament nahi mila."
+        }), 404
+
+    # Edit sirf upcoming tournament ka hoga.
+    # Live/completed tournament ko edit karke running data disturb nahi hoga.
+    if tournament_status(tournament) != "upcoming":
+        return jsonify({
+            "success": False,
+            "message": "Live ya completed tournament edit nahi kiya ja sakta."
+        }), 400
+
+    booked_count = Player.query.filter_by(
+        tournament_id=tournament_id
+    ).count()
+
+    if booked_count >= int(tournament.max_players or 0):
+        return jsonify({
+            "success": False,
+            "message": "Is tournament ke saare slots book ho chuke hain."
+        }), 400
+
+    data = request.get_json() or {}
+
+    name = str(data.get("name", "")).strip()
+    date_time = str(data.get("date_time", "")).strip()
+    rules = str(data.get("rules", "")).strip()
+
+    try:
+        entry_fee = int(data.get("entry_fee", 0))
+        max_players = int(data.get("max_players", 0))
+        kill_reward = int(data.get("kill_reward", 0))
+        first_prize = int(data.get("first_prize", 0))
+    except (ValueError, TypeError):
+        return jsonify({
+            "success": False,
+            "message": "Numeric values galat hain."
+        }), 400
+
+    if not name or not date_time:
+        return jsonify({
+            "success": False,
+            "message": "Tournament name aur date/time required hai."
+        }), 400
+
+    if entry_fee < 0 or kill_reward < 0 or first_prize < 0:
+        return jsonify({
+            "success": False,
+            "message": "Entry fee/prize negative nahi ho sakta."
+        }), 400
+
+    # Existing booked slots ko kabhi bhi max players se kam nahi karenge.
+    if max_players < booked_count:
+        return jsonify({
+            "success": False,
+            "message": f"Already {booked_count} slots booked hain. Max players kam nahi kar sakte."
+        }), 400
+
+    if max_players <= 0:
+        return jsonify({
+            "success": False,
+            "message": "Max players 0 se zyada hona chahiye."
+        }), 400
+
+    tournament.name = name
+    tournament.entry_fee = entry_fee
+    tournament.max_players = max_players
+    tournament.kill_reward = kill_reward
+    tournament.first_prize = first_prize
+    tournament.date_time = date_time
+    tournament.rules = rules
+
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Tournament successfully update ho gaya.",
+        "tournament": {
+            "id": tournament.id,
+            "name": tournament.name,
+            "entry_fee": tournament.entry_fee,
+            "max_players": tournament.max_players,
+            "kill_reward": tournament.kill_reward,
+            "first_prize": tournament.first_prize,
+            "date_time": tournament.date_time,
+            "rules": tournament.rules or ""
+        }
+    })
+
+
+# =========================================================
+# NOTICE BOARD
+# =========================================================
+
+@app.route("/api/notices", methods=["GET"])
+def get_public_notices():
+
+    notices = Notice.query.filter_by(
+        active=True
+    ).order_by(
+        Notice.id.desc()
+    ).all()
+
+    return jsonify([
+        {
+            "id": n.id,
+            "title": n.title,
+            "message": n.message,
+            "created_at": n.created_at.isoformat() if n.created_at else None
+        }
+        for n in notices
+    ])
+
+
+@app.route("/api/admin/notices", methods=["GET"])
+def get_admin_notices():
+
+    if not is_admin_logged_in():
+        return jsonify({
+            "success": False,
+            "message": "Admin login required."
+        }), 401
+
+    notices = Notice.query.order_by(
+        Notice.id.desc()
+    ).all()
+
+    return jsonify([
+        {
+            "id": n.id,
+            "title": n.title,
+            "message": n.message,
+            "active": n.active,
+            "created_at": n.created_at.isoformat() if n.created_at else None
+        }
+        for n in notices
+    ])
+
+
+@app.route("/api/admin/notices", methods=["POST"])
+def create_notice():
+
+    if not is_admin_logged_in():
+        return jsonify({
+            "success": False,
+            "message": "Admin login required."
+        }), 401
+
+    data = request.get_json() or {}
+
+    title = str(data.get("title", "")).strip()
+    message = str(data.get("message", "")).strip()
+    active = bool(data.get("active", True))
+
+    if not title:
+        return jsonify({
+            "success": False,
+            "message": "Notice title required."
+        }), 400
+
+    if not message:
+        return jsonify({
+            "success": False,
+            "message": "Notice message required."
+        }), 400
+
+    notice = Notice(
+        title=title,
+        message=message,
+        active=active
+    )
+
+    db.session.add(notice)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Notice successfully add ho gaya.",
+        "notice": {
+            "id": notice.id,
+            "title": notice.title,
+            "message": notice.message,
+            "active": notice.active
+        }
+    })
+
+
+@app.route("/api/admin/notices/<int:notice_id>", methods=["PUT"])
+def update_notice(notice_id):
+
+    if not is_admin_logged_in():
+        return jsonify({
+            "success": False,
+            "message": "Admin login required."
+        }), 401
+
+    notice = db.session.get(Notice, notice_id)
+
+    if notice is None:
+        return jsonify({
+            "success": False,
+            "message": "Notice nahi mila."
+        }), 404
+
+    data = request.get_json() or {}
+
+    title = str(data.get("title", notice.title)).strip()
+    message = str(data.get("message", notice.message)).strip()
+    active = bool(data.get("active", notice.active))
+
+    if not title or not message:
+        return jsonify({
+            "success": False,
+            "message": "Title aur message required hain."
+        }), 400
+
+    notice.title = title
+    notice.message = message
+    notice.active = active
+
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Notice successfully update ho gaya."
+    })
+
+
+@app.route("/api/admin/notices/<int:notice_id>", methods=["DELETE"])
+def delete_notice(notice_id):
+
+    if not is_admin_logged_in():
+        return jsonify({
+            "success": False,
+            "message": "Admin login required."
+        }), 401
+
+    notice = db.session.get(Notice, notice_id)
+
+    if notice is None:
+        return jsonify({
+            "success": False,
+            "message": "Notice nahi mila."
+        }), 404
+
+    db.session.delete(notice)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Notice delete ho gaya."
     })
 
 
