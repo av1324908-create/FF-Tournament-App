@@ -20,6 +20,7 @@ class Player(db.Model):
     name = db.Column(db.String(100), nullable=False)
     uid = db.Column(db.String(50), nullable=False)
     kills = db.Column(db.Integer, default=0)
+    redeem_code = db.Column(db.String(100), nullable=True, default="")
     position = db.Column(db.Integer, default=0)
     tournament_id = db.Column(db.Integer, db.ForeignKey("tournament.id"), nullable=False)
 
