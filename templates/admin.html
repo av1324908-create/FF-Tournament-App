@@ -33,7 +33,9 @@ header {
     border-radius: 12px;
 }
 
-input, button {
+input,
+textarea,
+button {
     padding: 10px;
     margin: 5px;
     border-radius: 6px;
@@ -42,6 +44,13 @@ input, button {
 
 input {
     min-width: 180px;
+}
+
+textarea {
+    width: 95%;
+    min-height: 120px;
+    resize: vertical;
+    font-family: Arial, sans-serif;
 }
 
 button {
@@ -90,7 +99,8 @@ table {
     margin-top: 15px;
 }
 
-th, td {
+th,
+td {
     padding: 10px;
     border-bottom: 1px solid #444;
     text-align: center;
@@ -113,11 +123,45 @@ th {
     margin-top: 15px;
 }
 
+.rulesBox {
+    background: #151515;
+    border: 1px solid #555;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.rulesBox h3 {
+    color: #ffb000;
+    margin-top: 0;
+}
+
+.rulesText {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    color: #ddd;
+}
+
+.smallText {
+    color: #aaa;
+    font-size: 14px;
+}
+
+.success {
+    color: #00ff88;
+}
+
+.error {
+    color: #ff5555;
+}
+
 </style>
 
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -165,6 +209,8 @@ Login
 class="hidden">
 
 
+<!-- DASHBOARD TOP -->
+
 <div class="box">
 
 <h2>📊 Dashboard</h2>
@@ -180,77 +226,129 @@ class="hidden">
 </div>
 
 
-<!-- CREATE -->
+<!-- CREATE TOURNAMENT -->
 
 <div class="box">
 
 <h2>➕ Create Tournament</h2>
 
+
 <input
 id="tName"
 placeholder="Tournament Name">
 
+
 <input
 id="entryFee"
 type="number"
+min="0"
 placeholder="Entry Fee">
+
 
 <input
 id="maxPlayers"
 type="number"
+min="1"
 placeholder="Max Players">
+
 
 <input
 id="killReward"
 type="number"
+min="0"
 placeholder="Per Kill Reward">
+
 
 <input
 id="firstPrize"
 type="number"
+min="0"
 placeholder="1st Prize">
+
 
 <input
 id="dateTime"
 placeholder="24/09/26 13:00">
 
+
 <br>
+
+
+<!-- RULES -->
+
+<label
+style="
+display:block;
+margin:12px 5px 5px;
+font-weight:bold;
+color:#ffb000;
+">
+
+📜 Tournament Rules
+
+</label>
+
+
+<textarea
+id="rules"
+placeholder="Yahan tournament ke rules likho...
+
+Example:
+
+1. Hack ya cheat allowed nahi hai.
+2. Room me time par join karna hoga.
+3. Late join karne par refund nahi milega.
+4. Teaming allowed nahi hai.
+5. Admin ka decision final hoga."></textarea>
+
+
+<p class="smallText">
+Ye rules players ko tournament card me dikhaye jayenge.
+</p>
+
 
 <button onclick="createTournament()">
 Create Tournament
 </button>
+
 
 <p id="createMsg"></p>
 
 </div>
 
 
-<!-- PASSWORD -->
+<!-- CHANGE PASSWORD -->
 
 <div class="box">
 
 <h2>🔑 Change Admin Password</h2>
+
 
 <input
 id="currentPassword"
 type="password"
 placeholder="Current Password">
 
+
 <input
 id="newPassword"
 type="password"
 placeholder="New Password">
+
 
 <input
 id="confirmPassword"
 type="password"
 placeholder="Confirm New Password">
 
+
 <br>
+
 
 <button onclick="changePassword()">
 Change Password
 </button>
+
 
 <p id="passwordMsg"></p>
 
@@ -263,9 +361,11 @@ Change Password
 
 <h2>🏆 Tournaments</h2>
 
+
 <div id="tournaments">
 Loading...
 </div>
+
 
 </div>
 
@@ -276,13 +376,22 @@ Loading...
 
 <h2>🪙 Token Wallet</h2>
 
+
 <p style="color:#aaa;">
+
 Admin yahan player ke tokens manage kar sakta hai.
+
+<br>
+
+<strong>1 Token = ₹1 Entry Fee</strong>
+
 </p>
+
 
 <input
 id="walletUid"
 placeholder="Free Fire UID">
+
 
 <input
 id="walletAmount"
@@ -290,23 +399,29 @@ type="number"
 min="1"
 placeholder="Token Amount">
 
+
 <br>
+
 
 <button onclick="checkWalletBalance()">
 🔍 Check Balance
 </button>
 
+
 <button onclick="addWalletTokens()">
 ➕ Add Tokens
 </button>
+
 
 <button onclick="removeWalletTokens()">
 ➖ Remove Tokens
 </button>
 
+
 <h3 id="walletBalance">
 Balance: —
 </h3>
+
 
 <p id="walletMessage"></p>
 
@@ -321,17 +436,23 @@ Balance: —
 <script>
 
 
+/* =========================
+   ADMIN LOGIN
+========================= */
+
 async function login() {
 
     const username =
         document.getElementById(
             "username"
-        ).value;
+        ).value.trim();
+
 
     const password =
         document.getElementById(
             "password"
         ).value;
+
 
     const response =
         await fetch(
@@ -345,14 +466,21 @@ async function login() {
                 },
 
                 body: JSON.stringify({
-                    username: username,
-                    password: password
+
+                    username:
+                        username,
+
+                    password:
+                        password
+
                 })
             }
         );
 
+
     const data =
         await response.json();
+
 
     if (data.success) {
 
@@ -360,21 +488,31 @@ async function login() {
             "loginBox"
         ).classList.add("hidden");
 
+
         document.getElementById(
             "dashboard"
         ).classList.remove("hidden");
 
+
         loadTournaments();
+
 
     } else {
 
         document.getElementById(
             "loginMsg"
         ).innerText =
-            "❌ " + data.message;
+            "❌ " +
+            data.message;
+
     }
+
 }
 
+
+/* =========================
+   LOGOUT
+========================= */
 
 async function logout() {
 
@@ -383,49 +521,80 @@ async function logout() {
     );
 
     location.reload();
+
 }
 
 
+/* =========================
+   CREATE TOURNAMENT
+========================= */
+
 async function createTournament() {
+
 
     const data = {
 
         name:
             document.getElementById(
                 "tName"
-            ).value,
+            ).value.trim(),
+
 
         entry_fee:
             document.getElementById(
                 "entryFee"
             ).value,
 
+
         max_players:
             document.getElementById(
                 "maxPlayers"
             ).value,
+
 
         kill_reward:
             document.getElementById(
                 "killReward"
             ).value,
 
+
         first_prize:
             document.getElementById(
                 "firstPrize"
             ).value,
 
+
         date_time:
             document.getElementById(
                 "dateTime"
-            ).value
+            ).value.trim(),
+
+
+        rules:
+            document.getElementById(
+                "rules"
+            ).value.trim()
+
     };
+
+
+    if (!data.name) {
+
+        document.getElementById(
+            "createMsg"
+        ).innerText =
+            "❌ Tournament name bharo.";
+
+        return;
+
+    }
 
 
     const response =
         await fetch(
             "/api/tournaments",
             {
+
                 method: "POST",
 
                 headers: {
@@ -433,48 +602,94 @@ async function createTournament() {
                         "application/json"
                 },
 
-                body: JSON.stringify(data)
+                body:
+                    JSON.stringify(data)
+
             }
         );
 
+
     const result =
         await response.json();
+
 
     document.getElementById(
         "createMsg"
     ).innerText =
         result.success
         ? "✅ Tournament created!"
-        : "❌ " + result.message;
+        : "❌ " +
+          result.message;
+
 
     if (result.success) {
 
+        document.getElementById(
+            "tName"
+        ).value = "";
+
+        document.getElementById(
+            "entryFee"
+        ).value = "";
+
+        document.getElementById(
+            "maxPlayers"
+        ).value = "";
+
+        document.getElementById(
+            "killReward"
+        ).value = "";
+
+        document.getElementById(
+            "firstPrize"
+        ).value = "";
+
+        document.getElementById(
+            "dateTime"
+        ).value = "";
+
+        document.getElementById(
+            "rules"
+        ).value = "";
+
+
         loadTournaments();
+
     }
+
 }
 
 
+/* =========================
+   CHANGE PASSWORD
+========================= */
+
 async function changePassword() {
+
 
     const currentPassword =
         document.getElementById(
             "currentPassword"
         ).value;
 
+
     const newPassword =
         document.getElementById(
             "newPassword"
         ).value;
+
 
     const confirmPassword =
         document.getElementById(
             "confirmPassword"
         ).value;
 
+
     const response =
         await fetch(
             "/api/admin/change-password",
             {
+
                 method: "POST",
 
                 headers: {
@@ -492,19 +707,26 @@ async function changePassword() {
 
                     confirm_password:
                         confirmPassword
+
                 })
+
             }
         );
 
+
     const data =
         await response.json();
+
 
     document.getElementById(
         "passwordMsg"
     ).innerText =
         data.success
-        ? "✅ " + data.message
-        : "❌ " + data.message;
+        ? "✅ " +
+          data.message
+        : "❌ " +
+          data.message;
+
 
     if (data.success) {
 
@@ -512,33 +734,47 @@ async function changePassword() {
             "currentPassword"
         ).value = "";
 
+
         document.getElementById(
             "newPassword"
         ).value = "";
 
+
         document.getElementById(
             "confirmPassword"
         ).value = "";
+
     }
+
 }
 
 
+/* =========================
+   SAVE ROOM
+========================= */
+
 async function saveRoom(tournamentId) {
+
 
     const roomId =
         document.getElementById(
-            "room-" + tournamentId
+            "room-" +
+            tournamentId
         ).value.trim();
+
 
     const roomPassword =
         document.getElementById(
-            "roompass-" + tournamentId
+            "roompass-" +
+            tournamentId
         ).value.trim();
+
 
     const response =
         await fetch(
             `/api/admin/tournaments/${tournamentId}/room`,
             {
+
                 method: "POST",
 
                 headers: {
@@ -548,38 +784,54 @@ async function saveRoom(tournamentId) {
 
                 body: JSON.stringify({
 
-                    room_id: roomId,
+                    room_id:
+                        roomId,
 
                     room_password:
                         roomPassword
+
                 })
+
             }
         );
+
 
     const data =
         await response.json();
 
+
     alert(
         data.success
         ? "✅ Room details saved!"
-        : "❌ " + data.message
+        : "❌ " +
+          data.message
     );
+
 
     if (data.success) {
 
         loadTournaments();
+
     }
+
 }
 
 
+/* =========================
+   DELETE TOURNAMENT
+========================= */
+
 async function deleteTournament(id) {
+
 
     const ok =
         confirm(
             "⚠️ Kya tum ye tournament delete karna chahte ho?"
         );
 
-    if (!ok) return;
+
+    if (!ok)
+        return;
 
 
     const response =
@@ -590,8 +842,10 @@ async function deleteTournament(id) {
             }
         );
 
+
     const data =
         await response.json();
+
 
     if (data.success) {
 
@@ -599,34 +853,49 @@ async function deleteTournament(id) {
             "✅ Tournament deleted."
         );
 
+
         loadTournaments();
+
 
     } else {
 
         alert(
-            "❌ " + data.message
+            "❌ " +
+            data.message
         );
+
     }
+
 }
 
 
+/* =========================
+   SAVE PLAYER
+========================= */
+
 async function savePlayer(playerId) {
+
 
     const kills =
         document.getElementById(
-            "kills-" + playerId
+            "kills-" +
+            playerId
         ).value;
+
 
     const position =
         document.getElementById(
-            "position-" + playerId
+            "position-" +
+            playerId
         ).value;
 
 
     const response =
         await fetch(
-            "/api/players/" + playerId,
+            "/api/players/" +
+            playerId,
             {
+
                 method: "PUT",
 
                 headers: {
@@ -635,65 +904,91 @@ async function savePlayer(playerId) {
                 },
 
                 body: JSON.stringify({
-                    kills: kills,
-                    position: position
+
+                    kills:
+                        kills,
+
+                    position:
+                        position
+
                 })
+
             }
         );
+
 
     const result =
         await response.json();
 
+
     if (result.success) {
 
         document.getElementById(
-            "saved-" + playerId
+            "saved-" +
+            playerId
         ).innerText =
             "✅ Saved";
+
 
         setTimeout(() => {
 
             document.getElementById(
-                "saved-" + playerId
+                "saved-" +
+                playerId
             ).innerText = "";
 
         }, 2000);
 
+
     } else {
 
         alert(
-            "❌ " + result.message
+            "❌ " +
+            result.message
         );
+
     }
+
 }
 
 
+/* =========================
+   LOAD TOURNAMENTS
+========================= */
+
 async function loadTournaments() {
+
 
     const response =
         await fetch(
             "/api/tournaments"
         );
 
+
     const tournaments =
         await response.json();
+
 
     const container =
         document.getElementById(
             "tournaments"
         );
 
+
     container.innerHTML = "";
 
 
     tournaments.forEach(t => {
 
+
         const revenue =
             t.players.length *
             t.entry_fee;
 
+
         const prizePool =
             t.first_prize;
+
 
         const killCost =
             t.players.reduce(
@@ -704,6 +999,7 @@ async function loadTournaments() {
                 0
             );
 
+
         const profit =
             revenue -
             prizePool -
@@ -713,7 +1009,14 @@ async function loadTournaments() {
         let playersHTML = "";
 
 
-        if (t.players.length > 0) {
+        /* =========================
+           PLAYERS
+        ========================= */
+
+        if (
+            t.players.length > 0
+        ) {
+
 
             playersHTML = `
 
@@ -724,13 +1027,19 @@ async function loadTournaments() {
                     <tr>
 
                         <th>Player</th>
+
                         <th>UID</th>
+
                         <th>Kills</th>
+
                         <th>Position</th>
+
                         <th>Kill Reward</th>
+
                         <th>Save</th>
 
                     </tr>
+
 
                     ${t.players.map(p => `
 
@@ -740,9 +1049,11 @@ async function loadTournaments() {
                                 ${p.name}
                             </td>
 
+
                             <td>
                                 ${p.uid}
                             </td>
+
 
                             <td>
 
@@ -755,6 +1066,7 @@ async function loadTournaments() {
 
                             </td>
 
+
                             <td>
 
                                 <input
@@ -766,10 +1078,14 @@ async function loadTournaments() {
 
                             </td>
 
+
                             <td>
+
                                 ₹${(p.kills || 0) *
                                 t.kill_reward}
+
                             </td>
+
 
                             <td>
 
@@ -781,8 +1097,10 @@ async function loadTournaments() {
 
                                 </button>
 
+
                                 <div
                                 id="saved-${p.id}">
+
                                 </div>
 
                             </td>
@@ -792,14 +1110,22 @@ async function loadTournaments() {
                     `).join("")}
 
                 </table>
+
             `;
+
 
         } else {
 
+
             playersHTML =
                 "<p>Abhi koi player registered nahi hai.</p>";
+
         }
 
+
+        /* =========================
+           TOURNAMENT CARD
+        ========================= */
 
         container.innerHTML += `
 
@@ -809,32 +1135,76 @@ async function loadTournaments() {
                     🏆 ${t.name}
                 </h2>
 
+
                 <p>
                     💰 Entry:
                     ₹${t.entry_fee}
                 </p>
+
 
                 <p>
                     👥 Players:
                     ${t.players.length}/${t.max_players}
                 </p>
 
+
                 <p>
                     🗡️ Per Kill:
                     ₹${t.kill_reward}
                 </p>
+
 
                 <p>
                     🥇 1st Prize:
                     ₹${t.first_prize}
                 </p>
 
+
                 <p>
                     📅 ${t.date_time}
                 </p>
 
+
+                <!-- RULES -->
+
+                ${t.rules ? `
+
+                    <div class="rulesBox">
+
+                        <h3>
+                            📜 Tournament Rules
+                        </h3>
+
+                        <div class="rulesText">
+
+                            ${t.rules}
+
+                        </div>
+
+                    </div>
+
+                ` : `
+
+                    <div class="rulesBox">
+
+                        <h3>
+                            📜 Tournament Rules
+                        </h3>
+
+                        <p class="smallText">
+                            Is tournament ke liye
+                            abhi rules add nahi kiye gaye.
+                        </p>
+
+                    </div>
+
+                `}
+
+
                 <hr>
 
+
+                <!-- ROOM -->
 
                 <div class="roomBox">
 
@@ -842,15 +1212,18 @@ async function loadTournaments() {
                         🎮 Room Details
                     </h3>
 
+
                     <input
                     id="room-${t.id}"
                     value="${t.room_id || ""}"
                     placeholder="Room ID">
 
+
                     <input
                     id="roompass-${t.id}"
                     value="${t.room_password || ""}"
                     placeholder="Room Password">
+
 
                     <button
                     onclick="saveRoom(${t.id})">
@@ -859,9 +1232,13 @@ async function loadTournaments() {
 
                     </button>
 
+
                     <p style="color:#aaa;">
-                    Sirf is tournament ke registered
-                    players ko room details dikhenge.
+
+                    Sirf is tournament ke
+                    registered players ko
+                    room details dikhenge.
+
                     </p>
 
                 </div>
@@ -869,24 +1246,32 @@ async function loadTournaments() {
 
                 <hr>
 
+
+                <!-- PROFIT -->
+
                 <p>
                     💵 Revenue:
                     ₹${revenue}
                 </p>
+
 
                 <p>
                     🎁 1st Prize:
                     ₹${prizePool}
                 </p>
 
+
                 <p>
                     🔫 Total Kill Payout:
                     ₹${killCost}
                 </p>
 
+
                 <p class="profit">
+
                     📈 Current Profit:
                     ₹${profit}
+
                 </p>
 
 
@@ -901,31 +1286,38 @@ async function loadTournaments() {
 
                 </button>
 
+
             </div>
+
         `;
 
     });
 
 
-    if (tournaments.length === 0) {
+    if (
+        tournaments.length === 0
+    ) {
 
         container.innerHTML =
             "<p>Abhi koi tournament nahi hai.</p>";
+
     }
+
 }
 
 
 /* =========================
-   WALLET
+   CHECK WALLET
 ========================= */
 
-
 async function checkWalletBalance() {
+
 
     const uid =
         document.getElementById(
             "walletUid"
         ).value.trim();
+
 
     if (!uid) {
 
@@ -934,7 +1326,9 @@ async function checkWalletBalance() {
         );
 
         return;
+
     }
+
 
     const response =
         await fetch(
@@ -942,8 +1336,10 @@ async function checkWalletBalance() {
             encodeURIComponent(uid)
         );
 
+
     const data =
         await response.json();
+
 
     if (data.success) {
 
@@ -953,6 +1349,11 @@ async function checkWalletBalance() {
             "Balance: " +
             data.balance +
             " Tokens";
+
+
+        document.getElementById(
+            "walletMessage"
+        ).innerText = "";
 
     } else {
 
@@ -961,16 +1362,24 @@ async function checkWalletBalance() {
         ).innerText =
             data.message ||
             "Something went wrong.";
+
     }
+
 }
 
 
+/* =========================
+   ADD TOKENS
+========================= */
+
 async function addWalletTokens() {
+
 
     const uid =
         document.getElementById(
             "walletUid"
         ).value.trim();
+
 
     const amount =
         Number(
@@ -979,13 +1388,15 @@ async function addWalletTokens() {
             ).value
         );
 
-    if (!uid || !amount) {
+
+    if (!uid || !amount || amount < 1) {
 
         alert(
-            "UID aur token amount enter karo."
+            "UID aur valid token amount enter karo."
         );
 
         return;
+
     }
 
 
@@ -993,6 +1404,7 @@ async function addWalletTokens() {
         await fetch(
             "/api/admin/wallet/add",
             {
+
                 method: "POST",
 
                 headers: {
@@ -1001,19 +1413,28 @@ async function addWalletTokens() {
                 },
 
                 body: JSON.stringify({
-                    uid: uid,
-                    amount: amount
+
+                    uid:
+                        uid,
+
+                    amount:
+                        amount
+
                 })
+
             }
         );
+
 
     const data =
         await response.json();
 
+
     document.getElementById(
         "walletMessage"
     ).innerText =
-        data.message || "Done";
+        data.message ||
+        "Done";
 
 
     if (data.success) {
@@ -1024,16 +1445,24 @@ async function addWalletTokens() {
             "Balance: " +
             data.balance +
             " Tokens";
+
     }
+
 }
 
 
+/* =========================
+   REMOVE TOKENS
+========================= */
+
 async function removeWalletTokens() {
+
 
     const uid =
         document.getElementById(
             "walletUid"
         ).value.trim();
+
 
     const amount =
         Number(
@@ -1042,13 +1471,15 @@ async function removeWalletTokens() {
             ).value
         );
 
-    if (!uid || !amount) {
+
+    if (!uid || !amount || amount < 1) {
 
         alert(
-            "UID aur token amount enter karo."
+            "UID aur valid token amount enter karo."
         );
 
         return;
+
     }
 
 
@@ -1056,6 +1487,7 @@ async function removeWalletTokens() {
         await fetch(
             "/api/admin/wallet/remove",
             {
+
                 method: "POST",
 
                 headers: {
@@ -1064,19 +1496,28 @@ async function removeWalletTokens() {
                 },
 
                 body: JSON.stringify({
-                    uid: uid,
-                    amount: amount
+
+                    uid:
+                        uid,
+
+                    amount:
+                        amount
+
                 })
+
             }
         );
+
 
     const data =
         await response.json();
 
+
     document.getElementById(
         "walletMessage"
     ).innerText =
-        data.message || "Done";
+        data.message ||
+        "Done";
 
 
     if (data.success) {
@@ -1087,10 +1528,14 @@ async function removeWalletTokens() {
             "Balance: " +
             data.balance +
             " Tokens";
+
     }
+
 }
 
 </script>
 
+
 </body>
+
 </html>
