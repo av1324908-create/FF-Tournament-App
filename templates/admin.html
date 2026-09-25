@@ -125,14 +125,34 @@ button:hover {
 
 .player {
     background: #181818;
-    padding: 10px;
+    padding: 12px;
     border-radius: 7px;
     margin: 7px 0;
+    border: 1px solid #292929;
 }
 
 .player input {
     width: auto;
-    max-width: 120px;
+    max-width: 300px;
+}
+
+.redeem-box {
+    background: #101010;
+    border: 1px solid #ff9800;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 12px;
+}
+
+.redeem-title {
+    color: #ff9800;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.redeem-message {
+    font-weight: bold;
+    margin-top: 5px;
 }
 
 .grid {
@@ -201,6 +221,10 @@ button:hover {
     .grid,
     .editor-grid {
         grid-template-columns: 1fr;
+    }
+
+    .player input {
+        max-width: 100%;
     }
 
 }
@@ -339,19 +363,16 @@ button:hover {
 
 </div>
 
-
 <textarea
     id="tRules"
     placeholder="Tournament Rules..."
 ></textarea>
-
 
 <button
     onclick="createTournament()"
 >
     🚀 Create Tournament
 </button>
-
 
 <div
     id="createMessage"
@@ -376,7 +397,6 @@ Sirf upcoming tournament jisme slots available hain
 edit kiya ja sakta hai.
 </p>
 
-
 <select
     id="editTournamentSelect"
 >
@@ -384,7 +404,6 @@ edit kiya ja sakta hai.
 Tournament select karo
 </option>
 </select>
-
 
 <div class="editor-grid">
 
@@ -428,12 +447,10 @@ Tournament select karo
 
 </div>
 
-
 <textarea
     id="editRules"
     placeholder="Tournament Rules"
 ></textarea>
-
 
 <button
     class="blue"
@@ -441,7 +458,6 @@ Tournament select karo
 >
 💾 Save Tournament Changes
 </button>
-
 
 <div
     id="editTournamentMsg"
@@ -466,12 +482,10 @@ Tournament select karo
     placeholder="Notice Title"
 >
 
-
 <textarea
     id="noticeMessage"
     placeholder="Notice message..."
 ></textarea>
-
 
 <label>
 
@@ -486,9 +500,7 @@ Public notice active rakho
 
 </label>
 
-
 <br>
-
 
 <button
     class="green"
@@ -497,12 +509,10 @@ Public notice active rakho
 ➕ Add Notice
 </button>
 
-
 <div
     id="noticeMsg"
     class="message"
 ></div>
-
 
 <div
     id="adminNotices"
@@ -521,12 +531,10 @@ Public notice active rakho
 💰 Manage Player Tokens
 </h2>
 
-
 <input
     id="walletUID"
     placeholder="Player Free Fire UID"
 >
-
 
 <input
     id="walletAmount"
@@ -535,14 +543,12 @@ Public notice active rakho
     placeholder="Token Amount"
 >
 
-
 <button
     class="green"
     onclick="addTokens()"
 >
 ➕ Add Tokens
 </button>
-
 
 <button
     class="danger"
@@ -551,12 +557,10 @@ Public notice active rakho
 ➖ Remove Tokens
 </button>
 
-
 <div
     id="walletMessage"
     class="message"
 ></div>
-
 
 <div
     id="walletBalance"
@@ -580,13 +584,11 @@ Public notice active rakho
 🔑 Change Admin Password
 </h2>
 
-
 <input
     id="currentAdminPassword"
     type="password"
     placeholder="Current Password"
 >
-
 
 <input
     id="newAdminPassword"
@@ -594,20 +596,17 @@ Public notice active rakho
     placeholder="New Password"
 >
 
-
 <input
     id="confirmAdminPassword"
     type="password"
     placeholder="Confirm New Password"
 >
 
-
 <button
     onclick="changeAdminPassword()"
 >
 🔐 Change Password
 </button>
-
 
 <div
     id="passwordMessage"
@@ -626,7 +625,6 @@ Public notice active rakho
 <h2>
 🎮 All Tournaments
 </h2>
-
 
 <div
     id="tournamentList"
@@ -653,40 +651,26 @@ async function adminLogin() {
 
     const username =
         document
-            .getElementById(
-                "adminUsername"
-            )
+            .getElementById("adminUsername")
             .value
             .trim();
 
-
     const password =
         document
-            .getElementById(
-                "adminPassword"
-            )
+            .getElementById("adminPassword")
             .value;
-
 
     const message =
         document
-            .getElementById(
-                "loginMessage"
-            );
+            .getElementById("loginMessage");
 
-
-    if (
-        !username ||
-        !password
-    ) {
+    if (!username || !password) {
 
         message.innerText =
             "❌ Username aur password bharo.";
 
         return;
-
     }
-
 
     try {
 
@@ -712,30 +696,20 @@ async function adminLogin() {
                 }
             );
 
-
         const data =
             await response.json();
 
-
-        if (
-            data.success
-        ) {
+        if (data.success) {
 
             document
-                .getElementById(
-                    "loginBox"
-                )
+                .getElementById("loginBox")
                 .classList
                 .add("hidden");
 
-
             document
-                .getElementById(
-                    "dashboard"
-                )
+                .getElementById("dashboard")
                 .classList
                 .remove("hidden");
-
 
             await loadTournaments();
 
@@ -753,7 +727,6 @@ async function adminLogin() {
                     data.message ||
                     "Login failed."
                 );
-
         }
 
     }
@@ -799,30 +772,25 @@ async function createTournament() {
             .value
             .trim();
 
-
     const entry_fee =
         document
             .getElementById("tEntryFee")
             .value;
-
 
     const max_players =
         document
             .getElementById("tMaxPlayers")
             .value;
 
-
     const kill_reward =
         document
             .getElementById("tKillReward")
             .value;
 
-
     const first_prize =
         document
             .getElementById("tFirstPrize")
             .value;
-
 
     const date_time =
         document
@@ -830,32 +798,22 @@ async function createTournament() {
             .value
             .trim();
 
-
     const rules =
         document
             .getElementById("tRules")
             .value;
 
-
     const message =
         document
-            .getElementById(
-                "createMessage"
-            );
+            .getElementById("createMessage");
 
-
-    if (
-        !name ||
-        !date_time
-    ) {
+    if (!name || !date_time) {
 
         message.innerText =
             "❌ Name aur date/time required hai.";
 
         return;
-
     }
-
 
     try {
 
@@ -894,60 +852,21 @@ async function createTournament() {
                 }
             );
 
-
         const data =
             await response.json();
 
-
-        if (
-            data.success
-        ) {
+        if (data.success) {
 
             message.innerText =
                 "✅ Tournament create ho gaya.";
 
-            document
-                .getElementById(
-                    "tName"
-                )
-                .value = "";
-
-            document
-                .getElementById(
-                    "tEntryFee"
-                )
-                .value = "";
-
-            document
-                .getElementById(
-                    "tMaxPlayers"
-                )
-                .value = "";
-
-            document
-                .getElementById(
-                    "tKillReward"
-                )
-                .value = "";
-
-            document
-                .getElementById(
-                    "tFirstPrize"
-                )
-                .value = "";
-
-            document
-                .getElementById(
-                    "tDateTime"
-                )
-                .value = "";
-
-            document
-                .getElementById(
-                    "tRules"
-                )
-                .value = "";
-
+            document.getElementById("tName").value = "";
+            document.getElementById("tEntryFee").value = "";
+            document.getElementById("tMaxPlayers").value = "";
+            document.getElementById("tKillReward").value = "";
+            document.getElementById("tFirstPrize").value = "";
+            document.getElementById("tDateTime").value = "";
+            document.getElementById("tRules").value = "";
 
             await loadTournaments();
 
@@ -988,13 +907,15 @@ async function loadTournaments() {
 
         const response =
             await fetch(
-                "/api/tournaments"
+                "/api/tournaments",
+                {
+                    credentials:
+                        "same-origin"
+                }
             );
-
 
         const tournaments =
             await response.json();
-
 
         const box =
             document
@@ -1002,11 +923,8 @@ async function loadTournaments() {
                     "tournamentList"
                 );
 
-
         if (
-            !Array.isArray(
-                tournaments
-            ) ||
+            !Array.isArray(tournaments) ||
             tournaments.length === 0
         ) {
 
@@ -1014,17 +932,13 @@ async function loadTournaments() {
                 "No tournaments found.";
 
             return;
-
         }
-
 
         box.innerHTML =
             tournaments
                 .map(
                     t =>
-                        renderTournament(
-                            t
-                        )
+                        renderTournament(t)
                 )
                 .join("");
 
@@ -1055,40 +969,22 @@ function renderTournament(t) {
             ? t.players
             : [];
 
-
     let statusHTML = "";
 
-
-    if (
-        t.status ===
-        "live"
-    ) {
+    if (t.status === "live") {
 
         statusHTML = `
-            <span
-                class="
-                    status
-                    status-live
-                "
-            >
+            <span class="status status-live">
                 🔴 LIVE
             </span>
         `;
 
     }
 
-    else if (
-        t.status ===
-        "completed"
-    ) {
+    else if (t.status === "completed") {
 
         statusHTML = `
-            <span
-                class="
-                    status
-                    status-completed
-                "
-            >
+            <span class="status status-completed">
                 🏁 COMPLETED
             </span>
         `;
@@ -1098,18 +994,12 @@ function renderTournament(t) {
     else {
 
         statusHTML = `
-            <span
-                class="
-                    status
-                    status-upcoming
-                "
-            >
+            <span class="status status-upcoming">
                 🟢 UPCOMING
             </span>
         `;
 
     }
-
 
     return `
 
@@ -1120,14 +1010,12 @@ function renderTournament(t) {
                 ${escapeHTML(t.name)}
             </h3>
 
-
             <p>
 
                 Status:
                 ${statusHTML}
 
             </p>
-
 
             <p>
 
@@ -1152,31 +1040,25 @@ function renderTournament(t) {
                 <br>
 
                 📅 Date:
-                ${escapeHTML(
-                    t.date_time
-                )}
+                ${escapeHTML(t.date_time)}
 
             </p>
-
 
             ${
                 t.rules
                     ? `
-                        <div
-                            class="rules-preview"
-                        >
+                        <div class="rules-preview">
+
                             📜 Rules:
 
                             <br><br>
 
-                            ${escapeHTML(
-                                t.rules
-                            )}
+                            ${escapeHTML(t.rules)}
+
                         </div>
                     `
                     : ""
             }
-
 
             <hr
                 style="
@@ -1185,65 +1067,39 @@ function renderTournament(t) {
                 "
             >
 
-
             <h4>
                 🎮 Room Details
             </h4>
 
-
             <input
-                id="
-                    room-id-${t.id}
-                "
+                id="room-id-${t.id}"
                 placeholder="Room ID"
-                value="
-                    ${escapeHTML(
-                        t.room_id || ""
-                    )}
-                "
+                value="${escapeHTML(t.room_id || "")}"
             >
 
-
             <input
-                id="
-                    room-password-${t.id}
-                "
+                id="room-password-${t.id}"
                 placeholder="Room Password"
-                value="
-                    ${escapeHTML(
-                        t.room_password || ""
-                    )}
-            ">
-
+                value="${escapeHTML(t.room_password || "")}"
+            >
 
             <button
                 class="blue"
-                onclick="
-                    saveRoom(
-                        ${t.id}
-                    )
-                "
+                onclick="saveRoom(${t.id})"
             >
                 💾 Save Room
             </button>
 
-
             <button
                 class="danger"
-                onclick="
-                    deleteTournament(
-                        ${t.id}
-                    )
-                "
+                onclick="deleteTournament(${t.id})"
             >
                 🗑️ Delete Tournament
             </button>
 
-
             <h4>
                 👥 Players
             </h4>
-
 
             ${
                 players.length
@@ -1257,13 +1113,8 @@ function renderTournament(t) {
                         )
                         .join("")
                     : `
-                        <p
-                            style="
-                                color:#aaa;
-                            "
-                        >
-                            Abhi koi player
-                            registered nahi hai.
+                        <p style="color:#aaa;">
+                            Abhi koi player registered nahi hai.
                         </p>
                     `
             }
@@ -1276,7 +1127,7 @@ function renderTournament(t) {
 
 
 /* =====================================================
-   RENDER PLAYER
+   RENDER PLAYER + REDEEM CODE
 ====================================================== */
 
 function renderPlayer(t, p) {
@@ -1286,60 +1137,73 @@ function renderPlayer(t, p) {
         <div class="player">
 
             <strong>
-                ${escapeHTML(
-                    p.name
-                )}
+                ${escapeHTML(p.name)}
             </strong>
 
             <br>
 
             UID:
-            ${escapeHTML(
-                p.uid
-            )}
-
+            ${escapeHTML(p.uid)}
 
             <br><br>
-
 
             Position:
 
             <input
                 type="number"
                 min="0"
-                value="
-                    ${p.position || 0}
-                "
-                id="
-                    position-${p.id}
-                "
+                value="${p.position || 0}"
+                id="position-${p.id}"
             >
-
 
             Kills:
 
             <input
                 type="number"
                 min="0"
-                value="
-                    ${p.kills || 0}
-                "
-                id="
-                    kills-${p.id}
-                "
+                value="${p.kills || 0}"
+                id="kills-${p.id}"
             >
 
+            <br>
 
             <button
                 class="green"
-                onclick="
-                    updatePlayer(
-                        ${p.id}
-                    )
-                "
+                onclick="updatePlayer(${p.id})"
             >
                 💾 Save Result
             </button>
+
+
+            <!-- REDEEM CODE -->
+
+            <div class="redeem-box">
+
+                <div class="redeem-title">
+                    🎟️ Redeem Code
+                </div>
+
+                <input
+                    type="text"
+                    id="redeem-code-${p.id}"
+                    placeholder="Enter Redeem Code"
+                    value="${escapeHTML(p.redeem_code || "")}"
+                    maxlength="100"
+                >
+
+                <button
+                    class="blue"
+                    onclick="saveRedeemCode(${p.id})"
+                >
+                    🎟️ Save Redeem Code
+                </button>
+
+                <div
+                    id="redeem-message-${p.id}"
+                    class="redeem-message"
+                ></div>
+
+            </div>
 
         </div>
 
@@ -1361,7 +1225,6 @@ async function updatePlayer(id) {
             )
             .value;
 
-
     const kills =
         document
             .getElementById(
@@ -1369,50 +1232,163 @@ async function updatePlayer(id) {
             )
             .value;
 
+    try {
 
-    const response =
-        await fetch(
-            `/api/admin/players/${id}`,
-            {
-                method: "PUT",
+        const response =
+            await fetch(
+                `/api/admin/players/${id}`,
+                {
+                    method: "PUT",
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                credentials:
-                    "same-origin",
+                    credentials:
+                        "same-origin",
 
-                body:
-                    JSON.stringify({
-                        position,
-                        kills
-                    })
-            }
+                    body:
+                        JSON.stringify({
+                            position,
+                            kills
+                        })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        alert(
+            data.success
+                ? "✅ Result saved."
+                : "❌ " +
+                  (
+                      data.message ||
+                      "Save failed."
+                  )
         );
 
+        if (data.success) {
 
-    const data =
-        await response.json();
+            await loadTournaments();
+
+        }
+
+    }
+
+    catch (error) {
+
+        alert("❌ Server error.");
+
+    }
+
+}
 
 
-    alert(
-        data.success
-            ? "✅ Result saved."
-            : "❌ " +
-              (
-                  data.message ||
-                  "Save failed."
-              )
-    );
+/* =====================================================
+   SAVE REDEEM CODE
+====================================================== */
 
+async function saveRedeemCode(playerId) {
 
-    if (
-        data.success
-    ) {
+    const input =
+        document.getElementById(
+            `redeem-code-${playerId}`
+        );
 
-        loadTournaments();
+    const message =
+        document.getElementById(
+            `redeem-message-${playerId}`
+        );
+
+    if (!input || !message) {
+
+        return;
+
+    }
+
+    const redeemCode =
+        input.value.trim();
+
+    if (!redeemCode) {
+
+        message.style.color =
+            "#ff5555";
+
+        message.innerText =
+            "❌ Redeem code enter karo.";
+
+        return;
+
+    }
+
+    try {
+
+        message.style.color =
+            "#ffd54f";
+
+        message.innerText =
+            "Saving...";
+
+        const response =
+            await fetch(
+                `/api/admin/players/${playerId}/redeem-code`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            redeem_code:
+                                redeemCode
+                        })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (response.ok && data.success) {
+
+            message.style.color =
+                "#5cff7b";
+
+            message.innerText =
+                "✅ Redeem code saved.";
+
+        }
+
+        else {
+
+            message.style.color =
+                "#ff5555";
+
+            message.innerText =
+                "❌ " +
+                (
+                    data.message ||
+                    "Save failed."
+                );
+
+        }
+
+    }
+
+    catch (error) {
+
+        message.style.color =
+            "#ff5555";
+
+        message.innerText =
+            "❌ Server error.";
 
     }
 
@@ -1433,7 +1409,6 @@ async function saveRoom(id) {
             .value
             .trim();
 
-
     const room_password =
         document
             .getElementById(
@@ -1442,43 +1417,50 @@ async function saveRoom(id) {
             .value
             .trim();
 
+    try {
 
-    const response =
-        await fetch(
-            `/api/admin/tournaments/${id}/room`,
-            {
-                method: "PUT",
+        const response =
+            await fetch(
+                `/api/admin/tournaments/${id}/room`,
+                {
+                    method: "PUT",
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                credentials:
-                    "same-origin",
+                    credentials:
+                        "same-origin",
 
-                body:
-                    JSON.stringify({
-                        room_id,
-                        room_password
-                    })
-            }
+                    body:
+                        JSON.stringify({
+                            room_id,
+                            room_password
+                        })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        alert(
+            data.success
+                ? "✅ Room details saved."
+                : "❌ " +
+                  (
+                      data.message ||
+                      "Save failed."
+                  )
         );
 
+    }
 
-    const data =
-        await response.json();
+    catch (error) {
 
+        alert("❌ Server error.");
 
-    alert(
-        data.success
-            ? "✅ Room details saved."
-            : "❌ " +
-              (
-                  data.message ||
-                  "Save failed."
-              )
-    );
+    }
 
 }
 
@@ -1499,46 +1481,51 @@ async function deleteTournament(id) {
 
     }
 
+    try {
 
-    const response =
-        await fetch(
-            `/api/tournaments/${id}`,
-            {
-                method: "DELETE",
+        const response =
+            await fetch(
+                `/api/tournaments/${id}`,
+                {
+                    method: "DELETE",
 
-                credentials:
-                    "same-origin"
-            }
-        );
+                    credentials:
+                        "same-origin"
+                }
+            );
 
+        const data =
+            await response.json();
 
-    const data =
-        await response.json();
+        if (data.success) {
 
+            alert(
+                "✅ Tournament delete ho gaya."
+            );
 
-    if (
-        data.success
-    ) {
+            await loadTournaments();
 
-        alert(
-            "✅ Tournament delete ho gaya."
-        );
+            await loadEditableTournaments();
 
-        await loadTournaments();
+        }
 
-        await loadEditableTournaments();
+        else {
+
+            alert(
+                "❌ " +
+                (
+                    data.message ||
+                    "Delete failed."
+                )
+            );
+
+        }
 
     }
 
-    else {
+    catch (error) {
 
-        alert(
-            "❌ " +
-            (
-                data.message ||
-                "Delete failed."
-            )
-        );
+        alert("❌ Server error.");
 
     }
 
@@ -1557,50 +1544,43 @@ async function loadEditableTournaments() {
                 "editTournamentSelect"
             );
 
-
     if (!select) {
 
         return;
 
     }
 
-
     try {
 
         const response =
             await fetch(
-                "/api/tournaments"
+                "/api/tournaments",
+                {
+                    credentials:
+                        "same-origin"
+                }
             );
-
 
         const tournaments =
             await response.json();
 
-
-        select.innerHTML =
-            `
+        select.innerHTML = `
             <option value="">
                 Tournament select karo
             </option>
-            `;
-
+        `;
 
         tournaments.forEach(
             t => {
 
                 const players =
-                    Array.isArray(
-                        t.players
-                    )
+                    Array.isArray(t.players)
                         ? t.players
                         : [];
 
-
                 if (
-                    t.status ===
-                        "upcoming" &&
-                    players.length <
-                        t.max_players
+                    t.status === "upcoming" &&
+                    players.length < t.max_players
                 ) {
 
                     const option =
@@ -1608,16 +1588,13 @@ async function loadEditableTournaments() {
                             "option"
                         );
 
-
                     option.value =
                         t.id;
-
 
                     option.textContent =
                         `${t.name} — ` +
                         `${players.length}/` +
                         `${t.max_players} booked`;
-
 
                     select.appendChild(
                         option
@@ -1628,19 +1605,15 @@ async function loadEditableTournaments() {
             }
         );
 
-
         select.onchange =
             () => {
 
                 const t =
                     tournaments.find(
                         x =>
-                            String(
-                                x.id
-                            ) ===
+                            String(x.id) ===
                             select.value
                     );
-
 
                 if (!t) {
 
@@ -1648,59 +1621,38 @@ async function loadEditableTournaments() {
 
                 }
 
-
                 document
-                    .getElementById(
-                        "editName"
-                    )
+                    .getElementById("editName")
                     .value =
                     t.name || "";
 
-
                 document
-                    .getElementById(
-                        "editEntryFee"
-                    )
+                    .getElementById("editEntryFee")
                     .value =
                     t.entry_fee ?? 0;
 
-
                 document
-                    .getElementById(
-                        "editMaxPlayers"
-                    )
+                    .getElementById("editMaxPlayers")
                     .value =
                     t.max_players ?? 0;
 
-
                 document
-                    .getElementById(
-                        "editKillReward"
-                    )
+                    .getElementById("editKillReward")
                     .value =
                     t.kill_reward ?? 0;
 
-
                 document
-                    .getElementById(
-                        "editFirstPrize"
-                    )
+                    .getElementById("editFirstPrize")
                     .value =
                     t.first_prize ?? 0;
 
-
                 document
-                    .getElementById(
-                        "editDateTime"
-                    )
+                    .getElementById("editDateTime")
                     .value =
                     t.date_time || "";
 
-
                 document
-                    .getElementById(
-                        "editRules"
-                    )
+                    .getElementById("editRules")
                     .value =
                     t.rules || "";
 
@@ -1710,9 +1662,7 @@ async function loadEditableTournaments() {
 
     catch (error) {
 
-        console.error(
-            error
-        );
+        console.error(error);
 
     }
 
@@ -1732,13 +1682,11 @@ async function saveTournamentEdit() {
             )
             .value;
 
-
     const message =
         document
             .getElementById(
                 "editTournamentMsg"
             );
-
 
     if (!id) {
 
@@ -1749,62 +1697,46 @@ async function saveTournamentEdit() {
 
     }
 
-
     const payload = {
 
         name:
             document
-                .getElementById(
-                    "editName"
-                )
+                .getElementById("editName")
                 .value
                 .trim(),
 
         entry_fee:
             document
-                .getElementById(
-                    "editEntryFee"
-                )
+                .getElementById("editEntryFee")
                 .value,
 
         max_players:
             document
-                .getElementById(
-                    "editMaxPlayers"
-                )
+                .getElementById("editMaxPlayers")
                 .value,
 
         kill_reward:
             document
-                .getElementById(
-                    "editKillReward"
-                )
+                .getElementById("editKillReward")
                 .value,
 
         first_prize:
             document
-                .getElementById(
-                    "editFirstPrize"
-                )
+                .getElementById("editFirstPrize")
                 .value,
 
         date_time:
             document
-                .getElementById(
-                    "editDateTime"
-                )
+                .getElementById("editDateTime")
                 .value
                 .trim(),
 
         rules:
             document
-                .getElementById(
-                    "editRules"
-                )
+                .getElementById("editRules")
                 .value
 
     };
-
 
     try {
 
@@ -1823,20 +1755,14 @@ async function saveTournamentEdit() {
                         "same-origin",
 
                     body:
-                        JSON.stringify(
-                            payload
-                        )
+                        JSON.stringify(payload)
                 }
             );
-
 
         const data =
             await response.json();
 
-
-        if (
-            data.success
-        ) {
+        if (data.success) {
 
             message.innerText =
                 "✅ Tournament update ho gaya.";
@@ -1878,32 +1804,20 @@ async function addTokens() {
 
     const uid =
         document
-            .getElementById(
-                "walletUID"
-            )
+            .getElementById("walletUID")
             .value
             .trim();
 
-
     const amount =
         document
-            .getElementById(
-                "walletAmount"
-            )
+            .getElementById("walletAmount")
             .value;
-
 
     const message =
         document
-            .getElementById(
-                "walletMessage"
-            );
+            .getElementById("walletMessage");
 
-
-    if (
-        !uid ||
-        !amount
-    ) {
+    if (!uid || !amount) {
 
         message.innerText =
             "❌ UID aur amount bharo.";
@@ -1912,63 +1826,69 @@ async function addTokens() {
 
     }
 
+    try {
 
-    const response =
-        await fetch(
-            "/api/admin/wallet/add",
-            {
-                method: "POST",
+        const response =
+            await fetch(
+                "/api/admin/wallet/add",
+                {
+                    method: "POST",
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                credentials:
-                    "same-origin",
+                    credentials:
+                        "same-origin",
 
-                body:
-                    JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        player_uid:
-                            uid,
+                            player_uid:
+                                uid,
 
-                        amount:
-                            amount
+                            amount:
+                                amount
 
-                    })
-            }
-        );
+                        })
+                }
+            );
 
+        const data =
+            await response.json();
 
-    const data =
-        await response.json();
+        if (data.success) {
 
+            message.innerText =
+                "✅ Tokens add ho gaye.";
 
-    if (
-        data.success
-    ) {
+            document
+                .getElementById(
+                    "walletBalance"
+                )
+                .innerText =
+                `Balance: ${data.balance}`;
 
-        message.innerText =
-            "✅ Tokens add ho gaye.";
+        }
 
-        document
-            .getElementById(
-                "walletBalance"
-            )
-            .innerText =
-            `Balance: ${data.balance}`;
+        else {
+
+            message.innerText =
+                "❌ " +
+                (
+                    data.message ||
+                    "Failed."
+                );
+
+        }
 
     }
 
-    else {
+    catch (error) {
 
         message.innerText =
-            "❌ " +
-            (
-                data.message ||
-                "Failed."
-            );
+            "❌ Server error.";
 
     }
 
@@ -1983,32 +1903,20 @@ async function removeTokens() {
 
     const uid =
         document
-            .getElementById(
-                "walletUID"
-            )
+            .getElementById("walletUID")
             .value
             .trim();
 
-
     const amount =
         document
-            .getElementById(
-                "walletAmount"
-            )
+            .getElementById("walletAmount")
             .value;
-
 
     const message =
         document
-            .getElementById(
-                "walletMessage"
-            );
+            .getElementById("walletMessage");
 
-
-    if (
-        !uid ||
-        !amount
-    ) {
+    if (!uid || !amount) {
 
         message.innerText =
             "❌ UID aur amount bharo.";
@@ -2017,63 +1925,69 @@ async function removeTokens() {
 
     }
 
+    try {
 
-    const response =
-        await fetch(
-            "/api/admin/wallet/remove",
-            {
-                method: "POST",
+        const response =
+            await fetch(
+                "/api/admin/wallet/remove",
+                {
+                    method: "POST",
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                credentials:
-                    "same-origin",
+                    credentials:
+                        "same-origin",
 
-                body:
-                    JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        player_uid:
-                            uid,
+                            player_uid:
+                                uid,
 
-                        amount:
-                            amount
+                            amount:
+                                amount
 
-                    })
-            }
-        );
+                        })
+                }
+            );
 
+        const data =
+            await response.json();
 
-    const data =
-        await response.json();
+        if (data.success) {
 
+            message.innerText =
+                "✅ Tokens remove ho gaye.";
 
-    if (
-        data.success
-    ) {
+            document
+                .getElementById(
+                    "walletBalance"
+                )
+                .innerText =
+                `Balance: ${data.balance}`;
 
-        message.innerText =
-            "✅ Tokens remove ho gaye.";
+        }
 
-        document
-            .getElementById(
-                "walletBalance"
-            )
-            .innerText =
-            `Balance: ${data.balance}`;
+        else {
+
+            message.innerText =
+                "❌ " +
+                (
+                    data.message ||
+                    "Failed."
+                );
+
+        }
 
     }
 
-    else {
+    catch (error) {
 
         message.innerText =
-            "❌ " +
-            (
-                data.message ||
-                "Failed."
-            );
+            "❌ Server error.";
 
     }
 
@@ -2093,14 +2007,12 @@ async function changeAdminPassword() {
             )
             .value;
 
-
     const newPassword =
         document
             .getElementById(
                 "newAdminPassword"
             )
             .value;
-
 
     const confirmPassword =
         document
@@ -2109,13 +2021,11 @@ async function changeAdminPassword() {
             )
             .value;
 
-
     const message =
         document
             .getElementById(
                 "passwordMessage"
             );
-
 
     if (
         !currentPassword ||
@@ -2130,11 +2040,7 @@ async function changeAdminPassword() {
 
     }
 
-
-    if (
-        newPassword !==
-        confirmPassword
-    ) {
+    if (newPassword !== confirmPassword) {
 
         message.innerText =
             "❌ New passwords match nahi kar rahe.";
@@ -2142,7 +2048,6 @@ async function changeAdminPassword() {
         return;
 
     }
-
 
     try {
 
@@ -2167,16 +2072,17 @@ async function changeAdminPassword() {
                                 currentPassword,
 
                             new_password:
-                                newPassword
+                                newPassword,
+
+                            confirm_password:
+                                confirmPassword
 
                         })
                 }
             );
 
-
         const data =
             await response.json();
-
 
         message.innerText =
             data.success
@@ -2207,41 +2113,26 @@ async function createNotice() {
 
     const title =
         document
-            .getElementById(
-                "noticeTitle"
-            )
+            .getElementById("noticeTitle")
             .value
             .trim();
-
 
     const messageText =
         document
-            .getElementById(
-                "noticeMessage"
-            )
+            .getElementById("noticeMessage")
             .value
             .trim();
 
-
     const active =
         document
-            .getElementById(
-                "noticeActive"
-            )
+            .getElementById("noticeActive")
             .checked;
-
 
     const message =
         document
-            .getElementById(
-                "noticeMsg"
-            );
+            .getElementById("noticeMsg");
 
-
-    if (
-        !title ||
-        !messageText
-    ) {
+    if (!title || !messageText) {
 
         message.innerText =
             "❌ Title aur message dono bharo.";
@@ -2249,7 +2140,6 @@ async function createNotice() {
         return;
 
     }
-
 
     try {
 
@@ -2281,14 +2171,10 @@ async function createNotice() {
                 }
             );
 
-
         const data =
             await response.json();
 
-
-        if (
-            data.success
-        ) {
+        if (data.success) {
 
             message.innerText =
                 "✅ Notice add ho gaya.";
@@ -2304,7 +2190,6 @@ async function createNotice() {
                     "noticeMessage"
                 )
                 .value = "";
-
 
             await loadAdminNotices();
 
@@ -2345,13 +2230,11 @@ async function loadAdminNotices() {
                 "adminNotices"
             );
 
-
     if (!box) {
 
         return;
 
     }
-
 
     try {
 
@@ -2364,33 +2247,23 @@ async function loadAdminNotices() {
                 }
             );
 
-
         const notices =
             await response.json();
 
-
         if (
-            !Array.isArray(
-                notices
-            ) ||
+            !Array.isArray(notices) ||
             notices.length === 0
         ) {
 
-            box.innerHTML =
-                `
-                <p
-                    style="
-                        color:#aaa;
-                    "
-                >
+            box.innerHTML = `
+                <p style="color:#aaa;">
                     Abhi koi notice nahi hai.
                 </p>
-                `;
+            `;
 
             return;
 
         }
-
 
         box.innerHTML =
             notices
@@ -2403,21 +2276,15 @@ async function loadAdminNotices() {
 
                         <h3>
                             📌
-                            ${escapeHTML(
-                                n.title
-                            )}
+                            ${escapeHTML(n.title)}
                         </h3>
 
                         <p>
-                            ${escapeHTML(
-                                n.message
-                            )}
+                            ${escapeHTML(n.message)}
                         </p>
 
                         <p
-                            style="
-                                color:#aaa;
-                            "
+                            style="color:#aaa;"
                         >
 
                             Status:
@@ -2429,14 +2296,9 @@ async function loadAdminNotices() {
 
                         </p>
 
-
                         <button
                             class="danger"
-                            onclick="
-                                deleteNotice(
-                                    ${n.id}
-                                )
-                            "
+                            onclick="deleteNotice(${n.id})"
                         >
                             🗑️ Delete
                         </button>
@@ -2451,12 +2313,11 @@ async function loadAdminNotices() {
 
     catch (error) {
 
-        box.innerHTML =
-            `
+        box.innerHTML = `
             <p style="color:#f55;">
                 Notices load nahi ho paaye.
             </p>
-            `;
+        `;
 
     }
 
@@ -2479,7 +2340,6 @@ async function deleteNotice(id) {
 
     }
 
-
     try {
 
         const response =
@@ -2493,14 +2353,10 @@ async function deleteNotice(id) {
                 }
             );
 
-
         const data =
             await response.json();
 
-
-        if (
-            data.success
-        ) {
+        if (data.success) {
 
             await loadAdminNotices();
 
@@ -2564,30 +2420,20 @@ async function checkAdminSession() {
                 }
             );
 
-
         const data =
             await response.json();
 
-
-        if (
-            data.logged_in
-        ) {
+        if (data.logged_in) {
 
             document
-                .getElementById(
-                    "loginBox"
-                )
+                .getElementById("loginBox")
                 .classList
                 .add("hidden");
 
-
             document
-                .getElementById(
-                    "dashboard"
-                )
+                .getElementById("dashboard")
                 .classList
                 .remove("hidden");
-
 
             await loadTournaments();
 
