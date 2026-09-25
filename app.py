@@ -78,23 +78,12 @@ with app.app_context():
 
                 with db.engine.begin() as connection:
 
-                    if db.engine.dialect.name == "postgresql":
-
-                        connection.execute(
-                            text(
-                                "ALTER TABLE tournament "
-                                "ADD COLUMN rules TEXT DEFAULT ''"
-                            )
+                    connection.execute(
+                        text(
+                            "ALTER TABLE tournament "
+                            "ADD COLUMN rules TEXT DEFAULT ''"
                         )
-
-                    else:
-
-                        connection.execute(
-                            text(
-                                "ALTER TABLE tournament "
-                                "ADD COLUMN rules TEXT DEFAULT ''"
-                            )
-                        )
+                    )
 
                 print("Tournament rules column added successfully.")
 
@@ -376,15 +365,16 @@ def signup():
 )
 def login():
 
-    data = request.get_json() or {}
+    # JSON body safely read karega
+    data = request.get_json(silent=True) or {}
 
-    # Dono names support karega:
-    # identifier + login
+    # Frontend ke multiple possible field names support
     identifier = str(
-        data.get(
-            "identifier",
-            data.get("login", "")
-        )
+        data.get("identifier")
+        or data.get("login")
+        or data.get("username")
+        or data.get("email")
+        or ""
     ).strip().lower()
 
     password = str(
@@ -857,7 +847,6 @@ def get_tournaments():
 
             "date_time": tournament.date_time,
 
-            # NEW
             "rules": tournament.rules or "",
 
             "registered": registered,
@@ -1104,7 +1093,6 @@ def create_tournament():
     ).strip()
 
 
-    # NEW
     rules = str(
         data.get(
             "rules",
@@ -1238,7 +1226,6 @@ def create_tournament():
 
         date_time=date_time,
 
-        # NEW
         rules=rules
     )
 
