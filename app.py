@@ -1268,7 +1268,7 @@ def register_player(tournament_id):
     if current_balance < entry_fee:
         return jsonify({
             "success": False,
-            "message": f"Insufficient tokens. Entry fee: {entry_fee}, balance: {current_balance}.",
+            "message": f"Registration ke liye {entry_fee} tokens chahiye. Aapke wallet me {current_balance} tokens hain. Admin se tokens add karwao.",
             "entry_fee": entry_fee,
             "balance": current_balance
         }), 400
