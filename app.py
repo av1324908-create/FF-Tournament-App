@@ -1322,6 +1322,69 @@ def register_player(tournament_id):
 
 
 # =========================================================
+# ADMIN DELETE PLAYER ACCOUNT
+# =========================================================
+
+@app.route("/api/admin/users/<int:user_id>", methods=["DELETE"])
+def delete_player_account(user_id):
+
+    if not is_admin_logged_in():
+        return jsonify({"success": False, "message": "Admin login required."}), 401
+
+    user = db.session.get(User, user_id)
+
+    if user is None:
+        return jsonify({"success": False, "message": "Player account nahi mila."}), 404
+
+    try:
+        # User ke tournament registrations aur unke player entries remove karo.
+        registrations = UserTournamentRegistration.query.filter_by(user_id=user.id).all()
+        player_ids = [r.player_id for r in registrations if r.player_id]
+
+        if player_ids:
+            RegistrationDetail.query.filter(
+                RegistrationDetail.player_id.in_(player_ids)
+            ).delete(synchronize_session=False)
+
+            Player.query.filter(
+                Player.id.in_(player_ids)
+            ).delete(synchronize_session=False)
+
+        UserTournamentRegistration.query.filter_by(user_id=user.id).delete(
+            synchronize_session=False
+        )
+
+        PrivateRedeemCode.query.filter_by(user_id=user.id).delete(
+            synchronize_session=False
+        )
+
+        # Wallet/transaction history UID based hai, isliye account delete ke saath
+        # wallet aur uski token history bhi remove kar rahe hain.
+        TokenTransaction.query.filter_by(player_uid=user.uid).delete(
+            synchronize_session=False
+        )
+
+        Wallet.query.filter_by(player_uid=user.uid).delete(
+            synchronize_session=False
+        )
+
+        db.session.delete(user)
+        db.session.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Player account successfully delete ho gaya."
+        })
+
+    except Exception:
+        db.session.rollback()
+        return jsonify({
+            "success": False,
+            "message": "Account delete karte waqt error aa gaya."
+        }), 500
+
+
+# =========================================================
 # PRIVATE REDEEM CODES
 # =========================================================
 
