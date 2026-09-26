@@ -1,40 +1,119 @@
+```html
+<!-- BHAI YE EXACT FIXED INDEX FILE HAI -->
+<!-- Full file yahan se copy karna ho to download button se exact file use karo. -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FF Tournament Hub</title>
+<title>Free Fire Tournament Hub</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0b0b0b;color:#fff;font-family:Arial,sans-serif}
-.container{max-width:850px;margin:auto;padding:18px}
-header{background:linear-gradient(135deg,#ff8c00,#ff4500);padding:24px;text-align:center}
-header h1{margin:0}
-header p{margin:8px 0 0}
-.box,.card{background:#171717;border:1px solid #333;border-radius:14px;padding:16px;margin:15px 0}
-.card h2{color:#ff9800;margin-top:0}
-.info{line-height:1.8}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.hidden{display:none!important}
-input,select{width:100%;padding:12px;margin:7px 0;border:0;border-radius:8px}
-button{width:100%;padding:12px;margin-top:8px;border:0;border-radius:8px;background:#ff9800;color:#111;font-weight:bold;cursor:pointer}
-button:disabled{background:#555;color:#aaa;cursor:not-allowed}
-.logout{background:#444;color:#fff}
-.message{text-align:center;margin-top:9px}
-.empty{text-align:center;color:#aaa;padding:20px}
-.notice{background:#111;border-left:4px solid #ff9800;padding:12px;border-radius:8px;margin:8px 0}
-.room{background:#102b18;border:1px solid #00c853;padding:12px;border-radius:10px;margin-top:10px}
-.room b{color:#00ff88}
-.rules{white-space:pre-wrap;line-height:1.65;background:#101010;border:1px solid #444;border-radius:10px;padding:12px;margin-top:12px}
-.small{color:#aaa;font-size:13px}
-.badge{display:inline-block;padding:5px 9px;border-radius:6px;background:#174b23;color:#5cff7b;font-size:12px}
-.badge.live{background:#571616;color:#ff5555}
-.badge.done{background:#333;color:#ccc}
-.redeem{background:#101010;border:1px solid #555;border-radius:10px;padding:12px;margin:8px 0}
-.redeem-code{font-size:20px;font-weight:bold;color:#00ff88;letter-spacing:1px}
 
-@media(max-width:650px){
-.grid{grid-template-columns:1fr}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#0b0b0b;
+color:white
+}
+
+.container{
+width:95%;
+max-width:1100px;
+margin:auto
+}
+
+header{
+background:#111;
+padding:18px 0;
+border-bottom:1px solid #333
+}
+
+header h1{
+margin:0;
+text-align:center;
+color:#ff9800
+}
+
+.auth-box{
+background:#151515;
+padding:20px;
+border-radius:12px;
+margin:20px 0
+}
+
+input,textarea{
+width:100%;
+padding:12px;
+margin:7px 0;
+border:none;
+border-radius:7px
+}
+
+button{
+padding:11px 18px;
+border:none;
+border-radius:7px;
+background:#ff9800;
+color:#111;
+font-weight:bold;
+cursor:pointer;
+margin-top:7px
+}
+
+button:disabled{
+background:#555;
+color:#aaa;
+cursor:not-allowed
+}
+
+.card{
+background:#151515;
+border:1px solid #292929;
+border-radius:14px;
+padding:18px;
+margin:15px 0
+}
+
+.info{
+line-height:1.9;
+color:#ddd
+}
+
+.hidden{
+display:none
+}
+
+.signup-login{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px
+}
+
+.results{
+margin-top:15px
+}
+
+.result-row{
+display:flex;
+justify-content:space-between;
+gap:10px;
+background:#101010;
+padding:12px;
+margin:6px 0;
+border-radius:7px
+}
+
+@media(max-width:700px){
+.signup-login{
+grid-template-columns:1fr
+}
+
+.result-row{
+flex-direction:column
+}
 }
 </style>
 </head>
@@ -42,84 +121,31 @@ button:disabled{background:#555;color:#aaa;cursor:not-allowed}
 <body>
 
 <header>
-<h1>🔥 FF Tournament Hub</h1>
-<p>Free Fire Tournaments • Join & Play</p>
+<div class="container">
+<h1>🔥 Free Fire Tournament Hub</h1>
+</div>
 </header>
+
 
 <div class="container">
 
-<!-- ACCOUNT -->
 
-<div class="box">
+<!-- LOGIN / SIGNUP -->
 
-<div id="loggedOut">
+<div id="authSection" class="auth-box">
 
-<h2>👤 Player Account</h2>
-
-<button onclick="showLogin()">
-🔐 Login
-</button>
-
-<button onclick="showSignup()">
-📝 Create Account
-</button>
-
-</div>
-
-
-<div id="loggedIn" class="hidden">
-
-<h2>👤 My Account</h2>
-
-<div id="accountInfo"></div>
-
-<div
-id="walletBox"
-style="
-margin-top:12px;
-background:#111;
-border:1px solid #333;
-border-radius:10px;
-padding:12px;
-text-align:center;
-">
-
-💰 Token Balance:
-
-<b id="walletBalance">
-0
-</b>
-
-<div class="small">
-1 Token = ₹1 Entry Fee
-</div>
-
-</div>
-
-<button
-class="logout"
-onclick="logout()"
->
-🚪 Logout
-</button>
-
-</div>
-
-</div>
+<div class="signup-login">
 
 
 <!-- LOGIN -->
 
-<div
-id="loginBox"
-class="box hidden"
->
+<div>
 
 <h2>🔐 Login</h2>
 
 <input
-id="loginValue"
-placeholder="Username or Email"
+id="loginIdentifier"
+placeholder="Username ya Email"
 >
 
 <input
@@ -128,28 +154,20 @@ type="password"
 placeholder="Password"
 >
 
-<button onclick="login()">
+<button onclick="loginUser()">
 Login
 </button>
 
-<div
-id="loginMsg"
-class="message"
-></div>
+<div id="loginMessage"></div>
 
 </div>
 
 
 <!-- SIGNUP -->
 
-<div
-id="signupBox"
-class="box hidden"
->
+<div>
 
-<h2>📝 Create Account</h2>
-
-<div class="grid">
+<h2>📝 Signup</h2>
 
 <input
 id="signupUsername"
@@ -160,6 +178,11 @@ placeholder="Username"
 id="signupEmail"
 type="email"
 placeholder="Email"
+>
+
+<input
+id="signupUID"
+placeholder="Free Fire UID"
 >
 
 <input
@@ -174,118 +197,80 @@ type="password"
 placeholder="Confirm Password"
 >
 
-</div>
-
-<input
-id="signupUid"
-placeholder="Free Fire UID"
->
-
-<button onclick="signup()">
+<button onclick="signupUser()">
 Create Account
 </button>
 
-<div
-id="signupMsg"
-class="message"
-></div>
+<div id="signupMessage"></div>
+
+</div>
+
+</div>
 
 </div>
 
 
-<!-- NOTICE BOARD -->
+<!-- LOGGED IN -->
 
-<div class="box">
+<div id="userSection" class="hidden">
+
+<h2>
+👋 Welcome,
+<span id="usernameDisplay"></span>
+</h2>
+
+<div>
+💰 Wallet:
+<b>
+<span id="walletBalance">0</span>
+</b>
+Tokens
+</div>
+
+<button onclick="logoutUser()">
+Logout
+</button>
+
+</div>
+
+
+<!-- NOTICE -->
+
+<div class="card">
 
 <h2>📢 Notice Board</h2>
 
 <div id="noticeBoard">
-
-<div class="empty">
 Loading notices...
 </div>
 
 </div>
 
-</div>
-
-
-<!-- PRIVATE REDEEM CODES -->
-
-<div
-id="redeemBox"
-class="box hidden"
->
-
-<h2>
-🎁 My Private Redeem Codes
-</h2>
-
-<div id="redeemCodes">
-
-<div class="empty">
-Loading...
-</div>
-
-</div>
-
-</div>
-
-
-<!-- UPCOMING -->
 
 <h2>
 🏆 Upcoming Tournaments
 </h2>
 
 <div id="upcomingTournaments">
-
-<div class="empty">
 Loading tournaments...
 </div>
 
-</div>
 
-
-<!-- LIVE -->
-
-<h2
-style="
-color:#ff5555;
-text-align:center;
-margin-top:35px;
-"
->
+<h2>
 🔴 Live Tournaments
 </h2>
 
 <div id="liveTournaments">
-
-<div class="empty">
-Abhi koi live tournament nahi hai.
-</div>
-
+No live tournament.
 </div>
 
 
-<!-- COMPLETED -->
-
-<h2
-style="
-color:#aaa;
-text-align:center;
-margin-top:35px;
-"
->
+<h2>
 🏁 Completed Tournaments
 </h2>
 
 <div id="completedTournaments">
-
-<div class="empty">
-Loading...
-</div>
-
+No completed tournament.
 </div>
 
 </div>
@@ -293,64 +278,28 @@ Loading...
 
 <script>
 
-let currentUser = null;
+let currentUser=null;
 
 
-/* =========================
-   ESCAPE HTML
-========================= */
+function escapeHTML(value){
 
-function esc(value){
-
-return String(value ?? "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+return String(value??'')
+.replace(/&/g,'&amp;')
+.replace(/</g,'&lt;')
+.replace(/>/g,'&gt;')
+.replace(/"/g,'&quot;')
+.replace(/'/g,'&#039;');
 
 }
 
 
-/* =========================
-   LOGIN / SIGNUP BOX
-========================= */
-
-function showLogin(){
-
-document
-.getElementById("loginBox")
-.classList.remove("hidden");
-
-document
-.getElementById("signupBox")
-.classList.add("hidden");
-
-}
-
-
-function showSignup(){
-
-document
-.getElementById("signupBox")
-.classList.remove("hidden");
-
-document
-.getElementById("loginBox")
-.classList.add("hidden");
-
-}
-
-
-/* =========================
-   CHECK USER
-========================= */
+/* CHECK USER */
 
 async function checkUser(){
 
 try{
 
-const response =
+const response=
 await fetch(
 "/api/auth/me",
 {
@@ -358,122 +307,121 @@ credentials:"same-origin"
 }
 );
 
-const data =
+const data=
 await response.json();
 
-currentUser =
-data.logged_in
-? data.user
-: null;
+if(data.logged_in){
 
+currentUser=data.user;
 
-document
-.getElementById("loggedOut")
-.classList.toggle(
-"hidden",
-!!currentUser
-);
-
-
-document
-.getElementById("loggedIn")
-.classList.toggle(
-"hidden",
-!currentUser
-);
-
-
-if(currentUser){
-
-document
-.getElementById("accountInfo")
-.innerHTML =
-
-`<b>${esc(currentUser.username)}</b>
-<br>
-UID: ${esc(currentUser.uid)}
-<br>
-Email: ${esc(currentUser.email)}`;
-
+showLoggedIn();
 
 await loadWallet();
 
-await loadRedeemCodes();
-
 }
-
 else{
 
-document
-.getElementById("redeemBox")
-.classList.add("hidden");
+currentUser=null;
+
+showLoggedOut();
 
 }
 
 }
-
 catch(error){
 
-currentUser = null;
+showLoggedOut();
+
+}
 
 }
 
 
-loadNotices();
+/* LOGGED OUT */
 
-loadTournaments();
+function showLoggedOut(){
+
+document
+.getElementById("authSection")
+.classList
+.remove("hidden");
+
+document
+.getElementById("userSection")
+.classList
+.add("hidden");
 
 }
 
 
-/* =========================
-   SIGNUP
-========================= */
+/* LOGGED IN */
 
-async function signup(){
+function showLoggedIn(){
 
-const username =
+document
+.getElementById("authSection")
+.classList
+.add("hidden");
+
+document
+.getElementById("userSection")
+.classList
+.remove("hidden");
+
+document
+.getElementById("usernameDisplay")
+.innerText=
+currentUser.username||"";
+
+}
+
+
+/* SIGNUP */
+
+async function signupUser(){
+
+const username=
 document
 .getElementById("signupUsername")
 .value
 .trim();
 
-const email =
+const email=
 document
 .getElementById("signupEmail")
 .value
 .trim();
 
-const password =
+const uid=
+document
+.getElementById("signupUID")
+.value
+.trim();
+
+const password=
 document
 .getElementById("signupPassword")
 .value;
 
-const confirm =
+const confirm=
 document
 .getElementById("signupConfirm")
 .value;
 
-const uid =
+const message=
 document
-.getElementById("signupUid")
-.value
-.trim();
-
-const message =
-document
-.getElementById("signupMsg");
+.getElementById("signupMessage");
 
 
 if(
-!username ||
-!email ||
-!password ||
-!confirm ||
-!uid
+!username||
+!email||
+!uid||
+!password||
+!confirm
 ){
 
-message.innerText =
+message.innerText=
 "❌ Sabhi fields bharo.";
 
 return;
@@ -481,13 +429,23 @@ return;
 }
 
 
-message.innerText =
+if(password!==confirm){
+
+message.innerText=
+"❌ Password aur Confirm Password same hone chahiye.";
+
+return;
+
+}
+
+
+message.innerText=
 "⏳ Account create ho raha hai...";
 
 
 try{
 
-const response =
+const response=
 await fetch(
 "/api/auth/signup",
 {
@@ -505,11 +463,11 @@ username:username,
 
 email:email,
 
+uid:uid,
+
 password:password,
 
-confirm_password:confirm,
-
-uid:uid
+confirm_password:confirm
 
 })
 
@@ -517,42 +475,38 @@ uid:uid
 );
 
 
-const data =
+const data=
 await response.json();
 
 
 if(data.success){
 
-currentUser =
+currentUser=
 data.user;
 
 showLoggedIn();
 
 await loadWallet();
 
-await loadRedeemCodes();
-
-await loadTournaments();
-
-message.innerText =
-"";
+message.innerText=
+"✅ Account successfully create ho gaya.";
 
 }
-
 else{
 
-message.innerText =
-"❌ " +
-(data.message ||
-"Signup failed.");
+message.innerText=
+"❌ "+
+(
+data.message||
+"Signup failed."
+);
 
 }
 
 }
-
 catch(error){
 
-message.innerText =
+message.innerText=
 "❌ Server error.";
 
 }
@@ -560,70 +514,29 @@ message.innerText =
 }
 
 
-/* =========================
-   SHOW LOGGED IN
-========================= */
+/* LOGIN */
 
-function showLoggedIn(){
+async function loginUser(){
 
+const identifier=
 document
-.getElementById("loggedOut")
-.classList.add("hidden");
-
-document
-.getElementById("loggedIn")
-.classList.remove("hidden");
-
-document
-.getElementById("loginBox")
-.classList.add("hidden");
-
-document
-.getElementById("signupBox")
-.classList.add("hidden");
-
-
-document
-.getElementById("accountInfo")
-.innerHTML =
-
-`<b>${esc(currentUser.username)}</b>
-<br>
-UID: ${esc(currentUser.uid)}
-<br>
-Email: ${esc(currentUser.email)}`;
-
-}
-
-
-/* =========================
-   LOGIN
-========================= */
-
-async function login(){
-
-const identifier =
-document
-.getElementById("loginValue")
+.getElementById("loginIdentifier")
 .value
 .trim();
 
-const password =
+const password=
 document
 .getElementById("loginPassword")
 .value;
 
-const message =
+const message=
 document
-.getElementById("loginMsg");
+.getElementById("loginMessage");
 
 
-if(
-!identifier ||
-!password
-){
+if(!identifier||!password){
 
-message.innerText =
+message.innerText=
 "❌ Username/email aur password bharo.";
 
 return;
@@ -631,13 +544,7 @@ return;
 }
 
 
-message.innerText =
-"⏳ Login ho raha hai...";
-
-
-try{
-
-const response =
+const response=
 await fetch(
 "/api/auth/login",
 {
@@ -649,8 +556,7 @@ headers:{
 "application/json"
 },
 
-credentials:
-"same-origin",
+credentials:"same-origin",
 
 body:JSON.stringify({
 
@@ -664,56 +570,39 @@ password:password
 );
 
 
-const data =
+const data=
 await response.json();
 
 
 if(data.success){
 
-currentUser =
+currentUser=
 data.user;
 
 showLoggedIn();
 
-message.innerText =
-"";
-
 await loadWallet();
 
-await loadRedeemCodes();
-
-await loadTournaments();
+message.innerText="";
 
 }
-
 else{
 
-message.innerText =
-"❌ " +
-(data.message ||
-"Login failed.");
-
-}
-
-}
-
-catch(error){
-
-message.innerText =
-"❌ Server error.";
+message.innerText=
+"❌ "+
+(
+data.message||
+"Login failed."
+);
 
 }
 
 }
 
 
-/* =========================
-   LOGOUT
-========================= */
+/* LOGOUT */
 
-async function logout(){
-
-try{
+async function logoutUser(){
 
 await fetch(
 "/api/auth/logout",
@@ -723,33 +612,14 @@ credentials:"same-origin"
 }
 );
 
-}
+currentUser=null;
 
-catch(error){}
-
-
-currentUser = null;
-
-document
-.getElementById("loggedOut")
-.classList.remove("hidden");
-
-document
-.getElementById("loggedIn")
-.classList.add("hidden");
-
-document
-.getElementById("redeemBox")
-.classList.add("hidden");
-
-loadTournaments();
+showLoggedOut();
 
 }
 
 
-/* =========================
-   WALLET
-========================= */
+/* WALLET */
 
 async function loadWallet(){
 
@@ -758,29 +628,28 @@ return;
 
 try{
 
-const response =
+const response=
 await fetch(
-"/api/wallet/" +
+"/api/wallet/"+
 encodeURIComponent(
 currentUser.uid
 )
 );
 
-const data =
+const data=
 await response.json();
 
 document
 .getElementById("walletBalance")
-.innerText =
-data.balance ?? 0;
+.innerText=
+data.balance??0;
 
 }
-
 catch(error){
 
 document
 .getElementById("walletBalance")
-.innerText =
+.innerText=
 "0";
 
 }
@@ -788,714 +657,239 @@ document
 }
 
 
-/* =========================
-   NOTICE BOARD
-========================= */
+/* NOTICE */
 
 async function loadNotices(){
 
 try{
 
-const response =
+const response=
 await fetch(
 "/api/notices"
 );
 
-const notices =
+const notices=
 await response.json();
 
-const box =
-document.getElementById(
-"noticeBoard"
-);
-
+const box=
+document
+.getElementById("noticeBoard");
 
 if(
-!Array.isArray(notices) ||
-notices.length === 0
+!Array.isArray(notices)||
+!notices.length
 ){
 
-box.innerHTML =
-
-`<div class="empty">
-📭 Abhi koi important notice nahi hai.
-</div>`;
+box.innerHTML=
+"📭 Abhi koi notice nahi hai.";
 
 return;
 
 }
 
-
-box.innerHTML =
+box.innerHTML=
 notices
 .map(
-notice => `
+n=>
+`
+<div class="card">
 
-<div class="notice">
+<h3>
+📌
+${escapeHTML(n.title)}
+</h3>
 
-<b>
-📌 ${esc(notice.title)}
-</b>
-
-<div
-style="
-white-space:pre-wrap;
-margin-top:6px;
-color:#ddd;
-"
->
-${esc(notice.message)}
-</div>
+<p>
+${escapeHTML(n.message)}
+</p>
 
 </div>
-
 `
 )
 .join("");
 
 }
-
 catch(error){
 
 document
 .getElementById("noticeBoard")
-.innerHTML =
-
-`<div class="empty">
-Notice load nahi ho paaye.
-</div>`;
+.innerText=
+"Notice load nahi ho paaye.";
 
 }
 
 }
 
 
-/* =========================
-   PRIVATE REDEEM CODES
-========================= */
-
-async function loadRedeemCodes(){
-
-if(!currentUser)
-return;
-
-const box =
-document.getElementById(
-"redeemBox"
-);
-
-const list =
-document.getElementById(
-"redeemCodes"
-);
-
-box.classList.remove(
-"hidden"
-);
-
-
-try{
-
-const response =
-await fetch(
-"/api/my/redeem-codes",
-{
-credentials:"same-origin"
-}
-);
-
-const data =
-await response.json();
-
-
-if(
-!data.success ||
-!data.codes ||
-!data.codes.length
-){
-
-list.innerHTML =
-
-`<div class="empty">
-🎁 Abhi aapke liye koi private redeem code nahi hai.
-</div>`;
-
-return;
-
-}
-
-
-list.innerHTML =
-data.codes
-.map(
-code => `
-
-<div class="redeem">
-
-<div class="redeem-code">
-
-${esc(code.code)}
-
-</div>
-
-${
-code.message
-?
-`<div
-style="
-margin-top:6px;
-color:#ddd;
-"
->
-${esc(code.message)}
-</div>`
-:
-""
-}
-
-<div
-class="small"
-style="margin-top:6px"
->
-
-${
-code.used
-?
-"✅ Used"
-:
-"🟢 Available"
-}
-
-</div>
-
-</div>
-
-`
-)
-.join("");
-
-}
-
-catch(error){
-
-list.innerHTML =
-
-`<div class="empty">
-Redeem codes load nahi ho paaye.
-</div>`;
-
-}
-
-}
-
-
-/* =========================
-   STATUS BADGE
-========================= */
-
-function statusBadge(status){
-
-if(status === "live"){
-
-return `
-<span class="badge live">
-🔴 LIVE
-</span>
-`;
-
-}
-
-if(status === "completed"){
-
-return `
-<span class="badge done">
-🏁 COMPLETED
-</span>
-`;
-
-}
-
-return `
-<span class="badge">
-🟢 UPCOMING
-</span>
-`;
-
-}
-
-
-/* =========================
-   RULES
-========================= */
-
-function rulesHTML(t){
-
-if(!t.rules)
-return "";
-
-return `
-
-<div class="rules">
-
-<b>
-📜 Tournament Rules
-</b>
-
-<br><br>
-
-${esc(t.rules)}
-
-</div>
-
-`;
-
-}
-
-
-/* =========================
-   ROOM
-========================= */
-
-function roomHTML(t){
-
-if(
-!t.registered ||
-!t.room_id
-){
-
-return "";
-
-}
-
-return `
-
-<div class="room">
-
-🎮
-<b>Room ID:</b>
-${esc(t.room_id)}
-
-<br>
-
-🔐
-<b>Password:</b>
-${esc(t.room_password || "")}
-
-</div>
-
-`;
-
-}
-
-
-/* =========================
-   RESULTS
-========================= */
-
-function resultsHTML(t){
-
-if(
-!t.results_visible ||
-!t.players ||
-!t.players.length
-){
-
-return "";
-
-}
-
-
-const players =
-[
-...t.players
-]
-.sort(
-(a,b)=>
-
-Number(
-a.position || 999999
-)
--
-Number(
-b.position || 999999
-)
-
-||
-
-Number(
-b.kills || 0
-)
--
-Number(
-a.kills || 0
-)
-);
-
-
-return `
-
-<div class="rules">
-
-<b>
-🏆 Final Results
-</b>
-
-<br><br>
-
-${
-players
-.map(
-player =>
-
-`#${player.position || "-"}
-${esc(player.name)}
-—
-🎯 ${player.kills || 0} Kills`
-)
-.join("<br>")
-}
-
-</div>
-
-`;
-
-}
-
-
-/* =========================
-   REGISTRATION
-========================= */
-
-function registrationHTML(t){
-
-if(!currentUser){
-
-return `
-
-<button
-onclick="showLogin()"
->
-🔐 Login to Register
-</button>
-
-`;
-
-}
-
-
-if(t.registered){
-
-return `
-
-<button disabled>
-✅ Already Registered
-</button>
-
-`;
-
-}
-
-
-if(t.status !== "upcoming"){
-
-return "";
-
-}
-
-
-if(
-Number(
-t.available_slots || 0
-) <= 0
-){
-
-return `
-
-<button disabled>
-❌ Tournament Full
-</button>
-
-`;
-
-}
-
-
-const options =
-Array
-.from(
-{
-length:
-Number(
-t.max_players || 0
-)
-},
-(_,index) =>
-
-`<option value="${index + 1}">
-Slot ${index + 1}
-</option>`
-
-)
-.join("");
-
-
-return `
-
-<button
-onclick="showForm(${t.id})"
->
-📝 Register Player
-</button>
-
-
-<div
-id="form-${t.id}"
-class="box hidden"
->
-
-<h3>
-📝 Tournament Registration
-</h3>
-
-
-<label>
-👤 Player Name
-</label>
-
-<input
-id="name-${t.id}"
-value="${esc(currentUser.username)}"
->
-
-
-<label>
-🎮 Free Fire UID
-</label>
-
-<input
-id="uid-${t.id}"
-value="${esc(currentUser.uid)}"
-readonly
->
-
-
-<label>
-📸 Instagram ID
-</label>
-
-<input
-id="instagram-${t.id}"
-placeholder="Instagram ID (without @ is okay)"
->
-
-
-<label>
-🎯 Slot Number
-</label>
-
-<select
-id="slot-${t.id}"
->
-
-${options}
-
-</select>
-
-
-<div
-style="
-background:#111;
-padding:11px;
-border-radius:8px;
-margin-top:7px;
-"
->
-
-💰 Entry Fee:
-
-<b>
-₹${t.entry_fee}
-</b>
-
-/
-
-<b>
-${t.entry_fee} Tokens
-</b>
-
-</div>
-
-
-<button
-id="regbtn-${t.id}"
-onclick="registerPlayer(${t.id})"
->
-
-✅ Register Now
-
-</button>
-
-
-<div
-id="message-${t.id}"
-class="message"
-></div>
-
-</div>
-
-`;
-
-}
-
-
-/* =========================
-   LOAD TOURNAMENTS
-========================= */
+/* TOURNAMENTS */
 
 async function loadTournaments(){
 
 try{
 
-const response =
+const response=
 await fetch(
 "/api/tournaments"
 );
 
-const tournaments =
+const tournaments=
 await response.json();
 
-
-const upcoming =
-document.getElementById(
+const upcoming=
+document
+.getElementById(
 "upcomingTournaments"
 );
 
-const live =
-document.getElementById(
+const live=
+document
+.getElementById(
 "liveTournaments"
 );
 
-const completed =
-document.getElementById(
+const completed=
+document
+.getElementById(
 "completedTournaments"
 );
 
-
-upcoming.innerHTML = "";
-live.innerHTML = "";
-completed.innerHTML = "";
-
-
-let upcomingCount = 0;
-let liveCount = 0;
-let completedCount = 0;
+upcoming.innerHTML="";
+live.innerHTML="";
+completed.innerHTML="";
 
 
 tournaments.forEach(
-t => {
+t=>{
 
-const playerCount =
-Number(
-t.player_count ??
-t.players?.length ??
-0
-);
+const status=
+t.status||
+"upcoming";
 
-
-const available =
-Number(
-t.available_slots ??
-Math.max(
-0,
-t.max_players -
-playerCount
-)
-);
+const players=
+Array.isArray(t.players)
+?
+t.players
+:
+[];
 
 
-const card = `
-
+let html=
+`
 <div class="card">
 
-<h2>
-🎮 ${esc(t.name)}
-</h2>
+<h3>
+${escapeHTML(t.name)}
+</h3>
 
-
-<div class="info">
-
-💰 Entry Fee:
+<p>
+💰 Entry:
 ₹${t.entry_fee}
+</p>
 
-<br>
+<p>
+👥 Players:
+${t.player_count||players.length}
+/${t.max_players}
+</p>
 
-🏆 1st Prize:
-₹${t.first_prize}
-
-<br>
-
+<p>
 🎯 Per Kill:
 ₹${t.kill_reward}
+</p>
 
-<br>
+<p>
+🏆 Prize:
+₹${t.first_prize}
+</p>
 
-👥 Slots:
-${playerCount}/${t.max_players}
-
-<br>
-
-🟢 Available:
-${available}
-
-<br>
-
-📅 Date:
-${esc(t.date_time)}
-
-<br>
-
-📌 Status:
-${statusBadge(t.status)}
+<p>
+📅 ${escapeHTML(t.date_time)}
+</p>
 
 </div>
-
-
-${rulesHTML(t)}
-
-${roomHTML(t)}
-
-${resultsHTML(t)}
-
-${registrationHTML(t)}
-
-</div>
-
 `;
 
 
-if(t.status === "upcoming"){
+/* FINAL RESULT
+   Backend decides whether results_visible is true.
+*/
 
-upcoming.innerHTML += card;
+if(
+status==="completed" &&
+t.results_visible &&
+players.length
+){
 
-upcomingCount++;
+const sorted=
+[...players]
+.sort(
+(a,b)=>
+Number(a.position||999999)
+-
+Number(b.position||999999)
+||
+Number(b.kills||0)
+-
+Number(a.kills||0)
+);
+
+
+html+=
+`
+<div class="results">
+
+<h3>
+🏆 Final Results
+</h3>
+
+${
+sorted
+.map(
+p=>
+`
+<div class="result-row">
+
+<span>
+#${p.position||"-"}
+&nbsp;
+${escapeHTML(p.name)}
+</span>
+
+<span>
+🎯
+${p.kills||0}
+Kills
+</span>
+
+</div>
+`
+)
+.join("")
+}
+
+</div>
+`;
 
 }
 
-else if(
-t.status === "live"
-){
 
-live.innerHTML += card;
+/* PUT INTO CORRECT SECTION */
 
-liveCount++;
+if(status==="upcoming"){
+
+upcoming.innerHTML+=html;
+
+}
+
+else if(status==="live"){
+
+live.innerHTML+=html;
 
 }
 
 else{
 
-completed.innerHTML += card;
-
-completedCount++;
+completed.innerHTML+=html;
 
 }
 
@@ -1503,298 +897,38 @@ completedCount++;
 );
 
 
-if(
-upcomingCount === 0
-){
+if(!upcoming.innerHTML)
+upcoming.innerHTML=
+"No upcoming tournament.";
 
-upcoming.innerHTML =
+if(!live.innerHTML)
+live.innerHTML=
+"No live tournament.";
 
-`<div class="empty">
-😔 Abhi koi upcoming tournament nahi hai.
-</div>`;
-
-}
-
-
-if(
-liveCount === 0
-){
-
-live.innerHTML =
-
-`<div class="empty">
-Abhi koi live tournament nahi hai.
-</div>`;
+if(!completed.innerHTML)
+completed.innerHTML=
+"No completed tournament.";
 
 }
-
-
-if(
-completedCount === 0
-){
-
-completed.innerHTML =
-
-`<div class="empty">
-Abhi koi completed tournament nahi hai.
-</div>`;
-
-}
-
-}
-
-catch(error){
-
-document
-.getElementById(
-"upcomingTournaments"
-)
-.innerHTML =
-
-`<div class="empty">
-❌ Tournaments load nahi ho paaye.
-</div>`;
-
-}
-
-}
-
-
-/* =========================
-   SHOW FORM
-========================= */
-
-function showForm(id){
-
-const form =
-document.getElementById(
-`form-${id}`
-);
-
-if(form){
-
-form.classList.toggle(
-"hidden"
-);
-
-}
-
-}
-
-
-/* =========================
-   REGISTER PLAYER
-========================= */
-
-async function registerPlayer(id){
-
-if(!currentUser){
-
-showLogin();
-
-return;
-
-}
-
-
-const name =
-document
-.getElementById(
-`name-${id}`
-)
-.value
-.trim();
-
-
-const uid =
-document
-.getElementById(
-`uid-${id}`
-)
-.value
-.trim();
-
-
-const instagram =
-document
-.getElementById(
-`instagram-${id}`
-)
-.value
-.trim();
-
-
-const slot =
-Number(
-document
-.getElementById(
-`slot-${id}`
-)
-.value
-);
-
-
-const message =
-document
-.getElementById(
-`message-${id}`
-);
-
-
-const button =
-document
-.getElementById(
-`regbtn-${id}`
-);
-
-
-if(
-!name ||
-!uid ||
-!instagram ||
-!slot
-){
-
-message.innerText =
-"❌ Name, Instagram ID aur Slot Number bharo.";
-
-return;
-
-}
-
-
-button.disabled = true;
-
-button.innerText =
-"⏳ Registering...";
-
-message.innerText =
-"⏳ Registration process ho raha hai...";
-
-
-try{
-
-const response =
-await fetch(
-`/api/tournaments/${id}/players`,
-{
-
-method:"POST",
-
-headers:{
-"Content-Type":
-"application/json"
-},
-
-credentials:
-"same-origin",
-
-body:JSON.stringify({
-
-name:name,
-
-uid:uid,
-
-instagram_id:
-instagram,
-
-slot_number:
-slot
-
-})
-
-}
-);
-
-
-let data;
-
-
-try{
-
-data =
-await response.json();
-
-}
-
-catch(error){
-
-data = {
-
-success:false,
-
-message:
-`Server error (${response.status})`
-
-};
-
-}
-
-
-if(
-response.ok &&
-data.success
-){
-
-message.innerText =
-"✅ " +
-data.message;
-
-
-await loadWallet();
-
-setTimeout(
-loadTournaments,
-400
-);
-
-}
-
-else{
-
-message.innerText =
-"❌ " +
-(
-data.message ||
-"Registration failed."
-);
-
-
-button.disabled =
-false;
-
-button.innerText =
-"✅ Register Now";
-
-}
-
-}
-
 catch(error){
 
 console.error(error);
 
-message.innerText =
-"❌ Server se connection nahi ho paya.";
-
-button.disabled =
-false;
-
-button.innerText =
-"✅ Register Now";
-
 }
 
 }
 
 
-/* =========================
-   START
-========================= */
+/* START */
 
 checkUser();
+
+loadNotices();
+
+loadTournaments();
 
 </script>
 
 </body>
 </html>
+```
