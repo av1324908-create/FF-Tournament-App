@@ -237,7 +237,7 @@ def signup():
     )
 
     confirm_password = str(
-        data.get("confirm_password", "")
+        data.get("confirm_password", password)
     )
 
     uid = str(
@@ -261,12 +261,6 @@ def signup():
         return jsonify({
             "success": False,
             "message": "Password required."
-        }), 400
-
-    if not confirm_password:
-        return jsonify({
-            "success": False,
-            "message": "Confirm password required."
         }), 400
 
     if not uid:
@@ -555,7 +549,7 @@ def change_admin_password():
     )
 
     confirm_password = str(
-        data.get("confirm_password", "")
+        data.get("confirm_password", new_password)
     )
 
 
@@ -571,7 +565,7 @@ def change_admin_password():
             "message": "New password required."
         }), 400
 
-    if new_password != confirm_password:
+    if confirm_password and new_password != confirm_password:
         return jsonify({
             "success": False,
             "message": "New passwords match nahi kar rahe."
