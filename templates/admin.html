@@ -7,2075 +7,2611 @@
 <title>Admin Panel - Free Fire Tournament Hub</title>
 
 <style>
-* {
-    box-sizing: border-box;
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    background:#090d16;
+    color:#fff;
+    font-family:Arial,sans-serif;
 }
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b0f19;
-    color: #fff;
+.wrap{
+    width:94%;
+    max-width:1250px;
+    margin:25px auto;
 }
 
-.container {
-    width: 95%;
-    max-width: 1200px;
-    margin: 30px auto;
+.card{
+    background:#141b29;
+    border:1px solid #2a3448;
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:18px;
 }
 
-h1, h2, h3 {
-    margin-top: 0;
+h1,h2,h3{
+    margin-top:0;
 }
 
-.card {
-    background: #151b29;
-    border: 1px solid #293247;
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 20px;
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:18px;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+}
+
+.top button{
+    width:auto;
+}
+
+.hidden{
+    display:none!important;
 }
 
 input,
 select,
 textarea,
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 8px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    border: 1px solid #374151;
-    font-size: 15px;
+button{
+    width:100%;
+    padding:11px;
+    margin:6px 0 10px;
+    border-radius:8px;
+    border:1px solid #39455d;
+    font-size:14px;
 }
 
 input,
 select,
-textarea {
-    background: #0f1420;
-    color: white;
+textarea{
+    background:#0d1320;
+    color:#fff;
 }
 
-textarea {
-    min-height: 100px;
-    resize: vertical;
+textarea{
+    min-height:100px;
+    resize:vertical;
 }
 
-button {
-    background: #ff6b00;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
+button{
+    border:0;
+    background:#ff6b00;
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
 }
 
-button:hover {
-    opacity: 0.9;
+button:hover{
+    opacity:.9;
 }
 
-.danger {
-    background: #dc2626;
+button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
 }
 
-.success {
-    background: #16a34a;
+.green{
+    background:#16a34a;
 }
 
-.secondary {
-    background: #374151;
+.red{
+    background:#dc2626;
 }
 
-.hidden {
-    display: none;
+.gray{
+    background:#374151;
 }
 
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+.muted{
+    color:#9ca3af;
+    font-size:13px;
 }
 
-.topbar button {
-    width: auto;
-    padding: 10px 18px;
+.msg{
+    display:none;
+    padding:10px;
+    border-radius:8px;
+    margin:8px 0;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+.msg.ok{
+    display:block;
+    background:#14532d;
 }
 
-.item {
-    background: #0f1420;
-    border: 1px solid #293247;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 12px;
+.msg.err{
+    display:block;
+    background:#7f1d1d;
 }
 
-.item p {
-    margin: 6px 0;
+.item{
+    background:#0d1320;
+    border:1px solid #29354b;
+    border-radius:10px;
+    padding:13px;
+    margin:9px 0;
 }
 
-.small {
-    color: #9ca3af;
-    font-size: 13px;
+.row{
+    display:flex;
+    gap:8px;
 }
 
-.message {
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    display: none;
+.row>*{
+    flex:1;
 }
 
-.message.ok {
-    display: block;
-    background: #14532d;
-    color: #bbf7d0;
+.searchbox{
+    position:relative;
 }
 
-.message.error {
-    display: block;
-    background: #7f1d1d;
-    color: #fecaca;
+.search-results{
+    max-height:220px;
+    overflow:auto;
+    background:#0b111c;
+    border:1px solid #344057;
+    border-radius:8px;
+    margin-top:-7px;
+    display:none;
+}
+
+.search-results.show{
+    display:block;
+}
+
+.search-result{
+    padding:10px;
+    border-bottom:1px solid #263044;
+    cursor:pointer;
+}
+
+.search-result:hover{
+    background:#1d2636;
+}
+
+.selected{
+    background:#132a1d;
+    border:1px solid #2f7d4b;
+    border-radius:8px;
+    padding:10px;
+    margin:6px 0 10px;
+    display:none;
+}
+
+.badge{
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:20px;
+    background:#263247;
+    font-size:12px;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    z-index:10;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    background:#141b29;
+    border:1px solid #344057;
+    border-radius:14px;
+    padding:20px;
+    width:min(650px,100%);
+    max-height:90vh;
+    overflow:auto;
+}
+
+.danger-note{
+    color:#fca5a5;
+    font-size:13px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="wrap">
 
-    <!-- LOGIN -->
-    <div id="loginSection" class="card">
-        <h1>🔐 Admin Login</h1>
+<!-- ================= LOGIN ================= -->
 
-        <div id="loginMessage" class="message"></div>
+<div id="login" class="card">
 
-        <input
-            type="text"
-            id="adminUsername"
-            placeholder="Admin username"
-        >
+    <h1>🔐 Admin Login</h1>
 
-        <input
-            type="password"
-            id="adminPassword"
-            placeholder="Admin password"
-        >
+    <div id="loginMsg" class="msg"></div>
 
-        <button onclick="adminLogin()">Login</button>
+    <input
+        id="adminUsername"
+        placeholder="Username"
+        value="admin"
+    >
+
+    <input
+        id="adminPassword"
+        type="password"
+        placeholder="Password"
+    >
+
+    <button onclick="login()">
+        Login
+    </button>
+
+</div>
+
+
+<!-- ================= ADMIN PANEL ================= -->
+
+<div id="panel" class="hidden">
+
+<div class="top card">
+
+    <div>
+        <h1>🔥 Free Fire Tournament Hub</h1>
+        <div class="muted">
+            Admin Panel
+        </div>
     </div>
 
+    <button
+        class="red"
+        style="width:auto"
+        onclick="logout()"
+    >
+        Logout
+    </button>
 
-    <!-- ADMIN PANEL -->
-    <div id="adminPanel" class="hidden">
-
-        <div class="topbar">
-            <div>
-                <h1>🔥 Free Fire Tournament Hub</h1>
-                <div class="small">Admin Panel</div>
-            </div>
-
-            <button class="danger" onclick="adminLogout()">
-                Logout
-            </button>
-        </div>
+</div>
 
 
-        <!-- CREATE TOURNAMENT -->
-        <div class="card">
-            <h2>➕ Create Tournament</h2>
+<!-- ================= CREATE TOURNAMENT ================= -->
 
-            <div id="tournamentMessage" class="message"></div>
+<div class="card">
+
+    <h2>➕ Create Tournament</h2>
+
+    <div id="createMsg" class="msg"></div>
+
+    <div class="grid">
+
+        <div>
 
             <input
-                type="text"
-                id="tName"
+                id="tn"
                 placeholder="Tournament name"
             >
 
             <input
+                id="te"
                 type="number"
-                id="tEntryFee"
-                placeholder="Entry fee"
                 min="0"
+                placeholder="Entry fee"
             >
 
             <input
+                id="tm"
                 type="number"
-                id="tMaxPlayers"
-                placeholder="Maximum players"
                 min="1"
+                placeholder="Max players"
             >
 
-            <input
-                type="datetime-local"
-                id="tStartTime"
-            >
-
-            <textarea
-                id="tRules"
-                placeholder="Tournament rules"
-            ></textarea>
-
-            <button onclick="createTournament()">
-                Create Tournament
-            </button>
         </div>
 
-
-        <!-- TOURNAMENT MANAGEMENT -->
-        <div class="card">
-            <h2>🏆 Tournament Management</h2>
-
-            <div id="tournamentsList">
-                Loading tournaments...
-            </div>
-        </div>
-
-
-        <!-- ROOM DETAILS -->
-        <div class="card">
-            <h2>🚪 Room ID & Password</h2>
-
-            <select id="roomTournament">
-                <option value="">Tournament select karo</option>
-            </select>
+        <div>
 
             <input
-                type="text"
-                id="roomId"
-                placeholder="Room ID"
-            >
-
-            <input
-                type="text"
-                id="roomPassword"
-                placeholder="Room Password"
-            >
-
-            <button onclick="saveRoomDetails()">
-                Save Room Details
-            </button>
-        </div>
-
-
-        <!-- PLAYER RESULTS -->
-        <div class="card">
-            <h2>📊 Player Results</h2>
-
-            <select id="resultTournament">
-                <option value="">Tournament select karo</option>
-            </select>
-
-            <div id="playersList">
-                Tournament select karo.
-            </div>
-        </div>
-
-
-        <!-- SEND REDEEM CODE -->
-        <div class="card">
-            <h2>🎁 Send Private Redeem Code</h2>
-
-            <div id="redeemMessage" class="message"></div>
-
-            <label>Select Player</label>
-
-            <select id="redeemUser">
-                <option value="">Players loading...</option>
-            </select>
-
-            <input
-                type="text"
-                id="redeemCode"
-                placeholder="Redeem code"
-            >
-
-            <textarea
-                id="redeemNote"
-                placeholder="Message / note for player (optional)"
-            ></textarea>
-
-            <button class="success" onclick="sendRedeemCode()">
-                Send Redeem Code
-            </button>
-
-            <h3>📨 Sent Redeem Codes</h3>
-
-            <div id="redeemCodesList">
-                Loading...
-            </div>
-        </div>
-
-
-        <!-- WALLET -->
-        <div class="card">
-            <h2>💰 Player Wallet</h2>
-
-            <select id="walletUser">
-                <option value="">Player select karo</option>
-            </select>
-
-            <input
+                id="tk"
                 type="number"
-                id="walletAmount"
-                placeholder="Token amount"
-                min="1"
-            >
-
-            <div class="grid">
-
-                <button
-                    class="success"
-                    onclick="addWallet()"
-                >
-                    Add Tokens
-                </button>
-
-                <button
-                    class="danger"
-                    onclick="removeWallet()"
-                >
-                    Remove Tokens
-                </button>
-
-            </div>
-        </div>
-
-
-        <!-- NOTICE BOARD -->
-        <div class="card">
-            <h2>📢 Notice Board</h2>
-
-            <input
-                type="text"
-                id="noticeTitle"
-                placeholder="Notice title"
-            >
-
-            <textarea
-                id="noticeMessage"
-                placeholder="Notice message"
-            ></textarea>
-
-            <button onclick="addNotice()">
-                Add Notice
-            </button>
-
-            <div id="noticesList">
-                Loading...
-            </div>
-        </div>
-
-
-        <!-- CHANGE PASSWORD -->
-        <div class="card">
-            <h2>🔑 Change Admin Password</h2>
-
-            <div id="passwordMessage" class="message"></div>
-
-            <input
-                type="password"
-                id="oldPassword"
-                placeholder="Current password"
+                min="0"
+                placeholder="Per kill reward"
             >
 
             <input
-                type="password"
-                id="newPassword"
-                placeholder="New password"
+                id="tp"
+                type="number"
+                min="0"
+                placeholder="1st prize"
             >
 
-            <button onclick="changePassword()">
-                Change Password
-            </button>
+            <input
+                id="td"
+                placeholder="Date/time: DD/MM/YY HH:MM"
+            >
+
         </div>
+
+    </div>
+
+    <textarea
+        id="tr"
+        placeholder="Tournament rules"
+    ></textarea>
+
+    <button onclick="createTournament()">
+        Create Tournament
+    </button>
+
+</div>
+
+
+<!-- ================= TOURNAMENT MANAGEMENT ================= -->
+
+<div class="card">
+
+    <h2>🏆 Tournament Management</h2>
+
+    <div id="tournaments">
+        Loading...
+    </div>
+
+</div>
+
+
+<!-- ================= ROOM + PASSWORD ================= -->
+
+<div class="grid">
+
+<div class="card">
+
+    <h2>🚪 Room Details</h2>
+
+    <select id="roomTournament">
+        <option value="">
+            Tournament select karo
+        </option>
+    </select>
+
+    <input
+        id="roomId"
+        placeholder="Room ID"
+    >
+
+    <input
+        id="roomPass"
+        placeholder="Room Password"
+    >
+
+    <button onclick="saveRoom()">
+        Save Room
+    </button>
+
+</div>
+
+
+<div class="card">
+
+    <h2>🔑 Change Admin Password</h2>
+
+    <div id="passMsg" class="msg"></div>
+
+    <input
+        id="oldPass"
+        type="password"
+        placeholder="Current password"
+    >
+
+    <input
+        id="newPass"
+        type="password"
+        placeholder="New password"
+    >
+
+    <button onclick="changePassword()">
+        Change Password
+    </button>
+
+</div>
+
+</div>
+
+
+<!-- ================= REDEEM CODE ================= -->
+
+<div class="card">
+
+    <h2>🎁 Send Private Redeem Code</h2>
+
+    <div id="redeemMsg" class="msg"></div>
+
+    <div class="searchbox">
+
+        <input
+            id="redeemSearch"
+            placeholder="Player name ya UID search karo..."
+            autocomplete="off"
+            oninput="searchPlayers('redeem')"
+            onclick="searchPlayers('redeem')"
+        >
+
+        <div
+            id="redeemResults"
+            class="search-results"
+        ></div>
+
+    </div>
+
+    <div
+        id="redeemSelected"
+        class="selected"
+    ></div>
+
+    <input
+        id="redeemCode"
+        placeholder="Redeem code"
+    >
+
+    <textarea
+        id="redeemNote"
+        placeholder="Message (optional)"
+    ></textarea>
+
+    <button
+        class="green"
+        onclick="sendRedeem()"
+    >
+        Send Redeem Code
+    </button>
+
+
+    <h3>📨 Sent Codes</h3>
+
+    <div id="codes">
+        Loading...
+    </div>
+
+</div>
+
+
+<!-- ================= WALLET ================= -->
+
+<div class="card">
+
+    <h2>💰 Wallet / Tokens</h2>
+
+    <div class="searchbox">
+
+        <input
+            id="walletSearch"
+            placeholder="Player name ya UID search karo..."
+            autocomplete="off"
+            oninput="searchPlayers('wallet')"
+            onclick="searchPlayers('wallet')"
+        >
+
+        <div
+            id="walletResults"
+            class="search-results"
+        ></div>
+
+    </div>
+
+    <div
+        id="walletSelected"
+        class="selected"
+    ></div>
+
+    <input
+        id="walletAmount"
+        type="number"
+        min="1"
+        placeholder="Token amount"
+    >
+
+    <div class="row">
+
+        <button
+            class="green"
+            onclick="walletAction('add')"
+        >
+            Add Tokens
+        </button>
+
+        <button
+            class="red"
+            onclick="walletAction('remove')"
+        >
+            Remove Tokens
+        </button>
 
     </div>
 
 </div>
 
 
+<!-- ================= PLAYER ACCOUNTS ================= -->
+
+<div class="card">
+
+    <h2>👥 Player Accounts</h2>
+
+    <div class="muted">
+        Name, UID ya email se search karke account delete kar sakte ho.
+    </div>
+
+    <div class="searchbox">
+
+        <input
+            id="accountSearch"
+            placeholder="Name / UID / email search karo..."
+            autocomplete="off"
+            oninput="renderAccountSearch()"
+            onclick="renderAccountSearch()"
+        >
+
+        <div
+            id="accountResults"
+            class="search-results"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= RESULTS ================= -->
+
+<div class="card">
+
+    <h2>📊 Player Results</h2>
+
+    <select
+        id="resultTournament"
+        onchange="loadResults()"
+    >
+        <option value="">
+            Tournament select karo
+        </option>
+    </select>
+
+    <div id="results">
+        Tournament select karo.
+    </div>
+
+</div>
+
+
+<!-- ================= NOTICE BOARD ================= -->
+
+<div class="card">
+
+    <h2>📢 Notice Board</h2>
+
+    <input
+        id="noticeTitle"
+        placeholder="Notice title"
+    >
+
+    <textarea
+        id="noticeText"
+        placeholder="Notice message"
+    ></textarea>
+
+    <button onclick="addNotice()">
+        Add Notice
+    </button>
+
+    <div id="notices">
+        Loading...
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- ================= EDIT TOURNAMENT MODAL ================= -->
+
+<div
+    id="editModal"
+    class="modal"
+>
+
+<div class="modal-box">
+
+    <h2>✏️ Edit Tournament</h2>
+
+    <div id="editMsg" class="msg"></div>
+
+    <input
+        id="en"
+        placeholder="Tournament name"
+    >
+
+    <input
+        id="ee"
+        type="number"
+        min="0"
+        placeholder="Entry fee"
+    >
+
+    <input
+        id="em"
+        type="number"
+        min="1"
+        placeholder="Max players"
+    >
+
+    <input
+        id="ek"
+        type="number"
+        min="0"
+        placeholder="Per kill reward"
+    >
+
+    <input
+        id="ep"
+        type="number"
+        min="0"
+        placeholder="1st prize"
+    >
+
+    <input
+        id="ed"
+        placeholder="DD/MM/YY HH:MM"
+    >
+
+    <textarea
+        id="er"
+        placeholder="Tournament rules"
+    ></textarea>
+
+    <div class="row">
+
+        <button
+            class="gray"
+            onclick="closeEdit()"
+        >
+            Cancel
+        </button>
+
+        <button onclick="saveEdit()">
+            Save Changes
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+
 <script>
 
-/* =========================
-   COMMON MESSAGE
-========================= */
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
 
-function showMessage(id, text, success = true) {
+let users = [];
 
-    const box = document.getElementById(id);
+let tournaments = [];
 
-    if (!box) return;
+let redeemPlayer = null;
 
-    box.textContent = text;
+let walletPlayer = null;
 
-    box.className =
-        "message " + (success ? "ok" : "error");
+let editId = null;
+
+
+/* =====================================================
+   SHORTCUT
+===================================================== */
+
+const $ = id =>
+    document.getElementById(id);
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function msg(id, text, ok = true) {
+
+    $(id).textContent = text;
+
+    $(id).className =
+        "msg " + (ok ? "ok" : "err");
 
     setTimeout(() => {
-        box.className = "message";
+
+        $(id).className = "msg";
+
     }, 4000);
 }
 
 
-/* =========================
-   ADMIN LOGIN
-========================= */
+/* =====================================================
+   HTML ESCAPE
+===================================================== */
 
-async function adminLogin() {
+function esc(value) {
 
-    const username =
-        document.getElementById("adminUsername").value.trim();
-
-    const password =
-        document.getElementById("adminPassword").value;
-
-    if (!username || !password) {
-        showMessage(
-            "loginMessage",
-            "Username aur password dono bharo.",
-            false
+    return String(value ?? "")
+        .replace(
+            /[&<>'"]/g,
+            x => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                "'": "&#39;",
+                '"': "&quot;"
+            }[x])
         );
-        return;
-    }
-
-    try {
-
-        const response = await fetch("/api/admin/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username,
-                password
-            })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || data.success === false) {
-
-            showMessage(
-                "loginMessage",
-                data.message || "Login failed.",
-                false
-            );
-
-            return;
-        }
-
-        document
-            .getElementById("loginSection")
-            .classList.add("hidden");
-
-        document
-            .getElementById("adminPanel")
-            .classList.remove("hidden");
-
-        loadEverything();
-
-    } catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            "loginMessage",
-            "Login ke time error aa gaya.",
-            false
-        );
-    }
 }
 
 
-/* =========================
-   CHECK ADMIN SESSION
-========================= */
+/* =====================================================
+   FETCH JSON
+===================================================== */
 
-async function checkAdmin() {
+async function json(url, options = {}) {
+
+    const response =
+        await fetch(url, options);
+
+    let data = {};
 
     try {
 
-        const response =
-            await fetch("/api/admin/me");
-
-        if (!response.ok) return;
-
-        const data =
+        data =
             await response.json();
 
-        if (data.success || data.logged_in || data.is_admin) {
+    } catch {
 
-            document
-                .getElementById("loginSection")
-                .classList.add("hidden");
+        data = {};
 
-            document
-                .getElementById("adminPanel")
-                .classList.remove("hidden");
+    }
 
-            loadEverything();
-        }
+    return {
+        r: response,
+        d: data
+    };
+}
 
-    } catch (error) {
 
-        console.log("Admin session check:", error);
+/* =====================================================
+   LOGIN
+===================================================== */
+
+async function login() {
+
+    const username =
+        $("adminUsername")
+            .value
+            .trim();
+
+    const password =
+        $("adminPassword")
+            .value;
+
+
+    const { r, d } =
+        await json(
+            "/api/admin/login",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    username,
+                    password
+                })
+            }
+        );
+
+
+    if (
+        !r.ok ||
+        d.success === false
+    ) {
+
+        return msg(
+            "loginMsg",
+            d.message ||
+            "Login failed.",
+            false
+        );
+    }
+
+
+    $("login")
+        .classList
+        .add("hidden");
+
+    $("panel")
+        .classList
+        .remove("hidden");
+
+
+    loadAll();
+}
+
+
+/* =====================================================
+   CHECK ADMIN SESSION
+===================================================== */
+
+async function check() {
+
+    const { r, d } =
+        await json(
+            "/api/admin/me"
+        );
+
+
+    if (
+        r.ok &&
+        (
+            d.success ||
+            d.logged_in ||
+            d.is_admin
+        )
+    ) {
+
+        $("login")
+            .classList
+            .add("hidden");
+
+        $("panel")
+            .classList
+            .remove("hidden");
+
+        loadAll();
     }
 }
 
 
-/* =========================
+/* =====================================================
    LOGOUT
-========================= */
+===================================================== */
 
-async function adminLogout() {
+async function logout() {
 
-    try {
-
-        await fetch("/api/admin/logout", {
+    await fetch(
+        "/api/admin/logout",
+        {
             method: "POST"
-        });
-
-    } catch (error) {
-        console.log(error);
-    }
+        }
+    );
 
     location.reload();
 }
 
 
-/* =========================
-   LOAD EVERYTHING
-========================= */
+/* =====================================================
+   LOAD ALL
+===================================================== */
 
-function loadEverything() {
+function loadAll() {
+
+    loadUsers();
 
     loadTournaments();
-    loadUsers();
-    loadRedeemCodes();
+
+    loadCodes();
+
     loadNotices();
 }
 
 
-/* =========================
+/* =====================================================
    LOAD USERS
-========================= */
+===================================================== */
 
 async function loadUsers() {
 
-    try {
-
-        const response =
-            await fetch("/api/admin/users");
-
-        const data =
-            await response.json();
-
-        console.log(
-            "ADMIN USERS RESPONSE:",
-            data
+    const { r, d } =
+        await json(
+            "/api/admin/users"
         );
 
-        if (!response.ok) {
 
-            console.error(data);
+    if (!r.ok) {
 
-            return;
-        }
-
-        /*
-          Backend:
-          {
-              success: true,
-              users: [...]
-          }
-
-          Old frontend array expect kar raha tha.
-          Isliye yahan dono formats handle kar rahe hain.
-        */
-
-        const users = Array.isArray(data)
-            ? data
-            : (
-                Array.isArray(data.users)
-                    ? data.users
-                    : []
-            );
-
-
-        /* REDEEM PLAYER DROPDOWN */
-
-        const redeemSelect =
-            document.getElementById("redeemUser");
-
-        if (redeemSelect) {
-
-            redeemSelect.innerHTML =
-                '<option value="">Player select karo</option>';
-
-            users.forEach(user => {
-
-                const option =
-                    document.createElement("option");
-
-                option.value = user.id;
-
-                option.textContent =
-                    `${user.username} | UID: ${user.uid || "No UID"}`;
-
-                redeemSelect.appendChild(option);
-            });
-
-            if (users.length === 0) {
-
-                redeemSelect.innerHTML =
-                    '<option value="">Koi player nahi mila</option>';
-            }
-        }
-
-
-        /* WALLET PLAYER DROPDOWN */
-
-        const walletSelect =
-            document.getElementById("walletUser");
-
-        if (walletSelect) {
-
-            walletSelect.innerHTML =
-                '<option value="">Player select karo</option>';
-
-            users.forEach(user => {
-
-                const option =
-                    document.createElement("option");
-
-                option.value = user.id;
-
-                option.textContent =
-                    `${user.username} | UID: ${user.uid || "No UID"}`;
-
-                walletSelect.appendChild(option);
-            });
-        }
-
-    } catch (error) {
-
-        console.error(
-            "LOAD USERS ERROR:",
-            error
-        );
-    }
-}
-
-
-/* =========================
-   CREATE TOURNAMENT
-========================= */
-
-async function createTournament() {
-
-    const name =
-        document.getElementById("tName").value.trim();
-
-    const entry_fee =
-        Number(document.getElementById("tEntryFee").value);
-
-    const max_players =
-        Number(document.getElementById("tMaxPlayers").value);
-
-    const start_time =
-        document.getElementById("tStartTime").value;
-
-    const rules =
-        document.getElementById("tRules").value.trim();
-
-
-    if (!name || !start_time || !max_players) {
-
-        showMessage(
-            "tournamentMessage",
-            "Tournament name, max players aur start time bharo.",
-            false
-        );
+        console.error(d);
 
         return;
     }
 
 
-    try {
+    users =
+        Array.isArray(d)
+            ? d
+            : (
+                Array.isArray(d.users)
+                    ? d.users
+                    : []
+            );
 
-        const response =
-            await fetch("/api/tournaments", {
 
+    renderAccountSearch();
+}
+
+
+/* =====================================================
+   PLAYER LABEL
+===================================================== */
+
+function playerLabel(user) {
+
+    return (
+        `${user.username} | UID: ${user.uid || "No UID"}`
+    );
+}
+
+
+/* =====================================================
+   MATCH PLAYER
+===================================================== */
+
+function matches(user, query) {
+
+    query =
+        query
+            .toLowerCase()
+            .trim();
+
+
+    if (!query) {
+
+        return true;
+    }
+
+
+    return [
+        user.username,
+        user.uid,
+        user.email
+    ].some(
+        value =>
+            String(value || "")
+                .toLowerCase()
+                .includes(query)
+    );
+}
+
+
+/* =====================================================
+   SEARCH PLAYER
+===================================================== */
+
+function searchPlayers(type) {
+
+    const input =
+        $(
+            type === "redeem"
+                ? "redeemSearch"
+                : "walletSearch"
+        );
+
+
+    const box =
+        $(
+            type === "redeem"
+                ? "redeemResults"
+                : "walletResults"
+        );
+
+
+    const list =
+        users
+            .filter(
+                user =>
+                    matches(
+                        user,
+                        input.value
+                    )
+            )
+            .slice(0, 30);
+
+
+    if (!list.length) {
+
+        box.innerHTML =
+            `
+            <div class="search-result">
+                Player nahi mila.
+            </div>
+            `;
+
+    } else {
+
+        box.innerHTML =
+            list
+                .map(
+                    user =>
+                        `
+                        <div
+                            class="search-result"
+                            onclick="
+                                selectPlayer(
+                                    '${type}',
+                                    ${user.id}
+                                )
+                            "
+                        >
+
+                            <b>
+                                ${esc(user.username)}
+                            </b>
+
+                            <br>
+
+                            <span class="muted">
+                                UID:
+                                ${esc(user.uid)}
+                                |
+                                ${esc(user.email)}
+                            </span>
+
+                        </div>
+                        `
+                )
+                .join("");
+    }
+
+
+    box.classList.add("show");
+}
+
+
+/* =====================================================
+   SELECT PLAYER
+===================================================== */
+
+function selectPlayer(type, id) {
+
+    const user =
+        users.find(
+            x => x.id == id
+        );
+
+
+    if (!user) {
+
+        return;
+    }
+
+
+    if (type === "redeem") {
+
+        redeemPlayer =
+            user;
+
+
+        $("redeemSearch")
+            .value =
+            playerLabel(user);
+
+
+        $("redeemSelected")
+            .style
+            .display =
+            "block";
+
+
+        $("redeemSelected")
+            .innerHTML =
+            `
+            Selected:
+            <b>
+                ${esc(user.username)}
+            </b>
+            |
+            UID:
+            ${esc(user.uid)}
+            `;
+
+
+        $("redeemResults")
+            .classList
+            .remove("show");
+
+    } else {
+
+        walletPlayer =
+            user;
+
+
+        $("walletSearch")
+            .value =
+            playerLabel(user);
+
+
+        $("walletSelected")
+            .style
+            .display =
+            "block";
+
+
+        $("walletSelected")
+            .innerHTML =
+            `
+            Selected:
+            <b>
+                ${esc(user.username)}
+            </b>
+            |
+            UID:
+            ${esc(user.uid)}
+            `;
+
+
+        $("walletResults")
+            .classList
+            .remove("show");
+    }
+}
+
+
+/* =====================================================
+   CLOSE SEARCH WHEN CLICK OUTSIDE
+===================================================== */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        if (
+            !event.target
+                .closest(".searchbox")
+        ) {
+
+            document
+                .querySelectorAll(
+                    ".search-results"
+                )
+                .forEach(
+                    box =>
+                        box.classList
+                            .remove("show")
+                );
+        }
+    }
+);
+
+
+/* =====================================================
+   ACCOUNT SEARCH
+===================================================== */
+
+function renderAccountSearch() {
+
+    const box =
+        $("accountResults");
+
+
+    const query =
+        $("accountSearch")
+            .value;
+
+
+    const list =
+        users
+            .filter(
+                user =>
+                    matches(
+                        user,
+                        query
+                    )
+            )
+            .slice(0, 50);
+
+
+    if (!list.length) {
+
+        box.innerHTML =
+            `
+            <div class="search-result">
+                Player nahi mila.
+            </div>
+            `;
+
+    } else {
+
+        box.innerHTML =
+            list
+                .map(
+                    user =>
+                        `
+                        <div
+                            class="search-result"
+                        >
+
+                            <b>
+                                ${esc(user.username)}
+                            </b>
+
+                            |
+                            UID:
+                            ${esc(user.uid)}
+
+                            <br>
+
+                            <span class="muted">
+                                ${esc(user.email)}
+                            </span>
+
+                            <br>
+
+                            <button
+                                class="red"
+                                style="
+                                    width:auto;
+                                    padding:6px 10px;
+                                    margin:4px 0 0;
+                                "
+                                onclick="
+                                    deleteAccount(
+                                        ${user.id}
+                                    )
+                                "
+                            >
+                                Delete Account
+                            </button>
+
+                        </div>
+                        `
+                )
+                .join("");
+    }
+
+
+    box.classList.add("show");
+}
+
+
+/* =====================================================
+   DELETE ACCOUNT
+===================================================== */
+
+async function deleteAccount(id) {
+
+    const user =
+        users.find(
+            x => x.id == id
+        );
+
+
+    if (!user) {
+
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+            `Kya ${user.username} ka account delete karna hai?\n\n` +
+            `Uski tournament registrations, ` +
+            `wallet/token history aur private redeem codes ` +
+            `bhi delete honge.`
+        );
+
+
+    if (!confirmed) {
+
+        return;
+    }
+
+
+    const { r, d } =
+        await json(
+            `/api/admin/users/${id}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+
+    if (
+        !r.ok ||
+        d.success === false
+    ) {
+
+        return alert(
+            d.message ||
+            "Account delete nahi hua."
+        );
+    }
+
+
+    alert(
+        d.message ||
+        "Account delete ho gaya."
+    );
+
+
+    redeemPlayer = null;
+
+    walletPlayer = null;
+
+
+    loadUsers();
+
+    loadCodes();
+
+    loadTournaments();
+}
+
+
+/* =====================================================
+   CREATE TOURNAMENT
+===================================================== */
+
+async function createTournament() {
+
+    const body = {
+
+        name:
+            $("tn")
+                .value
+                .trim(),
+
+        entry_fee:
+            Number(
+                $("te").value || 0
+            ),
+
+        max_players:
+            Number(
+                $("tm").value || 0
+            ),
+
+        kill_reward:
+            Number(
+                $("tk").value || 0
+            ),
+
+        first_prize:
+            Number(
+                $("tp").value || 0
+            ),
+
+        date_time:
+            $("td")
+                .value
+                .trim(),
+
+        rules:
+            $("tr")
+                .value
+                .trim()
+    };
+
+
+    const { r, d } =
+        await json(
+            "/api/tournaments",
+            {
                 method: "POST",
 
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type":
+                        "application/json"
                 },
 
-                body: JSON.stringify({
-                    name,
-                    entry_fee,
-                    max_players,
-                    start_time,
-                    rules
-                })
-            });
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || data.success === false) {
-
-            showMessage(
-                "tournamentMessage",
-                data.message || "Tournament create nahi hua.",
-                false
-            );
-
-            return;
-        }
-
-
-        showMessage(
-            "tournamentMessage",
-            "Tournament successfully create ho gaya."
+                body:
+                    JSON.stringify(body)
+            }
         );
 
 
-        document.getElementById("tName").value = "";
-        document.getElementById("tEntryFee").value = "";
-        document.getElementById("tMaxPlayers").value = "";
-        document.getElementById("tStartTime").value = "";
-        document.getElementById("tRules").value = "";
+    if (
+        !r.ok ||
+        d.success === false
+    ) {
 
-
-        loadTournaments();
-
-    } catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            "tournamentMessage",
-            "Tournament create karte waqt error.",
+        return msg(
+            "createMsg",
+            d.message ||
+            "Create failed.",
             false
         );
     }
+
+
+    msg(
+        "createMsg",
+        "Tournament successfully create ho gaya."
+    );
+
+
+    [
+        "tn",
+        "te",
+        "tm",
+        "tk",
+        "tp",
+        "td",
+        "tr"
+    ].forEach(
+        id =>
+            $(id).value = ""
+    );
+
+
+    loadTournaments();
 }
 
 
-/* =========================
+/* =====================================================
    LOAD TOURNAMENTS
-========================= */
+===================================================== */
 
 async function loadTournaments() {
 
-    try {
-
-        const response =
-            await fetch("/api/tournaments");
-
-        const data =
-            await response.json();
+    const { r, d } =
+        await json(
+            "/api/tournaments"
+        );
 
 
-        const tournaments =
-            Array.isArray(data)
-                ? data
-                : (
-                    Array.isArray(data.tournaments)
-                        ? data.tournaments
-                        : []
+    if (!r.ok) {
+
+        return;
+    }
+
+
+    $("tournaments")
+        .innerHTML = "";
+
+
+    tournaments =
+        Array.isArray(d)
+            ? d
+            : (
+                Array.isArray(d.tournaments)
+                    ? d.tournaments
+                    : []
+            );
+
+
+    $("roomTournament")
+        .innerHTML =
+        `
+        <option value="">
+            Tournament select karo
+        </option>
+        `;
+
+
+    $("resultTournament")
+        .innerHTML =
+        `
+        <option value="">
+            Tournament select karo
+        </option>
+        `;
+
+
+    if (!tournaments.length) {
+
+        $("tournaments")
+            .innerHTML =
+            `
+            <div class="muted">
+                Koi tournament nahi.
+            </div>
+            `;
+
+        return;
+    }
+
+
+    tournaments.forEach(
+        tournament => {
+
+            const count =
+                tournament.player_count ??
+                (
+                    tournament.players ||
+                    []
+                ).length;
+
+
+            const div =
+                document.createElement(
+                    "div"
                 );
 
 
-        const list =
-            document.getElementById("tournamentsList");
-
-        const roomSelect =
-            document.getElementById("roomTournament");
-
-        const resultSelect =
-            document.getElementById("resultTournament");
+            div.className =
+                "item";
 
 
-        list.innerHTML = "";
+            div.innerHTML =
+                `
+                <h3>
+                    ${esc(tournament.name)}
+                </h3>
 
-        roomSelect.innerHTML =
-            '<option value="">Tournament select karo</option>';
+                <p>
+                    💰 ₹${tournament.entry_fee}
+                    |
+                    👥 ${count}/${tournament.max_players}
+                    |
+                    📅 ${esc(tournament.date_time)}
+                </p>
 
-        resultSelect.innerHTML =
-            '<option value="">Tournament select karo</option>';
+                <p>
+                    🏆 Prize
+                    ₹${tournament.first_prize}
+
+                    |
+                    🎯 Kill
+                    ₹${tournament.kill_reward}
+
+                    |
+
+                    Status:
+                    <span class="badge">
+                        ${esc(tournament.status)}
+                    </span>
+                </p>
+
+                <p class="muted">
+                    Rules:
+                    ${esc(
+                        tournament.rules ||
+                        "No rules"
+                    )}
+                </p>
+
+                <div class="row">
+
+                    <button
+                        onclick="
+                            openEdit(
+                                ${tournament.id}
+                            )
+                        "
+                    >
+                        ✏️ Edit
+                    </button>
+
+                    <button
+                        class="red"
+                        onclick="
+                            deleteTournament(
+                                ${tournament.id}
+                            )
+                        "
+                    >
+                        Delete
+                    </button>
+
+                </div>
+                `;
 
 
-        if (tournaments.length === 0) {
+            $("tournaments")
+                .appendChild(div);
 
-            list.innerHTML =
-                '<div class="small">Koi tournament nahi mila.</div>';
 
-            return;
+            let option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                tournament.id;
+
+            option.textContent =
+                tournament.name;
+
+            $("roomTournament")
+                .appendChild(option);
+
+
+            option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                tournament.id;
+
+            option.textContent =
+                tournament.name;
+
+            $("resultTournament")
+                .appendChild(option);
+
         }
-
-
-        tournaments.forEach(t => {
-
-            const item =
-                document.createElement("div");
-
-            item.className = "item";
-
-
-            item.innerHTML = `
-                <h3>${escapeHtml(t.name || "Tournament")}</h3>
-
-                <p>💰 Entry Fee: ${t.entry_fee ?? 0}</p>
-
-                <p>👥 Players:
-                    ${t.player_count ?? 0}
-                    /
-                    ${t.max_players ?? "-"}
-                </p>
-
-                <p>📅 Start:
-                    ${t.start_time || "-"}
-                </p>
-
-                <p>📌 Status:
-                    ${t.status || "-"}
-                </p>
-
-                <button
-                    class="danger"
-                    onclick="deleteTournament(${t.id})"
-                >
-                    Delete Tournament
-                </button>
-            `;
-
-            list.appendChild(item);
-
-
-            const roomOption =
-                document.createElement("option");
-
-            roomOption.value = t.id;
-            roomOption.textContent = t.name;
-
-            roomSelect.appendChild(roomOption);
-
-
-            const resultOption =
-                document.createElement("option");
-
-            resultOption.value = t.id;
-            resultOption.textContent = t.name;
-
-            resultSelect.appendChild(resultOption);
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "LOAD TOURNAMENTS ERROR:",
-            error
-        );
-
-        document.getElementById(
-            "tournamentsList"
-        ).innerHTML =
-            "Tournament load nahi hue.";
-    }
+    );
 }
 
 
-/* =========================
+/* =====================================================
+   EDIT TOURNAMENT
+===================================================== */
+
+function openEdit(id) {
+
+    const tournament =
+        tournaments.find(
+            x => x.id == id
+        );
+
+
+    if (!tournament) {
+
+        return;
+    }
+
+
+    editId =
+        id;
+
+
+    $("en").value =
+        tournament.name || "";
+
+    $("ee").value =
+        tournament.entry_fee ?? 0;
+
+    $("em").value =
+        tournament.max_players ?? 0;
+
+    $("ek").value =
+        tournament.kill_reward ?? 0;
+
+    $("ep").value =
+        tournament.first_prize ?? 0;
+
+    $("ed").value =
+        tournament.date_time || "";
+
+    $("er").value =
+        tournament.rules || "";
+
+
+    $("editModal")
+        .classList
+        .add("show");
+}
+
+
+function closeEdit() {
+
+    $("editModal")
+        .classList
+        .remove("show");
+
+    editId =
+        null;
+}
+
+
+/* =====================================================
+   SAVE EDIT
+===================================================== */
+
+async function saveEdit() {
+
+    if (!editId) {
+
+        return;
+    }
+
+
+    const body = {
+
+        name:
+            $("en")
+                .value
+                .trim(),
+
+        entry_fee:
+            Number(
+                $("ee").value || 0
+            ),
+
+        max_players:
+            Number(
+                $("em").value || 0
+            ),
+
+        kill_reward:
+            Number(
+                $("ek").value || 0
+            ),
+
+        first_prize:
+            Number(
+                $("ep").value || 0
+            ),
+
+        date_time:
+            $("ed")
+                .value
+                .trim(),
+
+        rules:
+            $("er")
+                .value
+                .trim()
+    };
+
+
+    const { r, d } =
+        await json(
+            `/api/tournaments/${editId}`,
+            {
+                method: "PUT",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(body)
+            }
+        );
+
+
+    if (
+        !r.ok ||
+        d.success === false
+    ) {
+
+        return msg(
+            "editMsg",
+            d.message ||
+            "Edit failed.",
+            false
+        );
+    }
+
+
+    closeEdit();
+
+    loadTournaments();
+}
+
+
+/* =====================================================
    DELETE TOURNAMENT
-========================= */
+===================================================== */
 
 async function deleteTournament(id) {
 
     if (
         !confirm(
-            "Kya tum sure ho? Tournament delete ho jayega."
+            "Tournament delete karna hai?\n\n" +
+            "Is tournament ki player registrations/results bhi delete ho sakte hain."
         )
     ) {
+
         return;
     }
 
 
-    try {
-
-        const response =
-            await fetch(
-                `/api/tournaments/${id}`,
-                {
-                    method: "DELETE"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || data.success === false) {
-
-            alert(
-                data.message ||
-                "Tournament delete nahi hua."
-            );
-
-            return;
-        }
-
-
-        alert(
-            data.message ||
-            "Tournament deleted."
+    const { r, d } =
+        await json(
+            `/api/tournaments/${id}`,
+            {
+                method: "DELETE"
+            }
         );
 
 
-        loadTournaments();
+    if (
+        !r.ok ||
+        d.success === false
+    ) {
 
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "Tournament delete karte waqt error."
+        return alert(
+            d.message ||
+            "Delete failed."
         );
     }
+
+
+    loadTournaments();
 }
 
 
-/* =========================
-   ROOM DETAILS
-========================= */
+/* =====================================================
+   ROOM
+===================================================== */
 
-async function saveRoomDetails() {
+async function saveRoom() {
 
-    const tournamentId =
-        document.getElementById(
-            "roomTournament"
-        ).value;
-
-    const roomId =
-        document.getElementById(
-            "roomId"
-        ).value.trim();
-
-    const roomPassword =
-        document.getElementById(
-            "roomPassword"
-        ).value.trim();
+    const id =
+        $("roomTournament")
+            .value;
 
 
-    if (!tournamentId) {
+    if (!id) {
 
-        alert("Tournament select karo.");
-
-        return;
+        return alert(
+            "Tournament select karo."
+        );
     }
 
 
-    try {
+    const { d } =
+        await json(
+            `/api/admin/tournaments/${id}/room`,
+            {
+                method: "POST",
 
-        const response =
-            await fetch(
-                `/api/admin/tournaments/${tournamentId}/room`,
-                {
-                    method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                body:
+                    JSON.stringify({
 
-                    body: JSON.stringify({
-                        room_id: roomId,
-                        room_password: roomPassword
+                        room_id:
+                            $("roomId")
+                                .value
+                                .trim(),
+
+                        room_password:
+                            $("roomPass")
+                                .value
+                                .trim()
+
                     })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || data.success === false) {
-
-            alert(
-                data.message ||
-                "Room details save nahi hue."
-            );
-
-            return;
-        }
-
-
-        alert(
-            data.message ||
-            "Room details saved."
+            }
         );
 
-    } catch (error) {
 
-        console.error(error);
-
-        alert(
-            "Room details save karte waqt error."
-        );
-    }
+    alert(
+        d.message ||
+        "Room details saved."
+    );
 }
 
 
-/* =========================
-   LOAD PLAYERS / RESULTS
-========================= */
+/* =====================================================
+   SEND REDEEM
+===================================================== */
 
-document
-    .getElementById("resultTournament")
-    .addEventListener(
-        "change",
-        loadPlayersForResults
+async function sendRedeem() {
+
+    if (!redeemPlayer) {
+
+        return msg(
+            "redeemMsg",
+            "Pehle player search karke select karo.",
+            false
+        );
+    }
+
+
+    const code =
+        $("redeemCode")
+            .value
+            .trim();
+
+
+    if (!code) {
+
+        return msg(
+            "redeemMsg",
+            "Redeem code bharo.",
+            false
+        );
+    }
+
+
+    const { r, d } =
+        await json(
+            "/api/admin/redeem-codes",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify({
+
+                        user_id:
+                            redeemPlayer.id,
+
+                        code:
+
+                            code,
+
+                        message:
+
+                            $("redeemNote")
+                                .value
+                                .trim()
+
+                    })
+            }
+        );
+
+
+    if (
+        !r.ok ||
+        d.success === false
+    ) {
+
+        return msg(
+            "redeemMsg",
+            d.message ||
+            "Send failed.",
+            false
+        );
+    }
+
+
+    msg(
+        "redeemMsg",
+        d.message ||
+        "Code send ho gaya."
     );
 
 
-async function loadPlayersForResults() {
+    $("redeemCode")
+        .value = "";
 
-    const tournamentId =
-        document.getElementById(
-            "resultTournament"
-        ).value;
+    $("redeemNote")
+        .value = "";
 
-    const container =
-        document.getElementById(
-            "playersList"
+
+    loadCodes();
+}
+
+
+/* =====================================================
+   LOAD REDEEM CODES
+===================================================== */
+
+async function loadCodes() {
+
+    const { r, d } =
+        await json(
+            "/api/admin/redeem-codes"
         );
 
 
-    if (!tournamentId) {
+    if (!r.ok) {
 
-        container.innerHTML =
+        return;
+    }
+
+
+    const list =
+        Array.isArray(d)
+            ? d
+            : (
+                Array.isArray(d.codes)
+                    ? d.codes
+                    : []
+            );
+
+
+    $("codes")
+        .innerHTML =
+        list.length
+
+            ? list
+                .map(
+                    code =>
+                        `
+                        <div class="item">
+
+                            <b>
+                                ${esc(
+                                    code.username
+                                )}
+                            </b>
+
+                            |
+                            UID:
+                            ${esc(code.uid)}
+
+                            <br>
+
+                            🎁
+                            <b>
+                                ${esc(code.code)}
+                            </b>
+
+                            <br>
+
+                            <span class="muted">
+                                ${esc(
+                                    code.message ||
+                                    ""
+                                )}
+                            </span>
+
+                            <br>
+
+                            <span class="badge">
+                                ${
+                                    code.used
+                                        ? "Used"
+                                        : "Not Used"
+                                }
+                            </span>
+
+                            <button
+                                class="red"
+                                style="
+                                    width:auto;
+                                    padding:6px 10px;
+                                "
+                                onclick="
+                                    deleteCode(
+                                        ${code.id}
+                                    )
+                                "
+                            >
+                                Delete
+                            </button>
+
+                        </div>
+                        `
+                )
+                .join("")
+
+            :
+
+            `
+            <div class="muted">
+                Koi redeem code nahi.
+            </div>
+            `;
+}
+
+
+/* =====================================================
+   DELETE REDEEM CODE
+===================================================== */
+
+async function deleteCode(id) {
+
+    if (
+        !confirm(
+            "Redeem code delete karna hai?"
+        )
+    ) {
+
+        return;
+    }
+
+
+    const { d } =
+        await json(
+            `/api/admin/redeem-codes/${id}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+
+    alert(
+        d.message ||
+        "Done"
+    );
+
+
+    loadCodes();
+}
+
+
+/* =====================================================
+   WALLET
+===================================================== */
+
+async function walletAction(action) {
+
+    if (!walletPlayer) {
+
+        return alert(
+            "Pehle player search karke select karo."
+        );
+    }
+
+
+    const amount =
+        Number(
+            $("walletAmount")
+                .value || 0
+        );
+
+
+    if (amount <= 0) {
+
+        return alert(
+            "Valid token amount bharo."
+        );
+    }
+
+
+    /*
+       Backend UID leta hai,
+       isliye selected player ka UID
+       automatically bhej rahe hain.
+    */
+
+    const { r, d } =
+        await json(
+            `/api/admin/wallet/${action}`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify({
+
+                        uid:
+                            walletPlayer.uid,
+
+                        amount:
+                            amount
+
+                    })
+            }
+        );
+
+
+    if (
+        !r.ok ||
+        d.success === false
+    ) {
+
+        return alert(
+            d.message ||
+            "Wallet update failed."
+        );
+    }
+
+
+    alert(
+        `${walletPlayer.username}: ` +
+        `${d.message || "Done"} ` +
+        `Balance: ${d.balance ?? ""}`
+    );
+
+
+    $("walletAmount")
+        .value = "";
+}
+
+
+/* =====================================================
+   LOAD RESULTS
+===================================================== */
+
+async function loadResults() {
+
+    const id =
+        $("resultTournament")
+            .value;
+
+
+    if (!id) {
+
+        $("results")
+            .textContent =
             "Tournament select karo.";
 
         return;
     }
 
 
-    try {
-
-        const response =
-            await fetch(
-                `/api/tournaments/${tournamentId}/players`
-            );
+    const { r, d } =
+        await json(
+            "/api/tournaments"
+        );
 
 
-        const data =
-            await response.json();
+    if (!r.ok) {
+
+        return;
+    }
 
 
-        const players =
-            Array.isArray(data)
-                ? data
-                : (
-                    Array.isArray(data.players)
-                        ? data.players
-                        : []
-                );
+    const list =
+        Array.isArray(d)
+            ? d
+            : [];
 
 
-        container.innerHTML = "";
+    const tournament =
+        list.find(
+            x => x.id == id
+        );
 
 
-        if (players.length === 0) {
-
-            container.innerHTML =
-                '<div class="small">Is tournament me players nahi hain.</div>';
-
-            return;
-        }
+    const players =
+        tournament?.players ||
+        [];
 
 
-        players.forEach(player => {
+    $("results")
+        .innerHTML =
+        players.length
 
-            const item =
-                document.createElement("div");
+            ?
 
-            item.className = "item";
+            players
+                .map(
+                    player =>
+                        `
+                        <div class="item">
 
+                            <b>
+                                ${esc(
+                                    player.name
+                                )}
+                            </b>
 
-            item.innerHTML = `
+                            |
+                            UID
+                            ${esc(
+                                player.uid
+                            )}
 
-                <p>
-                    <strong>
-                        ${escapeHtml(
-                            player.name ||
-                            player.player_name ||
-                            "Player"
-                        )}
-                    </strong>
-                </p>
+                            <div class="row">
 
-                <p>
-                    UID:
-                    ${escapeHtml(
-                        player.uid || "-"
-                    )}
-                </p>
+                                <input
+                                    id="k${player.id}"
+                                    type="number"
+                                    min="0"
+                                    value="${
+                                        player.kills ??
+                                        0
+                                    }"
+                                    placeholder="Kills"
+                                >
 
-                <input
-                    type="number"
-                    id="kills_${player.id}"
-                    value="${player.kills ?? 0}"
-                    min="0"
-                    placeholder="Kills"
-                >
+                                <input
+                                    id="p${player.id}"
+                                    type="number"
+                                    min="0"
+                                    value="${
+                                        player.position ??
+                                        0
+                                    }"
+                                    placeholder="Position"
+                                >
 
-                <input
-                    type="number"
-                    id="position_${player.id}"
-                    value="${player.position ?? ""}"
-                    min="1"
-                    placeholder="Position"
-                >
+                                <button
+                                    onclick="
+                                        saveResult(
+                                            ${player.id}
+                                        )
+                                    "
+                                >
+                                    Save
+                                </button>
 
-                <button
-                    onclick="savePlayerResult(${player.id})"
-                >
-                    Save Result
-                </button>
+                            </div>
+
+                        </div>
+                        `
+                )
+                .join("")
+
+            :
+
+            `
+            <div class="muted">
+                Players/results nahi mile.
+            </div>
             `;
-
-
-            container.appendChild(item);
-
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-        container.innerHTML =
-            "Players load nahi hue.";
-    }
 }
 
 
-/* =========================
-   SAVE PLAYER RESULT
-========================= */
+/* =====================================================
+   SAVE RESULT
+===================================================== */
 
-async function savePlayerResult(playerId) {
+async function saveResult(id) {
 
-    const kills =
-        Number(
-            document.getElementById(
-                `kills_${playerId}`
-            ).value
-        );
+    const { r, d } =
+        await json(
+            `/api/admin/players/${id}`,
+            {
+                method: "PUT",
 
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
 
-    const positionValue =
-        document.getElementById(
-            `position_${playerId}`
-        ).value;
+                body:
+                    JSON.stringify({
 
+                        kills:
+                            Number(
+                                $(`k${id}`)
+                                    .value || 0
+                            ),
 
-    const position =
-        positionValue === ""
-            ? null
-            : Number(positionValue);
+                        position:
+                            Number(
+                                $(`p${id}`)
+                                    .value || 0
+                            )
 
-
-    try {
-
-        const response =
-            await fetch(
-                `/api/admin/players/${playerId}`,
-                {
-                    method: "PUT",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        kills,
-                        position
                     })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || data.success === false) {
-
-            alert(
-                data.message ||
-                "Result save nahi hua."
-            );
-
-            return;
-        }
-
-
-        alert(
-            data.message ||
-            "Result saved."
+            }
         );
 
-    } catch (error) {
 
-        console.error(error);
-
-        alert(
-            "Result save karte waqt error."
-        );
-    }
+    alert(
+        d.message ||
+        "Done"
+    );
 }
 
 
-/* =========================
-   SEND REDEEM CODE
-========================= */
-
-async function sendRedeemCode() {
-
-    const userId =
-        document.getElementById(
-            "redeemUser"
-        ).value;
-
-
-    const code =
-        document.getElementById(
-            "redeemCode"
-        ).value.trim();
-
-
-    const message =
-        document.getElementById(
-            "redeemNote"
-        ).value.trim();
-
-
-    if (!userId) {
-
-        showMessage(
-            "redeemMessage",
-            "Pehle player select karo.",
-            false
-        );
-
-        return;
-    }
-
-
-    if (!code) {
-
-        showMessage(
-            "redeemMessage",
-            "Redeem code enter karo.",
-            false
-        );
-
-        return;
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/redeem-codes",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        user_id: Number(userId),
-                        code,
-                        message
-                    })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || data.success === false) {
-
-            showMessage(
-                "redeemMessage",
-                data.message ||
-                "Redeem code send nahi hua.",
-                false
-            );
-
-            return;
-        }
-
-
-        showMessage(
-            "redeemMessage",
-            data.message ||
-            "Redeem code send ho gaya."
-        );
-
-
-        document.getElementById(
-            "redeemCode"
-        ).value = "";
-
-        document.getElementById(
-            "redeemNote"
-        ).value = "";
-
-
-        loadRedeemCodes();
-
-    } catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            "redeemMessage",
-            "Redeem code send karte waqt error.",
-            false
-        );
-    }
-}
-
-
-/* =========================
-   LOAD REDEEM CODES
-========================= */
-
-async function loadRedeemCodes() {
-
-    const container =
-        document.getElementById(
-            "redeemCodesList"
-        );
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/redeem-codes"
-            );
-
-
-        const data =
-            await response.json();
-
-
-        /*
-          Backend:
-          {
-              success: true,
-              codes: [...]
-          }
-        */
-
-        const codes =
-            Array.isArray(data)
-                ? data
-                : (
-                    Array.isArray(data.codes)
-                        ? data.codes
-                        : []
-                );
-
-
-        container.innerHTML = "";
-
-
-        if (codes.length === 0) {
-
-            container.innerHTML =
-                '<div class="small">Abhi koi redeem code send nahi hua.</div>';
-
-            return;
-        }
-
-
-        codes.forEach(item => {
-
-            const box =
-                document.createElement("div");
-
-            box.className = "item";
-
-
-            box.innerHTML = `
-
-                <p>
-                    👤
-                    <strong>
-                        ${escapeHtml(
-                            item.username ||
-                            "Unknown"
-                        )}
-                    </strong>
-                </p>
-
-                <p>
-                    UID:
-                    ${escapeHtml(
-                        item.uid || "-"
-                    )}
-                </p>
-
-                <p>
-                    🎁 Code:
-                    <strong>
-                        ${escapeHtml(
-                            item.code || "-"
-                        )}
-                    </strong>
-                </p>
-
-                <p>
-                    📝
-                    ${escapeHtml(
-                        item.message || ""
-                    )}
-                </p>
-
-                <p class="small">
-                    Status:
-                    ${
-                        item.used
-                            ? "Used"
-                            : "Not Used"
-                    }
-                </p>
-
-                <button
-                    class="danger"
-                    onclick="deleteRedeemCode(${item.id})"
-                >
-                    Delete
-                </button>
-            `;
-
-
-            container.appendChild(box);
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "LOAD REDEEM CODES ERROR:",
-            error
-        );
-
-        container.innerHTML =
-            "Redeem codes load nahi hue.";
-    }
-}
-
-
-/* =========================
-   DELETE REDEEM CODE
-========================= */
-
-async function deleteRedeemCode(id) {
-
-    if (
-        !confirm(
-            "Kya tum ye redeem code delete karna chahte ho?"
-        )
-    ) {
-        return;
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                `/api/admin/redeem-codes/${id}`,
-                {
-                    method: "DELETE"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || data.success === false) {
-
-            alert(
-                data.message ||
-                "Redeem code delete nahi hua."
-            );
-
-            return;
-        }
-
-
-        loadRedeemCodes();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "Redeem code delete karte waqt error."
-        );
-    }
-}
-
-
-/* =========================
-   WALLET ADD
-========================= */
-
-async function addWallet() {
-
-    const userId =
-        document.getElementById(
-            "walletUser"
-        ).value;
-
-    const amount =
-        Number(
-            document.getElementById(
-                "walletAmount"
-            ).value
-        );
-
-
-    if (!userId || !amount || amount <= 0) {
-
-        alert(
-            "Player aur valid token amount select karo."
-        );
-
-        return;
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/wallet/add",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        user_id: Number(userId),
-                        amount
-                    })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || data.success === false) {
-
-            alert(
-                data.message ||
-                "Tokens add nahi hue."
-            );
-
-            return;
-        }
-
-
-        alert(
-            data.message ||
-            "Tokens successfully added."
-        );
-
-        document.getElementById(
-            "walletAmount"
-        ).value = "";
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "Wallet update karte waqt error."
-        );
-    }
-}
-
-
-/* =========================
-   WALLET REMOVE
-========================= */
-
-async function removeWallet() {
-
-    const userId =
-        document.getElementById(
-            "walletUser"
-        ).value;
-
-    const amount =
-        Number(
-            document.getElementById(
-                "walletAmount"
-            ).value
-        );
-
-
-    if (!userId || !amount || amount <= 0) {
-
-        alert(
-            "Player aur valid token amount select karo."
-        );
-
-        return;
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/wallet/remove",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        user_id: Number(userId),
-                        amount
-                    })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || data.success === false) {
-
-            alert(
-                data.message ||
-                "Tokens remove nahi hue."
-            );
-
-            return;
-        }
-
-
-        alert(
-            data.message ||
-            "Tokens successfully removed."
-        );
-
-        document.getElementById(
-            "walletAmount"
-        ).value = "";
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "Wallet update karte waqt error."
-        );
-    }
-}
-
-
-/* =========================
-   NOTICE BOARD
-========================= */
+/* =====================================================
+   ADD NOTICE
+===================================================== */
 
 async function addNotice() {
 
-    const title =
-        document.getElementById(
-            "noticeTitle"
-        ).value.trim();
+    const { r, d } =
+        await json(
+            "/api/admin/notices",
+            {
+                method: "POST",
 
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
 
-    const message =
-        document.getElementById(
-            "noticeMessage"
-        ).value.trim();
+                body:
+                    JSON.stringify({
 
+                        title:
+                            $("noticeTitle")
+                                .value
+                                .trim(),
 
-    if (!title || !message) {
+                        message:
+                            $("noticeText")
+                                .value
+                                .trim()
 
-        alert(
-            "Notice title aur message bharo."
+                    })
+            }
         );
+
+
+    if (
+        !r.ok ||
+        d.success === false
+    ) {
+
+        return alert(
+            d.message ||
+            "Notice failed."
+        );
+    }
+
+
+    $("noticeTitle")
+        .value = "";
+
+    $("noticeText")
+        .value = "";
+
+
+    loadNotices();
+}
+
+
+/* =====================================================
+   LOAD NOTICES
+===================================================== */
+
+async function loadNotices() {
+
+    const { r, d } =
+        await json(
+            "/api/admin/notices"
+        );
+
+
+    if (!r.ok) {
 
         return;
     }
 
 
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/notices",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        title,
-                        message
-                    })
-                }
+    const list =
+        Array.isArray(d)
+            ? d
+            : (
+                Array.isArray(d.notices)
+                    ? d.notices
+                    : []
             );
 
 
-        const data =
-            await response.json();
+    $("notices")
+        .innerHTML =
+        list.length
 
+            ?
 
-        if (!response.ok || data.success === false) {
+            list
+                .map(
+                    notice =>
+                        `
+                        <div class="item">
 
-            alert(
-                data.message ||
-                "Notice add nahi hua."
-            );
+                            <b>
+                                ${esc(
+                                    notice.title
+                                )}
+                            </b>
 
-            return;
-        }
+                            <p>
+                                ${esc(
+                                    notice.message
+                                )}
+                            </p>
 
+                            <button
+                                class="red"
+                                onclick="
+                                    deleteNotice(
+                                        ${notice.id}
+                                    )
+                                "
+                            >
+                                Delete
+                            </button>
 
-        document.getElementById(
-            "noticeTitle"
-        ).value = "";
+                        </div>
+                        `
+                )
+                .join("")
 
-        document.getElementById(
-            "noticeMessage"
-        ).value = "";
+            :
 
-
-        loadNotices();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "Notice add karte waqt error."
-        );
-    }
-}
-
-
-/* =========================
-   LOAD NOTICES
-========================= */
-
-async function loadNotices() {
-
-    const container =
-        document.getElementById(
-            "noticesList"
-        );
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/notices"
-            );
-
-
-        const data =
-            await response.json();
-
-
-        const notices =
-            Array.isArray(data)
-                ? data
-                : (
-                    Array.isArray(data.notices)
-                        ? data.notices
-                        : []
-                );
-
-
-        container.innerHTML = "";
-
-
-        if (notices.length === 0) {
-
-            container.innerHTML =
-                '<div class="small">Koi notice nahi hai.</div>';
-
-            return;
-        }
-
-
-        notices.forEach(notice => {
-
-            const box =
-                document.createElement("div");
-
-            box.className = "item";
-
-
-            box.innerHTML = `
-
-                <h3>
-                    ${escapeHtml(
-                        notice.title || "Notice"
-                    )}
-                </h3>
-
-                <p>
-                    ${escapeHtml(
-                        notice.message || ""
-                    )}
-                </p>
-
-                <button
-                    class="danger"
-                    onclick="deleteNotice(${notice.id})"
-                >
-                    Delete Notice
-                </button>
+            `
+            <div class="muted">
+                Koi notice nahi.
+            </div>
             `;
-
-
-            container.appendChild(box);
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "LOAD NOTICES ERROR:",
-            error
-        );
-
-        container.innerHTML =
-            "Notices load nahi hue.";
-    }
 }
 
 
-/* =========================
+/* =====================================================
    DELETE NOTICE
-========================= */
+===================================================== */
 
 async function deleteNotice(id) {
 
     if (
         !confirm(
-            "Kya tum ye notice delete karna chahte ho?"
+            "Notice delete karna hai?"
         )
     ) {
+
         return;
     }
 
 
-    try {
-
-        const response =
-            await fetch(
-                `/api/admin/notices/${id}`,
-                {
-                    method: "DELETE"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || data.success === false) {
-
-            alert(
-                data.message ||
-                "Notice delete nahi hua."
-            );
-
-            return;
-        }
-
-
-        loadNotices();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "Notice delete karte waqt error."
+    const { d } =
+        await json(
+            `/api/admin/notices/${id}`,
+            {
+                method: "DELETE"
+            }
         );
-    }
+
+
+    alert(
+        d.message ||
+        "Done"
+    );
+
+
+    loadNotices();
 }
 
 
-/* =========================
+/* =====================================================
    CHANGE PASSWORD
-========================= */
+===================================================== */
 
 async function changePassword() {
 
-    const oldPassword =
-        document.getElementById(
-            "oldPassword"
-        ).value;
+    const { r, d } =
+        await json(
+            "/api/admin/change-password",
+            {
+                method: "POST",
 
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
 
-    const newPassword =
-        document.getElementById(
-            "newPassword"
-        ).value;
+                body:
+                    JSON.stringify({
 
+                        old_password:
+                            $("oldPass")
+                                .value,
 
-    if (!oldPassword || !newPassword) {
+                        new_password:
+                            $("newPass")
+                                .value
 
-        showMessage(
-            "passwordMessage",
-            "Old aur new password dono bharo.",
-            false
-        );
-
-        return;
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/change-password",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        old_password: oldPassword,
-                        new_password: newPassword
                     })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || data.success === false) {
-
-            showMessage(
-                "passwordMessage",
-                data.message ||
-                "Password change nahi hua.",
-                false
-            );
-
-            return;
-        }
-
-
-        showMessage(
-            "passwordMessage",
-            data.message ||
-            "Password successfully change ho gaya."
+            }
         );
 
 
-        document.getElementById(
-            "oldPassword"
-        ).value = "";
+    if (
+        !r.ok ||
+        d.success === false
+    ) {
 
-        document.getElementById(
-            "newPassword"
-        ).value = "";
-
-    } catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            "passwordMessage",
-            "Password change karte waqt error.",
+        return msg(
+            "passMsg",
+            d.message ||
+            "Password change failed.",
             false
         );
     }
+
+
+    msg(
+        "passMsg",
+        d.message ||
+        "Password changed."
+    );
+
+
+    $("oldPass")
+        .value = "";
+
+    $("newPass")
+        .value = "";
 }
 
 
-/* =========================
-   HTML ESCAPE
-========================= */
-
-function escapeHtml(value) {
-
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-
-/* =========================
+/* =====================================================
    START
-========================= */
+===================================================== */
 
-checkAdmin();
+check();
 
 </script>
 
