@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -154,6 +153,73 @@ width:min(650px,100%);
 max-height:90vh;
 overflow:auto
 }
+
+/* TOURNAMENT PLAYERS */
+
+.players-card{
+border:1px solid #334155;
+}
+
+.player-detail{
+background:#0b111c;
+border:1px solid #29354b;
+border-radius:12px;
+padding:15px;
+margin:10px 0;
+}
+
+.player-detail-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:10px;
+margin-top:12px;
+}
+
+.player-field{
+background:#111827;
+border-radius:8px;
+padding:10px;
+border:1px solid #253047;
+}
+
+.player-field .label{
+color:#9ca3af;
+font-size:12px;
+margin-bottom:4px;
+}
+
+.player-field .value{
+font-weight:700;
+word-break:break-word;
+}
+
+.players-count{
+color:#22c55e;
+font-weight:bold;
+}
+
+.empty-players{
+padding:20px;
+text-align:center;
+background:#0d1320;
+border-radius:10px;
+color:#9ca3af;
+}
+
+@media(max-width:600px){
+.row{
+flex-direction:column;
+}
+
+.top{
+flex-direction:column;
+align-items:stretch;
+}
+
+.top button{
+width:100%!important;
+}
+}
 </style>
 </head>
 
@@ -286,6 +352,46 @@ Create Tournament
 
 <div id="tournaments">
 Loading...
+</div>
+
+</div>
+
+
+<!-- NEW: TOURNAMENT PLAYERS -->
+
+<div class="card players-card">
+
+<h2>👥 Tournament Players</h2>
+
+<p class="muted">
+Tournament select karo. Sirf usi tournament me registered players ki details yahan dikhegi.
+</p>
+
+<select
+id="playersTournament"
+onchange="loadTournamentPlayers()"
+>
+
+<option value="">
+Tournament select karo
+</option>
+
+</select>
+
+<div
+id="playersTournamentInfo"
+class="muted"
+style="margin:10px 0"
+>
+Tournament select karo.
+</div>
+
+<div id="tournamentPlayers">
+
+<div class="empty-players">
+Pehle tournament select karo.
+</div>
+
 </div>
 
 </div>
@@ -1158,10 +1264,18 @@ $('roomTournament').innerHTML=
 $('resultTournament').innerHTML=
 '<option value="">Tournament select karo</option>';
 
+/* NEW PLAYER TOURNAMENT SELECT */
+
+$('playersTournament').innerHTML=
+'<option value="">Tournament select karo</option>';
+
 if(!tournaments.length){
 
 $('tournaments').innerHTML=
 '<div class="muted">Koi tournament nahi.</div>';
+
+$('tournamentPlayers').innerHTML=
+'<div class="empty-players">Koi tournament nahi.</div>';
 
 return;
 
@@ -1230,19 +1344,292 @@ let o=document.createElement('option');
 o.value=t.id;
 o.textContent=t.name;
 
-$('roomTournament')
-.appendChild(o);
+$('roomTournament').appendChild(o);
 
 o=document.createElement('option');
 
 o.value=t.id;
 o.textContent=t.name;
 
-$('resultTournament')
-.appendChild(o);
+$('resultTournament').appendChild(o);
+
+
+/* NEW PLAYERS SELECT OPTION */
+
+o=document.createElement('option');
+
+o.value=t.id;
+o.textContent=t.name;
+
+$('playersTournament').appendChild(o);
 
 }
 );
+
+}
+
+
+/* =========================================================
+   TOURNAMENT PLAYERS
+   ONLY NEW FEATURE
+   ========================================================= */
+
+async function loadTournamentPlayers(){
+
+let id=$('playersTournament').value;
+
+let box=$('tournamentPlayers');
+let info=$('playersTournamentInfo');
+
+if(!id){
+
+info.textContent='Tournament select karo.';
+
+box.innerHTML=
+'<div class="empty-players">Pehle tournament select karo.</div>';
+
+return;
+
+}
+
+/*
+  Existing /api/tournaments endpoint se tournament data
+  dobara read kar rahe hain. Isse existing backend ko
+  modify karne ki zaroorat nahi padti.
+*/
+
+let {r,d}=await json(
+'/api/tournaments'
+);
+
+if(!r.ok){
+
+info.textContent='Players load nahi ho paaye.';
+
+box.innerHTML=
+'<div class="empty-players">Server se data nahi mila.</div>';
+
+return;
+
+}
+
+let list=
+Array.isArray(d)
+?
+d
+:
+(d.tournaments||[]);
+
+let tournament=
+list.find(
+t=>String(t.id)===String(id)
+);
+
+if(!tournament){
+
+info.textContent='Tournament nahi mila.';
+
+box.innerHTML=
+'<div class="empty-players">Tournament nahi mila.</div>';
+
+return;
+
+}
+
+let players=
+Array.isArray(tournament.players)
+?
+tournament.players
+:
+[];
+
+info.innerHTML=
+`
+Tournament:
+<b>${esc(tournament.name)}</b>
+&nbsp; | &nbsp;
+Registered Players:
+<span class="players-count">${players.length}</span>
+/
+${esc(tournament.max_players)}
+`;
+
+if(!players.length){
+
+box.innerHTML=
+`
+<div class="empty-players">
+Is tournament me abhi koi player registered nahi hai.
+</div>
+`;
+
+return;
+
+}
+
+box.innerHTML=
+players.map(
+(p,index)=>{
+
+/*
+  Backend me Instagram/slot ke common names:
+  instagram_id / instagram
+  slot_number / slot
+*/
+
+let instagram=
+p.instagram_id ??
+p.instagram ??
+p.instagramId ??
+'';
+
+let slot=
+p.slot_number ??
+p.slot ??
+p.slot_no ??
+'';
+
+return `
+<div class="player-detail">
+
+<div class="top">
+
+<div>
+<h3 style="margin-bottom:5px">
+#${index+1} — ${esc(p.name || p.username || 'Player')}
+</h3>
+
+<span class="badge">
+Registered
+</span>
+</div>
+
+<div class="muted">
+Player ID: ${esc(p.id)}
+</div>
+
+</div>
+
+
+<div class="player-detail-grid">
+
+
+<div class="player-field">
+
+<div class="label">
+👤 Player Name
+</div>
+
+<div class="value">
+${esc(p.name || p.username || '—')}
+</div>
+
+</div>
+
+
+<div class="player-field">
+
+<div class="label">
+🎮 Free Fire UID
+</div>
+
+<div class="value">
+${esc(p.uid || '—')}
+</div>
+
+</div>
+
+
+<div class="player-field">
+
+<div class="label">
+📸 Instagram ID
+</div>
+
+<div class="value">
+${instagram ? '@'+esc(String(instagram).replace(/^@/,'')) : '—'}
+</div>
+
+</div>
+
+
+<div class="player-field">
+
+<div class="label">
+🎟️ Slot Number
+</div>
+
+<div class="value">
+${esc(slot || '—')}
+</div>
+
+</div>
+
+
+<div class="player-field">
+
+<div class="label">
+🔫 Kills
+</div>
+
+<div class="value">
+${esc(p.kills ?? 0)}
+</div>
+
+</div>
+
+
+<div class="player-field">
+
+<div class="label">
+🏅 Position
+</div>
+
+<div class="value">
+${esc(p.position ?? '—')}
+</div>
+
+</div>
+
+
+<div class="player-field">
+
+<div class="label">
+💰 Kill Reward
+</div>
+
+<div class="value">
+₹${esc(
+(
+Number(p.kills||0) *
+Number(tournament.kill_reward||0)
+)
+)}
+</div>
+
+</div>
+
+
+<div class="player-field">
+
+<div class="label">
+📅 Tournament
+</div>
+
+<div class="value">
+${esc(tournament.name)}
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+`;
+
+}
+).join('');
 
 }
 
@@ -1320,7 +1707,8 @@ await json(
 {
 method:'PUT',
 headers:{
-'Content-Type':'application/json'
+'Content-Type':
+'application/json'
 },
 body:JSON.stringify(body)
 }
@@ -1969,4 +2357,3 @@ check();
 
 </body>
 </html>
-```
