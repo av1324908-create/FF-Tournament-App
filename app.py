@@ -119,6 +119,12 @@ with app.app_context():
                 text("ALTER TABLE tournament ADD COLUMN rules TEXT")
             )
 
+    if "result_published" not in tournament_columns:
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE tournament ADD COLUMN result_published BOOLEAN DEFAULT FALSE")
+            )
+
     admin = AdminAccount.query.filter_by(
         username="admin"
     ).first()
@@ -652,8 +658,13 @@ def get_tournaments():
         status = tournament_status(tournament)
 
         # Admin ko results hamesha milenge.
-        # Normal users ko results sirf 15 min ke baad, yani Completed par.
-        show_results = admin_view or status == "completed"
+        # Normal users ko result sirf Completed + Admin Published ke baad milega.
+        published_row = db.session.execute(
+            text("SELECT result_published FROM tournament WHERE id = :id"),
+            {"id": tournament.id}
+        ).scalar()
+        result_published = bool(published_row)
+        show_results = admin_view or (status == "completed" and result_published)
 
         players_data = []
         if show_results:
@@ -682,6 +693,7 @@ def get_tournaments():
             "available_slots": max(0, int(tournament.max_players or 0) - len(players)),
             "registered": registered,
             "status": status,
+            "result_published": result_published,
             "results_visible": show_results,
             "players": players_data
         }
@@ -1780,6 +1792,51 @@ def wallet_transactions(uid):
         "uid": uid,
 
         "transactions": result
+    })
+
+
+# =========================================================
+# PUBLISH / UNPUBLISH FINAL RESULT
+# =========================================================
+
+@app.route(
+    "/api/admin/tournaments/<int:tournament_id>/result-publish",
+    methods=["POST"]
+)
+def publish_final_result(tournament_id):
+
+    if not is_admin_logged_in():
+        return jsonify({
+            "success": False,
+            "message": "Admin login required."
+        }), 401
+
+    tournament = db.session.get(Tournament, tournament_id)
+
+    if tournament is None:
+        return jsonify({
+            "success": False,
+            "message": "Tournament nahi mila."
+        }), 404
+
+    data = request.get_json() or {}
+    published = bool(data.get("published", True))
+
+    # Database column is created during startup migration.
+    with db.engine.begin() as connection:
+        connection.execute(
+            text("UPDATE tournament SET result_published = :published WHERE id = :id"),
+            {"published": published, "id": tournament_id}
+        )
+
+    return jsonify({
+        "success": True,
+        "message": (
+            "Final Result publish kar diya gaya."
+            if published else
+            "Final Result unpublish kar diya gaya."
+        ),
+        "published": published
     })
 
 
