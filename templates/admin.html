@@ -1,15 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>Admin Panel - Free Fire Tournament Hub</title>
+<title>Admin Panel - FF Tournament Hub</title>
 
 <style>
 
@@ -24,33 +19,37 @@ body {
     color: white;
 }
 
-.container {
-    width: 95%;
-    max-width: 1100px;
-    margin: auto;
-}
-
 header {
-    background: #111;
-    padding: 18px 0;
-    border-bottom: 1px solid #333;
+    background: linear-gradient(135deg, #ff8c00, #ff3d00);
+    padding: 25px 15px;
+    text-align: center;
 }
 
 header h1 {
     margin: 0;
-    text-align: center;
-    color: #ff9800;
+    font-size: 30px;
 }
 
-.box {
-    background: #151515;
+header p {
+    margin: 8px 0 0;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
     padding: 20px;
-    border-radius: 13px;
-    margin: 20px 0;
-    border: 1px solid #292929;
 }
 
-h2 {
+.card {
+    background: #181818;
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card h2 {
+    margin-top: 0;
     color: #ff9800;
 }
 
@@ -61,61 +60,78 @@ select {
     padding: 12px;
     margin: 7px 0;
     border: none;
-    border-radius: 7px;
-    background: #fff;
-    color: #111;
+    border-radius: 8px;
+    background: #292929;
+    color: white;
+    font-size: 15px;
 }
 
 textarea {
-    min-height: 120px;
+    min-height: 100px;
     resize: vertical;
 }
 
 button {
-    padding: 11px 18px;
     border: none;
-    border-radius: 7px;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 8px;
     background: #ff9800;
     color: #111;
     font-weight: bold;
     cursor: pointer;
-    margin: 5px 4px 5px 0;
 }
 
 button:hover {
-    opacity: .9;
+    background: #ffb52e;
 }
 
-.danger {
-    background: #d32f2f;
+button.danger {
+    background: #e53935;
     color: white;
 }
 
-.blue {
-    background: #008cff;
+button.green {
+    background: #00c853;
     color: white;
 }
 
-.green {
-    background: #159447;
+button.gray {
+    background: #555;
     color: white;
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .message {
     margin-top: 10px;
-    font-weight: bold;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.success {
+    background: #123d24;
+    color: #7dffac;
+}
+
+.error {
+    background: #451515;
+    color: #ff8a8a;
+}
+
+.small {
+    color: #aaa;
+    font-size: 13px;
 }
 
 .tournament {
-    background: #101010;
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 12px;
     padding: 16px;
-    border-radius: 10px;
-    margin-top: 12px;
-    border: 1px solid #292929;
+    margin-top: 15px;
 }
 
 .tournament h3 {
@@ -123,103 +139,61 @@ button:hover {
     margin-top: 0;
 }
 
-.player {
-    background: #181818;
-    padding: 10px;
-    border-radius: 7px;
-    margin: 7px 0;
+.player-row {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 10px;
 }
 
-.player input {
-    width: auto;
-    max-width: 120px;
+.player-row strong {
+    color: #ff9800;
 }
 
 .grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
 }
 
-.editor-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.notice-item {
-    background: #101010;
-    border-left: 4px solid #ff9800;
-    padding: 13px;
-    border-radius: 8px;
+.code-item {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 12px;
     margin-top: 10px;
 }
 
-.notice-item h3 {
-    margin: 0 0 7px;
-    color: #ff9800;
-}
-
-.notice-item p {
-    white-space: pre-wrap;
-    line-height: 1.5;
-}
-
-.status {
-    padding: 5px 9px;
-    border-radius: 6px;
-    font-size: 12px;
+.code-value {
+    color: #00ff88;
+    font-size: 20px;
     font-weight: bold;
+    letter-spacing: 1px;
 }
 
-.status-upcoming {
-    background: #164b23;
-    color: #5cff7b;
-}
-
-.status-live {
-    background: #571616;
-    color: #ff5555;
-}
-
-.status-completed {
-    background: #333;
-    color: #ccc;
-}
-
-.rules-preview {
-    background: #0c0c0c;
-    padding: 12px;
-    border-radius: 8px;
-    white-space: pre-wrap;
-    line-height: 1.6;
-    color: #ddd;
+hr {
+    border: 0;
+    border-top: 1px solid #333;
+    margin: 20px 0;
 }
 
 @media(max-width:700px) {
-
-    .grid,
-    .editor-grid {
+    .grid {
         grid-template-columns: 1fr;
     }
-
 }
 
 </style>
-
 </head>
 
 <body>
 
 <header>
 
-<div class="container">
+    <h1>🔥 FF Tournament Hub</h1>
 
-<h1>
-🔥 Free Fire Tournament Hub — Admin Panel
-</h1>
-
-</div>
+    <p>Admin Control Panel</p>
 
 </header>
 
@@ -228,411 +202,392 @@ button:hover {
 
 
 <!-- =====================================================
-     ADMIN LOGIN
-====================================================== -->
+     LOGIN
+===================================================== -->
 
-<div
-    id="loginBox"
-    class="box"
->
+<div id="loginSection" class="card">
 
-<h2>🔐 Admin Login</h2>
+    <h2>🔐 Admin Login</h2>
 
-<input
-    id="adminUsername"
-    placeholder="Admin Username"
->
+    <input
+        id="loginUsername"
+        placeholder="Admin Username"
+        value="admin"
+    >
 
-<input
-    id="adminPassword"
-    type="password"
-    placeholder="Admin Password"
->
+    <input
+        id="loginPassword"
+        type="password"
+        placeholder="Admin Password"
+    >
 
-<button
-    onclick="adminLogin()"
->
-    Login
-</button>
+    <button onclick="adminLogin()">
+        Login
+    </button>
 
-<div
-    id="loginMessage"
-    class="message"
-></div>
+    <div id="loginMessage"></div>
 
 </div>
 
 
 <!-- =====================================================
-     ADMIN DASHBOARD
-====================================================== -->
+     ADMIN PANEL
+===================================================== -->
 
-<div
-    id="dashboard"
-    class="hidden"
->
+<div id="adminPanel" class="hidden">
 
 
-<!-- LOGOUT -->
+<div class="card">
 
-<div class="box">
+    <h2>👑 Admin Dashboard</h2>
 
-<button
-    class="danger"
-    onclick="adminLogout()"
->
-    🚪 Logout
-</button>
+    <p>
+        Welcome,
+        <strong id="adminName"></strong>
+    </p>
+
+    <button
+        class="gray"
+        onclick="adminLogout()"
+    >
+        🚪 Logout
+    </button>
 
 </div>
 
 
 <!-- =====================================================
      CREATE TOURNAMENT
-====================================================== -->
+===================================================== -->
 
-<div class="box">
+<div class="card">
 
-<h2>
-➕ Create Tournament
-</h2>
+    <h2>🏆 Create Tournament</h2>
 
-<div class="grid">
+    <div class="grid">
 
-<input
-    id="tName"
-    placeholder="Tournament Name"
->
+        <div>
+            <label>Tournament Name</label>
 
-<input
-    id="tEntryFee"
-    type="number"
-    min="0"
-    placeholder="Entry Fee"
->
-
-<input
-    id="tMaxPlayers"
-    type="number"
-    min="1"
-    placeholder="Max Players"
->
-
-<input
-    id="tKillReward"
-    type="number"
-    min="0"
-    placeholder="Per Kill Reward"
->
-
-<input
-    id="tFirstPrize"
-    type="number"
-    min="0"
-    placeholder="1st Prize"
->
-
-<input
-    id="tDateTime"
-    placeholder="Date & Time e.g. 25/09/26 20:00"
->
+            <input
+                id="tName"
+                placeholder="Example: FFTH Night Tournament"
+            >
+        </div>
 
-</div>
-
-
-<textarea
-    id="tRules"
-    placeholder="Tournament Rules..."
-></textarea>
 
+        <div>
+            <label>Date & Time</label>
 
-<button
-    onclick="createTournament()"
->
-    🚀 Create Tournament
-</button>
+            <input
+                id="tDate"
+                placeholder="DD/MM/YY HH:MM"
+            >
+        </div>
 
 
-<div
-    id="createMessage"
-    class="message"
-></div>
+        <div>
+            <label>Entry Fee Tokens</label>
 
-</div>
+            <input
+                id="tEntry"
+                type="number"
+                min="0"
+                value="0"
+            >
+        </div>
 
 
-<!-- =====================================================
-     EDIT TOURNAMENT
-====================================================== -->
+        <div>
+            <label>Maximum Players</label>
 
-<div class="box">
+            <input
+                id="tMax"
+                type="number"
+                min="1"
+                value="48"
+            >
+        </div>
 
-<h2>
-✏️ Edit Tournament
-</h2>
 
-<p style="color:#aaa;">
-Sirf upcoming tournament jisme slots available hain
-edit kiya ja sakta hai.
-</p>
+        <div>
+            <label>Per Kill Reward</label>
 
+            <input
+                id="tKill"
+                type="number"
+                min="0"
+                value="0"
+            >
+        </div>
 
-<select
-    id="editTournamentSelect"
->
-<option value="">
-Tournament select karo
-</option>
-</select>
 
+        <div>
+            <label>1st Prize</label>
 
-<div class="editor-grid">
+            <input
+                id="tPrize"
+                type="number"
+                min="0"
+                value="0"
+            >
+        </div>
 
-<input
-    id="editName"
-    placeholder="Tournament Name"
->
+    </div>
 
-<input
-    id="editEntryFee"
-    type="number"
-    min="0"
-    placeholder="Entry Fee"
->
 
-<input
-    id="editMaxPlayers"
-    type="number"
-    min="1"
-    placeholder="Max Players"
->
+    <label>Tournament Rules</label>
 
-<input
-    id="editKillReward"
-    type="number"
-    min="0"
-    placeholder="Per Kill Reward"
->
+    <textarea
+        id="tRules"
+        placeholder="Tournament ke saare rules yahan likho..."
+    ></textarea>
 
-<input
-    id="editFirstPrize"
-    type="number"
-    min="0"
-    placeholder="1st Prize"
->
 
-<input
-    id="editDateTime"
-    placeholder="Date & Time"
->
+    <button onclick="createTournament()">
+        ➕ Create Tournament
+    </button>
 
-</div>
 
-
-<textarea
-    id="editRules"
-    placeholder="Tournament Rules"
-></textarea>
-
-
-<button
-    class="blue"
-    onclick="saveTournamentEdit()"
->
-💾 Save Tournament Changes
-</button>
-
-
-<div
-    id="editTournamentMsg"
-    class="message"
-></div>
-
-</div>
-
-
-<!-- =====================================================
-     NOTICE BOARD
-====================================================== -->
-
-<div class="box">
-
-<h2>
-📢 Notice Board
-</h2>
-
-<input
-    id="noticeTitle"
-    placeholder="Notice Title"
->
-
-
-<textarea
-    id="noticeMessage"
-    placeholder="Notice message..."
-></textarea>
-
-
-<label>
-
-<input
-    id="noticeActive"
-    type="checkbox"
-    checked
-    style="width:auto;"
->
-
-Public notice active rakho
-
-</label>
-
-
-<br>
-
-
-<button
-    class="green"
-    onclick="createNotice()"
->
-➕ Add Notice
-</button>
-
-
-<div
-    id="noticeMsg"
-    class="message"
-></div>
-
-
-<div
-    id="adminNotices"
-></div>
-
-</div>
-
-
-<!-- =====================================================
-     WALLET / TOKENS
-====================================================== -->
-
-<div class="box">
-
-<h2>
-💰 Manage Player Tokens
-</h2>
-
-
-<input
-    id="walletUID"
-    placeholder="Player Free Fire UID"
->
-
-
-<input
-    id="walletAmount"
-    type="number"
-    min="1"
-    placeholder="Token Amount"
->
-
-
-<button
-    class="green"
-    onclick="addTokens()"
->
-➕ Add Tokens
-</button>
-
-
-<button
-    class="danger"
-    onclick="removeTokens()"
->
-➖ Remove Tokens
-</button>
-
-
-<div
-    id="walletMessage"
-    class="message"
-></div>
-
-
-<div
-    id="walletBalance"
-    style="
-        margin-top:10px;
-        color:#ffd54f;
-        font-weight:bold;
-    "
-></div>
-
-</div>
-
-
-<!-- =====================================================
-     CHANGE ADMIN PASSWORD
-====================================================== -->
-
-<div class="box">
-
-<h2>
-🔑 Change Admin Password
-</h2>
-
-
-<input
-    id="currentAdminPassword"
-    type="password"
-    placeholder="Current Password"
->
-
-
-<input
-    id="newAdminPassword"
-    type="password"
-    placeholder="New Password"
->
-
-
-<input
-    id="confirmAdminPassword"
-    type="password"
-    placeholder="Confirm New Password"
->
-
-
-<button
-    onclick="changeAdminPassword()"
->
-🔐 Change Password
-</button>
-
-
-<div
-    id="passwordMessage"
-    class="message"
-></div>
+    <div id="createMessage"></div>
 
 </div>
 
 
 <!-- =====================================================
      TOURNAMENT LIST
-====================================================== -->
+===================================================== -->
 
-<div class="box">
+<div class="card">
 
-<h2>
-🎮 All Tournaments
-</h2>
+    <h2>🎮 Tournament Management</h2>
 
+    <button
+        class="gray"
+        onclick="loadTournaments()"
+    >
+        🔄 Refresh Tournaments
+    </button>
 
-<div
-    id="tournamentList"
->
-Loading tournaments...
+    <div id="tournamentsList">
+
+        <p class="small">
+            Loading tournaments...
+        </p>
+
+    </div>
+
 </div>
+
+
+<!-- =====================================================
+     SEND REDEEM CODE
+===================================================== -->
+
+<div class="card">
+
+    <h2>🎁 Send Private Redeem Code</h2>
+
+    <p class="small">
+        Yahan se kisi specific player ko redeem code bhejo.
+        Code sirf selected player ke account me dikhega.
+    </p>
+
+
+    <label>Select Player</label>
+
+    <select id="redeemUser">
+
+        <option value="">
+            Loading players...
+        </option>
+
+    </select>
+
+
+    <label>Redeem Code</label>
+
+    <input
+        id="redeemCode"
+        placeholder="Example: FFTH-500"
+    >
+
+
+    <label>Message</label>
+
+    <textarea
+        id="redeemMessage"
+        placeholder="Example: Congratulations! You won the tournament reward."
+    ></textarea>
+
+
+    <button
+        class="green"
+        onclick="sendRedeemCode()"
+    >
+        🎁 Send Redeem Code
+    </button>
+
+
+    <div id="redeemMessageBox"></div>
+
+
+    <hr>
+
+
+    <h3>📨 Sent Redeem Codes</h3>
+
+    <button
+        class="gray"
+        onclick="loadRedeemCodes()"
+    >
+        🔄 Refresh Codes
+    </button>
+
+
+    <div id="redeemCodesList">
+
+        <p class="small">
+            Loading...
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     WALLET / TOKENS
+===================================================== -->
+
+<div class="card">
+
+    <h2>💰 Player Wallet / Tokens</h2>
+
+    <p class="small">
+        Player ke Free Fire UID par tokens add ya remove karo.
+    </p>
+
+
+    <input
+        id="walletUID"
+        placeholder="Player Free Fire UID"
+    >
+
+
+    <input
+        id="walletAmount"
+        type="number"
+        min="1"
+        placeholder="Token Amount"
+    >
+
+
+    <button
+        class="green"
+        onclick="addTokens()"
+    >
+        ➕ Add Tokens
+    </button>
+
+
+    <button
+        class="danger"
+        onclick="removeTokens()"
+    >
+        ➖ Remove Tokens
+    </button>
+
+
+    <div id="walletMessage"></div>
+
+</div>
+
+
+<!-- =====================================================
+     NOTICE BOARD
+===================================================== -->
+
+<div class="card">
+
+    <h2>📢 Notice Board</h2>
+
+
+    <input
+        id="noticeTitle"
+        placeholder="Notice Title"
+    >
+
+
+    <textarea
+        id="noticeText"
+        placeholder="Notice message..."
+    ></textarea>
+
+
+    <button onclick="createNotice()">
+        📢 Add Notice
+    </button>
+
+
+    <div id="noticeMessage"></div>
+
+
+    <hr>
+
+
+    <h3>Existing Notices</h3>
+
+
+    <button
+        class="gray"
+        onclick="loadNotices()"
+    >
+        🔄 Refresh Notices
+    </button>
+
+
+    <div id="noticesList"></div>
+
+</div>
+
+
+<!-- =====================================================
+     ADMIN PASSWORD
+===================================================== -->
+
+<div class="card">
+
+    <h2>🔑 Change Admin Password</h2>
+
+
+    <input
+        id="currentPassword"
+        type="password"
+        placeholder="Current Password"
+    >
+
+
+    <input
+        id="newPassword"
+        type="password"
+        placeholder="New Password"
+    >
+
+
+    <input
+        id="confirmPassword"
+        type="password"
+        placeholder="Confirm New Password"
+    >
+
+
+    <button onclick="changePassword()">
+        🔐 Change Password
+    </button>
+
+
+    <div id="passwordMessage"></div>
 
 </div>
 
@@ -644,44 +599,156 @@ Loading tournaments...
 
 <script>
 
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+function showMessage(elementId, message, success = false) {
+
+    const box =
+        document.getElementById(elementId);
+
+    if (!box) return;
+
+    box.className =
+        "message " +
+        (success ? "success" : "error");
+
+    box.innerText = message;
+
+}
+
+
+/* =====================================================
+   CHECK ADMIN
+===================================================== */
+
+async function checkAdmin() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/me",
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            data.logged_in ||
+            data.is_admin ||
+            data.success
+        ) {
+
+            showAdminPanel(
+                data.username ||
+                data.admin_username ||
+                "Admin"
+            );
+
+        }
+
+        else {
+
+            showLogin();
+
+        }
+
+    }
+
+    catch (error) {
+
+        showLogin();
+
+    }
+
+}
+
+
+/* =====================================================
+   SHOW LOGIN
+===================================================== */
+
+function showLogin() {
+
+    document
+        .getElementById("loginSection")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("adminPanel")
+        .classList.add("hidden");
+
+}
+
+
+/* =====================================================
+   SHOW ADMIN
+===================================================== */
+
+function showAdminPanel(username) {
+
+    document
+        .getElementById("loginSection")
+        .classList.add("hidden");
+
+    document
+        .getElementById("adminPanel")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("adminName")
+        .innerText = username || "Admin";
+
+
+    loadTournaments();
+    loadUsers();
+    loadRedeemCodes();
+    loadNotices();
+
+}
+
 
 /* =====================================================
    ADMIN LOGIN
-====================================================== */
+===================================================== */
 
 async function adminLogin() {
 
     const username =
         document
-            .getElementById(
-                "adminUsername"
-            )
+            .getElementById("loginUsername")
             .value
             .trim();
 
-
     const password =
         document
-            .getElementById(
-                "adminPassword"
-            )
+            .getElementById("loginPassword")
             .value;
 
 
-    const message =
-        document
-            .getElementById(
-                "loginMessage"
-            );
+    if (!username || !password) {
 
-
-    if (
-        !username ||
-        !password
-    ) {
-
-        message.innerText =
-            "❌ Username aur password bharo.";
+        showMessage(
+            "loginMessage",
+            "Username aur password required hai."
+        );
 
         return;
 
@@ -717,42 +784,21 @@ async function adminLogin() {
             await response.json();
 
 
-        if (
-            data.success
-        ) {
+        if (response.ok && data.success) {
 
-            document
-                .getElementById(
-                    "loginBox"
-                )
-                .classList
-                .add("hidden");
-
-
-            document
-                .getElementById(
-                    "dashboard"
-                )
-                .classList
-                .remove("hidden");
-
-
-            await loadTournaments();
-
-            await loadEditableTournaments();
-
-            await loadAdminNotices();
+            showAdminPanel(
+                username
+            );
 
         }
 
         else {
 
-            message.innerText =
-                "❌ " +
-                (
-                    data.message ||
-                    "Login failed."
-                );
+            showMessage(
+                "loginMessage",
+                data.message ||
+                "Admin login failed."
+            );
 
         }
 
@@ -760,8 +806,10 @@ async function adminLogin() {
 
     catch (error) {
 
-        message.innerText =
-            "❌ Server error.";
+        showMessage(
+            "loginMessage",
+            "Server error. Login nahi ho paya."
+        );
 
     }
 
@@ -769,27 +817,34 @@ async function adminLogin() {
 
 
 /* =====================================================
-   ADMIN LOGOUT
-====================================================== */
+   LOGOUT
+===================================================== */
 
 async function adminLogout() {
 
-    await fetch(
-        "/api/admin/logout",
-        {
-            method: "POST",
-            credentials: "same-origin"
-        }
-    );
+    try {
 
-    location.reload();
+        await fetch(
+            "/api/admin/logout",
+            {
+                method: "POST",
+                credentials: "same-origin"
+            }
+        );
+
+    }
+
+    catch (error) {}
+
+
+    showLogin();
 
 }
 
 
 /* =====================================================
    CREATE TOURNAMENT
-====================================================== */
+===================================================== */
 
 async function createTournament() {
 
@@ -799,58 +854,53 @@ async function createTournament() {
             .value
             .trim();
 
-
-    const entry_fee =
-        document
-            .getElementById("tEntryFee")
-            .value;
-
-
-    const max_players =
-        document
-            .getElementById("tMaxPlayers")
-            .value;
-
-
-    const kill_reward =
-        document
-            .getElementById("tKillReward")
-            .value;
-
-
-    const first_prize =
-        document
-            .getElementById("tFirstPrize")
-            .value;
-
-
     const date_time =
         document
-            .getElementById("tDateTime")
+            .getElementById("tDate")
             .value
             .trim();
 
+    const entry_fee =
+        Number(
+            document
+                .getElementById("tEntry")
+                .value
+        );
+
+    const max_players =
+        Number(
+            document
+                .getElementById("tMax")
+                .value
+        );
+
+    const kill_reward =
+        Number(
+            document
+                .getElementById("tKill")
+                .value
+        );
+
+    const first_prize =
+        Number(
+            document
+                .getElementById("tPrize")
+                .value
+        );
 
     const rules =
         document
             .getElementById("tRules")
-            .value;
+            .value
+            .trim();
 
 
-    const message =
-        document
-            .getElementById(
-                "createMessage"
-            );
+    if (!name || !date_time) {
 
-
-    if (
-        !name ||
-        !date_time
-    ) {
-
-        message.innerText =
-            "❌ Name aur date/time required hai.";
+        showMessage(
+            "createMessage",
+            "Tournament name aur date/time required hai."
+        );
 
         return;
 
@@ -875,21 +925,13 @@ async function createTournament() {
 
                     body:
                         JSON.stringify({
-
                             name,
-
-                            entry_fee,
-
-                            max_players,
-
-                            kill_reward,
-
-                            first_prize,
-
                             date_time,
-
+                            entry_fee,
+                            max_players,
+                            kill_reward,
+                            first_prize,
                             rules
-
                         })
                 }
             );
@@ -899,70 +941,40 @@ async function createTournament() {
             await response.json();
 
 
-        if (
-            data.success
-        ) {
+        if (response.ok && data.success) {
 
-            message.innerText =
-                "✅ Tournament create ho gaya.";
+            showMessage(
+                "createMessage",
+                data.message ||
+                "Tournament successfully create ho gaya.",
+                true
+            );
+
 
             document
-                .getElementById(
-                    "tName"
-                )
+                .getElementById("tName")
                 .value = "";
 
             document
-                .getElementById(
-                    "tEntryFee"
-                )
+                .getElementById("tDate")
                 .value = "";
 
             document
-                .getElementById(
-                    "tMaxPlayers"
-                )
-                .value = "";
-
-            document
-                .getElementById(
-                    "tKillReward"
-                )
-                .value = "";
-
-            document
-                .getElementById(
-                    "tFirstPrize"
-                )
-                .value = "";
-
-            document
-                .getElementById(
-                    "tDateTime"
-                )
-                .value = "";
-
-            document
-                .getElementById(
-                    "tRules"
-                )
+                .getElementById("tRules")
                 .value = "";
 
 
-            await loadTournaments();
-
-            await loadEditableTournaments();
+            loadTournaments();
 
         }
 
         else {
 
-            message.innerText =
-                "❌ " +
-                (
-                    data.message ||
-                    "Create failed."
-                );
+            showMessage(
+                "createMessage",
+                data.message ||
+                "Tournament create nahi hua."
+            );
 
         }
 
@@ -970,8 +982,10 @@ async function createTournament() {
 
     catch (error) {
 
-        message.innerText =
-            "❌ Server error.";
+        showMessage(
+            "createMessage",
+            "Server error."
+        );
 
     }
 
@@ -980,15 +994,29 @@ async function createTournament() {
 
 /* =====================================================
    LOAD TOURNAMENTS
-====================================================== */
+===================================================== */
 
 async function loadTournaments() {
+
+    const box =
+        document.getElementById(
+            "tournamentsList"
+        );
+
+
+    box.innerHTML =
+        "<p class='small'>Loading...</p>";
+
 
     try {
 
         const response =
             await fetch(
-                "/api/tournaments"
+                "/api/tournaments",
+                {
+                    credentials:
+                        "same-origin"
+                }
             );
 
 
@@ -996,22 +1024,20 @@ async function loadTournaments() {
             await response.json();
 
 
-        const box =
-            document
-                .getElementById(
-                    "tournamentList"
-                );
-
-
-        if (
-            !Array.isArray(
-                tournaments
-            ) ||
-            tournaments.length === 0
-        ) {
+        if (!Array.isArray(tournaments)) {
 
             box.innerHTML =
-                "No tournaments found.";
+                "<p class='small'>Tournament data load nahi hua.</p>";
+
+            return;
+
+        }
+
+
+        if (tournaments.length === 0) {
+
+            box.innerHTML =
+                "<p class='small'>Abhi koi tournament nahi hai.</p>";
 
             return;
 
@@ -1020,399 +1046,173 @@ async function loadTournaments() {
 
         box.innerHTML =
             tournaments
-                .map(
-                    t =>
-                        renderTournament(
-                            t
-                        )
-                )
+                .map(t => {
+
+                    const players =
+                        Array.isArray(t.players)
+                        ? t.players
+                        : [];
+
+
+                    return `
+
+                        <div class="tournament">
+
+                            <h3>
+                                🎮 ${escapeHTML(t.name)}
+                            </h3>
+
+                            <p>
+                                💰 Entry:
+                                ${Number(t.entry_fee || 0)}
+                                tokens
+                            </p>
+
+                            <p>
+                                👥 Players:
+                                ${players.length}
+                                /
+                                ${Number(t.max_players || 0)}
+                            </p>
+
+                            <p>
+                                🕒 ${escapeHTML(t.date_time || "")}
+                            </p>
+
+                            <p>
+                                🎯 Per Kill:
+                                ₹${Number(t.kill_reward || 0)}
+                            </p>
+
+                            <p>
+                                🏆 1st Prize:
+                                ₹${Number(t.first_prize || 0)}
+                            </p>
+
+                            ${
+                                t.rules
+                                ? `
+                                    <p>
+                                        📜
+                                        <strong>Rules:</strong>
+                                        <br>
+                                        ${escapeHTML(t.rules)}
+                                    </p>
+                                `
+                                : ""
+                            }
+
+
+                            <hr>
+
+
+                            <h4>
+                                🎮 Room Details
+                            </h4>
+
+                            <input
+                                id="room-id-${t.id}"
+                                placeholder="Room ID"
+                                value="${escapeHTML(t.room_id || "")}"
+                            >
+
+                            <input
+                                id="room-pass-${t.id}"
+                                placeholder="Room Password"
+                                value="${escapeHTML(t.room_password || "")}"
+                            >
+
+                            <button
+                                class="green"
+                                onclick="saveRoom(${t.id})"
+                            >
+                                💾 Save Room Details
+                            </button>
+
+
+                            <hr>
+
+
+                            <h4>
+                                👥 Players / Results
+                            </h4>
+
+                            ${
+                                players.length
+                                ?
+                                players.map(p => `
+
+                                    <div class="player-row">
+
+                                        <strong>
+                                            ${escapeHTML(p.name)}
+                                        </strong>
+
+                                        <br>
+
+                                        UID:
+                                        ${escapeHTML(p.uid)}
+
+                                        <br>
+
+                                        Kills:
+
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            id="kills-${p.id}"
+                                            value="${Number(p.kills || 0)}"
+                                        >
+
+                                        Position:
+
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            id="position-${p.id}"
+                                            value="${Number(p.position || 0)}"
+                                        >
+
+                                        <button
+                                            onclick="updatePlayer(
+                                                ${p.id}
+                                            )"
+                                        >
+                                            💾 Save Result
+                                        </button>
+
+                                    </div>
+
+                                `).join("")
+                                :
+                                `
+                                    <p class="small">
+                                        Abhi koi registered player nahi hai.
+                                    </p>
+                                `
+                            }
+
+
+                            <button
+                                class="danger"
+                                onclick="deleteTournament(${t.id})"
+                            >
+                                🗑️ Delete Tournament
+                            </button>
+
+                        </div>
+
+                    `;
+
+                })
                 .join("");
 
     }
 
     catch (error) {
 
-        document
-            .getElementById(
-                "tournamentList"
-            )
-            .innerText =
-            "❌ Tournaments load nahi ho paaye.";
-
-    }
-
-}
-
-
-/* =====================================================
-   RENDER TOURNAMENT
-====================================================== */
-
-function renderTournament(t) {
-
-    const players =
-        Array.isArray(t.players)
-            ? t.players
-            : [];
-
-
-    let statusHTML = "";
-
-
-    if (
-        t.status ===
-        "live"
-    ) {
-
-        statusHTML = `
-            <span
-                class="
-                    status
-                    status-live
-                "
-            >
-                🔴 LIVE
-            </span>
-        `;
-
-    }
-
-    else if (
-        t.status ===
-        "completed"
-    ) {
-
-        statusHTML = `
-            <span
-                class="
-                    status
-                    status-completed
-                "
-            >
-                🏁 COMPLETED
-            </span>
-        `;
-
-    }
-
-    else {
-
-        statusHTML = `
-            <span
-                class="
-                    status
-                    status-upcoming
-                "
-            >
-                🟢 UPCOMING
-            </span>
-        `;
-
-    }
-
-
-    return `
-
-        <div class="tournament">
-
-            <h3>
-                🎮
-                ${escapeHTML(t.name)}
-            </h3>
-
-
-            <p>
-
-                Status:
-                ${statusHTML}
-
-            </p>
-
-
-            <p>
-
-                💰 Entry:
-                ₹${t.entry_fee}
-
-                <br>
-
-                👥 Players:
-                ${players.length}/${t.max_players}
-
-                <br>
-
-                🎯 Per Kill:
-                ₹${t.kill_reward}
-
-                <br>
-
-                🏆 First Prize:
-                ₹${t.first_prize}
-
-                <br>
-
-                📅 Date:
-                ${escapeHTML(
-                    t.date_time
-                )}
-
-            </p>
-
-
-            ${
-                t.rules
-                    ? `
-                        <div
-                            class="rules-preview"
-                        >
-                            📜 Rules:
-
-                            <br><br>
-
-                            ${escapeHTML(
-                                t.rules
-                            )}
-                        </div>
-                    `
-                    : ""
-            }
-
-
-            <hr
-                style="
-                    border-color:#333;
-                    margin:15px 0;
-                "
-            >
-
-
-            <h4>
-                🎮 Room Details
-            </h4>
-
-
-            <input
-                id="
-                    room-id-${t.id}
-                "
-                placeholder="Room ID"
-                value="
-                    ${escapeHTML(
-                        t.room_id || ""
-                    )}
-                "
-            >
-
-
-            <input
-                id="
-                    room-password-${t.id}
-                "
-                placeholder="Room Password"
-                value="
-                    ${escapeHTML(
-                        t.room_password || ""
-                    )}
-            ">
-
-
-            <button
-                class="blue"
-                onclick="
-                    saveRoom(
-                        ${t.id}
-                    )
-                "
-            >
-                💾 Save Room
-            </button>
-
-
-            <button
-                class="danger"
-                onclick="
-                    deleteTournament(
-                        ${t.id}
-                    )
-                "
-            >
-                🗑️ Delete Tournament
-            </button>
-
-
-            <h4>
-                👥 Players
-            </h4>
-
-
-            ${
-                players.length
-                    ? players
-                        .map(
-                            p =>
-                                renderPlayer(
-                                    t,
-                                    p
-                                )
-                        )
-                        .join("")
-                    : `
-                        <p
-                            style="
-                                color:#aaa;
-                            "
-                        >
-                            Abhi koi player
-                            registered nahi hai.
-                        </p>
-                    `
-            }
-
-        </div>
-
-    `;
-
-}
-
-
-/* =====================================================
-   RENDER PLAYER
-====================================================== */
-
-function renderPlayer(t, p) {
-
-    return `
-
-        <div class="player">
-
-            <strong>
-                ${escapeHTML(
-                    p.name
-                )}
-            </strong>
-
-            <br>
-
-            UID:
-            ${escapeHTML(
-                p.uid
-            )}
-
-
-            <br><br>
-
-
-            Position:
-
-            <input
-                type="number"
-                min="0"
-                value="
-                    ${p.position || 0}
-                "
-                id="
-                    position-${p.id}
-                "
-            >
-
-
-            Kills:
-
-            <input
-                type="number"
-                min="0"
-                value="
-                    ${p.kills || 0}
-                "
-                id="
-                    kills-${p.id}
-                "
-            >
-
-
-            <button
-                class="green"
-                onclick="
-                    updatePlayer(
-                        ${p.id}
-                    )
-                "
-            >
-                💾 Save Result
-            </button>
-
-        </div>
-
-    `;
-
-}
-
-
-/* =====================================================
-   UPDATE PLAYER RESULT
-====================================================== */
-
-async function updatePlayer(id) {
-
-    const position =
-        document
-            .getElementById(
-                `position-${id}`
-            )
-            .value;
-
-
-    const kills =
-        document
-            .getElementById(
-                `kills-${id}`
-            )
-            .value;
-
-
-    const response =
-        await fetch(
-            `/api/admin/players/${id}`,
-            {
-                method: "PUT",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                credentials:
-                    "same-origin",
-
-                body:
-                    JSON.stringify({
-                        position,
-                        kills
-                    })
-            }
-        );
-
-
-    const data =
-        await response.json();
-
-
-    alert(
-        data.success
-            ? "✅ Result saved."
-            : "❌ " +
-              (
-                  data.message ||
-                  "Save failed."
-              )
-    );
-
-
-    if (
-        data.success
-    ) {
-
-        loadTournaments();
+        box.innerHTML =
+            "<p class='small'>Tournament load error.</p>";
 
     }
 
@@ -1421,7 +1221,7 @@ async function updatePlayer(id) {
 
 /* =====================================================
    SAVE ROOM
-====================================================== */
+===================================================== */
 
 async function saveRoom(id) {
 
@@ -1433,59 +1233,137 @@ async function saveRoom(id) {
             .value
             .trim();
 
-
     const room_password =
         document
             .getElementById(
-                `room-password-${id}`
+                `room-pass-${id}`
             )
             .value
             .trim();
 
 
-    const response =
-        await fetch(
-            `/api/admin/tournaments/${id}/room`,
-            {
-                method: "PUT",
+    try {
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+        const response =
+            await fetch(
+                `/api/admin/tournaments/${id}/room`,
+                {
+                    method: "POST",
 
-                credentials:
-                    "same-origin",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                body:
-                    JSON.stringify({
-                        room_id,
-                        room_password
-                    })
-            }
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            room_id,
+                            room_password
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        alert(
+            data.message ||
+            "Room details saved."
+        );
+
+    }
+
+    catch (error) {
+
+        alert(
+            "Room details save nahi hue."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   UPDATE PLAYER RESULT
+===================================================== */
+
+async function updatePlayer(id) {
+
+    const kills =
+        Number(
+            document
+                .getElementById(
+                    `kills-${id}`
+                )
+                .value
+        );
+
+    const position =
+        Number(
+            document
+                .getElementById(
+                    `position-${id}`
+                )
+                .value
         );
 
 
-    const data =
-        await response.json();
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/players/${id}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            kills,
+                            position
+                        })
+                }
+            );
 
 
-    alert(
-        data.success
-            ? "✅ Room details saved."
-            : "❌ " +
-              (
-                  data.message ||
-                  "Save failed."
-              )
-    );
+        const data =
+            await response.json();
+
+
+        alert(
+            data.message ||
+            "Result updated."
+        );
+
+    }
+
+    catch (error) {
+
+        alert(
+            "Result update nahi hua."
+        );
+
+    }
 
 }
 
 
 /* =====================================================
    DELETE TOURNAMENT
-====================================================== */
+===================================================== */
 
 async function deleteTournament(id) {
 
@@ -1500,332 +1378,77 @@ async function deleteTournament(id) {
     }
 
 
-    const response =
-        await fetch(
-            `/api/tournaments/${id}`,
-            {
-                method: "DELETE",
-
-                credentials:
-                    "same-origin"
-            }
-        );
-
-
-    const data =
-        await response.json();
-
-
-    if (
-        data.success
-    ) {
-
-        alert(
-            "✅ Tournament delete ho gaya."
-        );
-
-        await loadTournaments();
-
-        await loadEditableTournaments();
-
-    }
-
-    else {
-
-        alert(
-            "❌ " +
-            (
-                data.message ||
-                "Delete failed."
-            )
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   EDIT TOURNAMENT LIST
-====================================================== */
-
-async function loadEditableTournaments() {
-
-    const select =
-        document
-            .getElementById(
-                "editTournamentSelect"
-            );
-
-
-    if (!select) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/tournaments"
-            );
-
-
-        const tournaments =
-            await response.json();
-
-
-        select.innerHTML =
-            `
-            <option value="">
-                Tournament select karo
-            </option>
-            `;
-
-
-        tournaments.forEach(
-            t => {
-
-                const players =
-                    Array.isArray(
-                        t.players
-                    )
-                        ? t.players
-                        : [];
-
-
-                if (
-                    t.status ===
-                        "upcoming" &&
-                    players.length <
-                        t.max_players
-                ) {
-
-                    const option =
-                        document.createElement(
-                            "option"
-                        );
-
-
-                    option.value =
-                        t.id;
-
-
-                    option.textContent =
-                        `${t.name} — ` +
-                        `${players.length}/` +
-                        `${t.max_players} booked`;
-
-
-                    select.appendChild(
-                        option
-                    );
-
-                }
-
-            }
-        );
-
-
-        select.onchange =
-            () => {
-
-                const t =
-                    tournaments.find(
-                        x =>
-                            String(
-                                x.id
-                            ) ===
-                            select.value
-                    );
-
-
-                if (!t) {
-
-                    return;
-
-                }
-
-
-                document
-                    .getElementById(
-                        "editName"
-                    )
-                    .value =
-                    t.name || "";
-
-
-                document
-                    .getElementById(
-                        "editEntryFee"
-                    )
-                    .value =
-                    t.entry_fee ?? 0;
-
-
-                document
-                    .getElementById(
-                        "editMaxPlayers"
-                    )
-                    .value =
-                    t.max_players ?? 0;
-
-
-                document
-                    .getElementById(
-                        "editKillReward"
-                    )
-                    .value =
-                    t.kill_reward ?? 0;
-
-
-                document
-                    .getElementById(
-                        "editFirstPrize"
-                    )
-                    .value =
-                    t.first_prize ?? 0;
-
-
-                document
-                    .getElementById(
-                        "editDateTime"
-                    )
-                    .value =
-                    t.date_time || "";
-
-
-                document
-                    .getElementById(
-                        "editRules"
-                    )
-                    .value =
-                    t.rules || "";
-
-            };
-
-    }
-
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   SAVE TOURNAMENT EDIT
-====================================================== */
-
-async function saveTournamentEdit() {
-
-    const id =
-        document
-            .getElementById(
-                "editTournamentSelect"
-            )
-            .value;
-
-
-    const message =
-        document
-            .getElementById(
-                "editTournamentMsg"
-            );
-
-
-    if (!id) {
-
-        message.innerText =
-            "❌ Pehle tournament select karo.";
-
-        return;
-
-    }
-
-
-    const payload = {
-
-        name:
-            document
-                .getElementById(
-                    "editName"
-                )
-                .value
-                .trim(),
-
-        entry_fee:
-            document
-                .getElementById(
-                    "editEntryFee"
-                )
-                .value,
-
-        max_players:
-            document
-                .getElementById(
-                    "editMaxPlayers"
-                )
-                .value,
-
-        kill_reward:
-            document
-                .getElementById(
-                    "editKillReward"
-                )
-                .value,
-
-        first_prize:
-            document
-                .getElementById(
-                    "editFirstPrize"
-                )
-                .value,
-
-        date_time:
-            document
-                .getElementById(
-                    "editDateTime"
-                )
-                .value
-                .trim(),
-
-        rules:
-            document
-                .getElementById(
-                    "editRules"
-                )
-                .value
-
-    };
-
-
     try {
 
         const response =
             await fetch(
                 `/api/tournaments/${id}`,
                 {
-                    method: "PUT",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                    method: "DELETE",
 
                     credentials:
-                        "same-origin",
+                        "same-origin"
+                }
+            );
 
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
+
+        const data =
+            await response.json();
+
+
+        if (response.ok && data.success) {
+
+            alert(
+                data.message ||
+                "Tournament deleted."
+            );
+
+            loadTournaments();
+
+        }
+
+        else {
+
+            alert(
+                data.message ||
+                "Tournament delete nahi hua."
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        alert(
+            "Server error."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD USERS FOR REDEEM CODE
+===================================================== */
+
+async function loadUsers() {
+
+    const select =
+        document.getElementById(
+            "redeemUser"
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/users",
+                {
+                    credentials:
+                        "same-origin"
                 }
             );
 
@@ -1835,35 +1458,73 @@ async function saveTournamentEdit() {
 
 
         if (
-            data.success
+            !response.ok ||
+            !Array.isArray(data)
         ) {
 
-            message.innerText =
-                "✅ Tournament update ho gaya.";
+            select.innerHTML =
+                `
+                    <option value="">
+                        Players load nahi hue
+                    </option>
+                `;
 
-            await loadTournaments();
-
-            await loadEditableTournaments();
+            return;
 
         }
 
-        else {
 
-            message.innerText =
-                "❌ " +
-                (
-                    data.message ||
-                    "Update failed."
+        if (data.length === 0) {
+
+            select.innerHTML =
+                `
+                    <option value="">
+                        Abhi koi player account nahi hai
+                    </option>
+                `;
+
+            return;
+
+        }
+
+
+        select.innerHTML =
+            `
+                <option value="">
+                    -- Player Select Karo --
+                </option>
+            `;
+
+
+        data.forEach(user => {
+
+            const option =
+                document.createElement(
+                    "option"
                 );
 
-        }
+            option.value =
+                user.id;
+
+            option.textContent =
+                `${user.username || "Player"} — UID: ${user.uid || "N/A"}`;
+
+            select.appendChild(
+                option
+            );
+
+        });
 
     }
 
     catch (error) {
 
-        message.innerText =
-            "❌ Server error.";
+        select.innerHTML =
+            `
+                <option value="">
+                    Players load error
+                </option>
+            `;
 
     }
 
@@ -1871,273 +1532,55 @@ async function saveTournamentEdit() {
 
 
 /* =====================================================
-   ADD TOKENS
-====================================================== */
+   SEND REDEEM CODE
+===================================================== */
 
-async function addTokens() {
+async function sendRedeemCode() {
 
-    const uid =
+    const user_id =
         document
             .getElementById(
-                "walletUID"
+                "redeemUser"
+            )
+            .value;
+
+
+    const code =
+        document
+            .getElementById(
+                "redeemCode"
             )
             .value
             .trim();
 
 
-    const amount =
-        document
-            .getElementById(
-                "walletAmount"
-            )
-            .value;
-
-
     const message =
         document
             .getElementById(
-                "walletMessage"
-            );
-
-
-    if (
-        !uid ||
-        !amount
-    ) {
-
-        message.innerText =
-            "❌ UID aur amount bharo.";
-
-        return;
-
-    }
-
-
-    const response =
-        await fetch(
-            "/api/admin/wallet/add",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                credentials:
-                    "same-origin",
-
-                body:
-                    JSON.stringify({
-
-                        player_uid:
-                            uid,
-
-                        amount:
-                            amount
-
-                    })
-            }
-        );
-
-
-    const data =
-        await response.json();
-
-
-    if (
-        data.success
-    ) {
-
-        message.innerText =
-            "✅ Tokens add ho gaye.";
-
-        document
-            .getElementById(
-                "walletBalance"
-            )
-            .innerText =
-            `Balance: ${data.balance}`;
-
-    }
-
-    else {
-
-        message.innerText =
-            "❌ " +
-            (
-                data.message ||
-                "Failed."
-            );
-
-    }
-
-}
-
-
-/* =====================================================
-   REMOVE TOKENS
-====================================================== */
-
-async function removeTokens() {
-
-    const uid =
-        document
-            .getElementById(
-                "walletUID"
+                "redeemMessage"
             )
             .value
             .trim();
 
 
-    const amount =
-        document
-            .getElementById(
-                "walletAmount"
-            )
-            .value;
+    if (!user_id) {
 
-
-    const message =
-        document
-            .getElementById(
-                "walletMessage"
-            );
-
-
-    if (
-        !uid ||
-        !amount
-    ) {
-
-        message.innerText =
-            "❌ UID aur amount bharo.";
-
-        return;
-
-    }
-
-
-    const response =
-        await fetch(
-            "/api/admin/wallet/remove",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                credentials:
-                    "same-origin",
-
-                body:
-                    JSON.stringify({
-
-                        player_uid:
-                            uid,
-
-                        amount:
-                            amount
-
-                    })
-            }
+        showMessage(
+            "redeemMessageBox",
+            "Pehle player select karo."
         );
 
-
-    const data =
-        await response.json();
-
-
-    if (
-        data.success
-    ) {
-
-        message.innerText =
-            "✅ Tokens remove ho gaye.";
-
-        document
-            .getElementById(
-                "walletBalance"
-            )
-            .innerText =
-            `Balance: ${data.balance}`;
-
-    }
-
-    else {
-
-        message.innerText =
-            "❌ " +
-            (
-                data.message ||
-                "Failed."
-            );
-
-    }
-
-}
-
-
-/* =====================================================
-   ADMIN PASSWORD
-====================================================== */
-
-async function changeAdminPassword() {
-
-    const currentPassword =
-        document
-            .getElementById(
-                "currentAdminPassword"
-            )
-            .value;
-
-
-    const newPassword =
-        document
-            .getElementById(
-                "newAdminPassword"
-            )
-            .value;
-
-
-    const confirmPassword =
-        document
-            .getElementById(
-                "confirmAdminPassword"
-            )
-            .value;
-
-
-    const message =
-        document
-            .getElementById(
-                "passwordMessage"
-            );
-
-
-    if (
-        !currentPassword ||
-        !newPassword ||
-        !confirmPassword
-    ) {
-
-        message.innerText =
-            "❌ Sabhi password fields bharo.";
-
         return;
 
     }
 
 
-    if (
-        newPassword !==
-        confirmPassword
-    ) {
+    if (!code) {
 
-        message.innerText =
-            "❌ New passwords match nahi kar rahe.";
+        showMessage(
+            "redeemMessageBox",
+            "Redeem code enter karo."
+        );
 
         return;
 
@@ -2148,7 +1591,7 @@ async function changeAdminPassword() {
 
         const response =
             await fetch(
-                "/api/admin/change-password",
+                "/api/admin/redeem-codes",
                 {
                     method: "POST",
 
@@ -2162,13 +1605,12 @@ async function changeAdminPassword() {
 
                     body:
                         JSON.stringify({
+                            user_id:
+                                Number(user_id),
 
-                            current_password:
-                                currentPassword,
+                            code,
 
-                            new_password:
-                                newPassword
-
+                            message
                         })
                 }
             );
@@ -2178,21 +1620,51 @@ async function changeAdminPassword() {
             await response.json();
 
 
-        message.innerText =
-            data.success
-                ? "✅ Password successfully changed."
-                : "❌ " +
-                  (
-                      data.message ||
-                      "Password change failed."
-                  );
+        if (response.ok && data.success) {
+
+            showMessage(
+                "redeemMessageBox",
+                data.message ||
+                "Redeem code successfully send ho gaya.",
+                true
+            );
+
+
+            document
+                .getElementById(
+                    "redeemCode"
+                )
+                .value = "";
+
+            document
+                .getElementById(
+                    "redeemMessage"
+                )
+                .value = "";
+
+
+            loadRedeemCodes();
+
+        }
+
+        else {
+
+            showMessage(
+                "redeemMessageBox",
+                data.message ||
+                "Redeem code send nahi hua."
+            );
+
+        }
 
     }
 
     catch (error) {
 
-        message.innerText =
-            "❌ Server error.";
+        showMessage(
+            "redeemMessageBox",
+            "Server error."
+        );
 
     }
 
@@ -2200,8 +1672,372 @@ async function changeAdminPassword() {
 
 
 /* =====================================================
-   NOTICE BOARD
-====================================================== */
+   LOAD SENT REDEEM CODES
+===================================================== */
+
+async function loadRedeemCodes() {
+
+    const box =
+        document.getElementById(
+            "redeemCodesList"
+        );
+
+
+    box.innerHTML =
+        "<p class='small'>Loading...</p>";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/redeem-codes",
+                {
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !Array.isArray(data)
+        ) {
+
+            box.innerHTML =
+                "<p class='small'>Redeem codes load nahi hue.</p>";
+
+            return;
+
+        }
+
+
+        if (data.length === 0) {
+
+            box.innerHTML =
+                "<p class='small'>Abhi koi redeem code send nahi kiya gaya.</p>";
+
+            return;
+
+        }
+
+
+        box.innerHTML =
+            data
+                .map(item => {
+
+                    return `
+
+                        <div class="code-item">
+
+                            <div>
+                                👤
+                                <strong>
+                                    ${escapeHTML(
+                                        item.username ||
+                                        item.user?.username ||
+                                        "Player"
+                                    )}
+                                </strong>
+                            </div>
+
+                            <div class="code-value">
+                                ${escapeHTML(
+                                    item.code
+                                )}
+                            </div>
+
+                            ${
+                                item.message
+                                ?
+                                `
+                                    <p>
+                                        ${escapeHTML(
+                                            item.message
+                                        )}
+                                    </p>
+                                `
+                                :
+                                ""
+                            }
+
+                            ${
+                                item.used
+                                ?
+                                `
+                                    <p class="small">
+                                        ✅ Used
+                                    </p>
+                                `
+                                :
+                                `
+                                    <p class="small">
+                                        🟢 Not used
+                                    </p>
+                                `
+                            }
+
+                            <button
+                                class="danger"
+                                onclick="deleteRedeemCode(
+                                    ${item.id}
+                                )"
+                            >
+                                🗑️ Delete
+                            </button>
+
+                        </div>
+
+                    `;
+
+                })
+                .join("");
+
+    }
+
+    catch (error) {
+
+        box.innerHTML =
+            "<p class='small'>Redeem codes load error.</p>";
+
+    }
+
+}
+
+
+/* =====================================================
+   DELETE REDEEM CODE
+===================================================== */
+
+async function deleteRedeemCode(id) {
+
+    if (
+        !confirm(
+            "Kya tum ye redeem code delete karna chahte ho?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/redeem-codes/${id}`,
+                {
+                    method: "DELETE",
+
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (response.ok && data.success) {
+
+            loadRedeemCodes();
+
+        }
+
+        else {
+
+            alert(
+                data.message ||
+                "Code delete nahi hua."
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        alert(
+            "Server error."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ADD TOKENS
+===================================================== */
+
+async function addTokens() {
+
+    const uid =
+        document
+            .getElementById(
+                "walletUID"
+            )
+            .value
+            .trim();
+
+    const amount =
+        Number(
+            document
+                .getElementById(
+                    "walletAmount"
+                )
+                .value
+        );
+
+
+    if (!uid || amount <= 0) {
+
+        showMessage(
+            "walletMessage",
+            "UID aur valid token amount enter karo."
+        );
+
+        return;
+
+    }
+
+
+    await walletAction(
+        "/api/admin/wallet/add",
+        uid,
+        amount
+    );
+
+}
+
+
+/* =====================================================
+   REMOVE TOKENS
+===================================================== */
+
+async function removeTokens() {
+
+    const uid =
+        document
+            .getElementById(
+                "walletUID"
+            )
+            .value
+            .trim();
+
+    const amount =
+        Number(
+            document
+                .getElementById(
+                    "walletAmount"
+                )
+                .value
+        );
+
+
+    if (!uid || amount <= 0) {
+
+        showMessage(
+            "walletMessage",
+            "UID aur valid token amount enter karo."
+        );
+
+        return;
+
+    }
+
+
+    await walletAction(
+        "/api/admin/wallet/remove",
+        uid,
+        amount
+    );
+
+}
+
+
+/* =====================================================
+   WALLET ACTION
+===================================================== */
+
+async function walletAction(
+    url,
+    uid,
+    amount
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            uid,
+                            amount
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (response.ok && data.success) {
+
+            showMessage(
+                "walletMessage",
+                `${data.message || "Success."} Balance: ${data.balance ?? 0} tokens.`,
+                true
+            );
+
+        }
+
+        else {
+
+            showMessage(
+                "walletMessage",
+                data.message ||
+                "Wallet action failed."
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        showMessage(
+            "walletMessage",
+            "Server error."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CREATE NOTICE
+===================================================== */
 
 async function createNotice() {
 
@@ -2213,38 +2049,21 @@ async function createNotice() {
             .value
             .trim();
 
-
-    const messageText =
+    const message =
         document
             .getElementById(
-                "noticeMessage"
+                "noticeText"
             )
             .value
             .trim();
 
 
-    const active =
-        document
-            .getElementById(
-                "noticeActive"
-            )
-            .checked;
+    if (!title || !message) {
 
-
-    const message =
-        document
-            .getElementById(
-                "noticeMsg"
-            );
-
-
-    if (
-        !title ||
-        !messageText
-    ) {
-
-        message.innerText =
-            "❌ Title aur message dono bharo.";
+        showMessage(
+            "noticeMessage",
+            "Title aur message dono required hain."
+        );
 
         return;
 
@@ -2269,14 +2088,9 @@ async function createNotice() {
 
                     body:
                         JSON.stringify({
-
                             title,
-
-                            message:
-                                messageText,
-
-                            active
-
+                            message,
+                            active: true
                         })
                 }
             );
@@ -2286,12 +2100,15 @@ async function createNotice() {
             await response.json();
 
 
-        if (
-            data.success
-        ) {
+        if (response.ok && data.success) {
 
-            message.innerText =
-                "✅ Notice add ho gaya.";
+            showMessage(
+                "noticeMessage",
+                data.message ||
+                "Notice add ho gaya.",
+                true
+            );
+
 
             document
                 .getElementById(
@@ -2301,23 +2118,22 @@ async function createNotice() {
 
             document
                 .getElementById(
-                    "noticeMessage"
+                    "noticeText"
                 )
                 .value = "";
 
 
-            await loadAdminNotices();
+            loadNotices();
 
         }
 
         else {
 
-            message.innerText =
-                "❌ " +
-                (
-                    data.message ||
-                    "Notice add failed."
-                );
+            showMessage(
+                "noticeMessage",
+                data.message ||
+                "Notice add nahi hua."
+            );
 
         }
 
@@ -2325,8 +2141,10 @@ async function createNotice() {
 
     catch (error) {
 
-        message.innerText =
-            "❌ Server error.";
+        showMessage(
+            "noticeMessage",
+            "Server error."
+        );
 
     }
 
@@ -2334,23 +2152,15 @@ async function createNotice() {
 
 
 /* =====================================================
-   LOAD ADMIN NOTICES
-====================================================== */
+   LOAD NOTICES
+===================================================== */
 
-async function loadAdminNotices() {
+async function loadNotices() {
 
     const box =
-        document
-            .getElementById(
-                "adminNotices"
-            );
-
-
-    if (!box) {
-
-        return;
-
-    }
+        document.getElementById(
+            "noticesList"
+        );
 
 
     try {
@@ -2365,27 +2175,27 @@ async function loadAdminNotices() {
             );
 
 
-        const notices =
+        const data =
             await response.json();
 
 
         if (
-            !Array.isArray(
-                notices
-            ) ||
-            notices.length === 0
+            !response.ok ||
+            !Array.isArray(data)
         ) {
 
             box.innerHTML =
-                `
-                <p
-                    style="
-                        color:#aaa;
-                    "
-                >
-                    Abhi koi notice nahi hai.
-                </p>
-                `;
+                "<p class='small'>Notices load nahi hue.</p>";
+
+            return;
+
+        }
+
+
+        if (data.length === 0) {
+
+            box.innerHTML =
+                "<p class='small'>Abhi koi notice nahi hai.</p>";
 
             return;
 
@@ -2393,58 +2203,40 @@ async function loadAdminNotices() {
 
 
         box.innerHTML =
-            notices
-                .map(
-                    n => `
+            data
+                .map(n => `
 
-                    <div
-                        class="notice-item"
-                    >
+                    <div class="code-item">
 
-                        <h3>
-                            📌
-                            ${escapeHTML(
-                                n.title
-                            )}
-                        </h3>
+                        <strong>
+                            📌 ${escapeHTML(n.title)}
+                        </strong>
 
                         <p>
-                            ${escapeHTML(
-                                n.message
-                            )}
+                            ${escapeHTML(n.message)}
                         </p>
 
-                        <p
-                            style="
-                                color:#aaa;
-                            "
-                        >
-
+                        <p class="small">
                             Status:
                             ${
                                 n.active
-                                    ? "🟢 Public"
-                                    : "⚪ Hidden"
+                                ? "🟢 Active"
+                                : "⚪ Inactive"
                             }
-
                         </p>
-
 
                         <button
                             class="danger"
-                            onclick="
-                                deleteNotice(
-                                    ${n.id}
-                                )
-                            "
+                            onclick="deleteNotice(
+                                ${n.id}
+                            )"
                         >
-                            🗑️ Delete
+                            🗑️ Delete Notice
                         </button>
 
                     </div>
 
-                `
-                )
+                `)
                 .join("");
 
     }
@@ -2452,11 +2244,7 @@ async function loadAdminNotices() {
     catch (error) {
 
         box.innerHTML =
-            `
-            <p style="color:#f55;">
-                Notices load nahi ho paaye.
-            </p>
-            `;
+            "<p class='small'>Notice load error.</p>";
 
     }
 
@@ -2465,13 +2253,13 @@ async function loadAdminNotices() {
 
 /* =====================================================
    DELETE NOTICE
-====================================================== */
+===================================================== */
 
 async function deleteNotice(id) {
 
     if (
         !confirm(
-            "Ye notice delete karna hai?"
+            "Kya tum ye notice delete karna chahte ho?"
         )
     ) {
 
@@ -2498,22 +2286,17 @@ async function deleteNotice(id) {
             await response.json();
 
 
-        if (
-            data.success
-        ) {
+        if (response.ok && data.success) {
 
-            await loadAdminNotices();
+            loadNotices();
 
         }
 
         else {
 
             alert(
-                "❌ " +
-                (
-                    data.message ||
-                    "Delete failed."
-                )
+                data.message ||
+                "Notice delete nahi hua."
             );
 
         }
@@ -2523,7 +2306,7 @@ async function deleteNotice(id) {
     catch (error) {
 
         alert(
-            "❌ Server error."
+            "Server error."
         );
 
     }
@@ -2532,35 +2315,71 @@ async function deleteNotice(id) {
 
 
 /* =====================================================
-   ESCAPE HTML
-====================================================== */
+   CHANGE ADMIN PASSWORD
+===================================================== */
 
-function escapeHTML(value) {
+async function changePassword() {
 
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    const current_password =
+        document
+            .getElementById(
+                "currentPassword"
+            )
+            .value;
 
-}
+    const new_password =
+        document
+            .getElementById(
+                "newPassword"
+            )
+            .value;
+
+    const confirm_password =
+        document
+            .getElementById(
+                "confirmPassword"
+            )
+            .value;
 
 
-/* =====================================================
-   AUTO CHECK ADMIN SESSION
-====================================================== */
+    if (
+        !current_password ||
+        !new_password ||
+        !confirm_password
+    ) {
 
-async function checkAdminSession() {
+        showMessage(
+            "passwordMessage",
+            "Saare password fields fill karo."
+        );
+
+        return;
+
+    }
+
 
     try {
 
         const response =
             await fetch(
-                "/api/admin/me",
+                "/api/admin/change-password",
                 {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
                     credentials:
-                        "same-origin"
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            current_password,
+                            new_password,
+                            confirm_password
+                        })
                 }
             );
 
@@ -2569,31 +2388,43 @@ async function checkAdminSession() {
             await response.json();
 
 
-        if (
-            data.logged_in
-        ) {
+        if (response.ok && data.success) {
 
-            document
-                .getElementById(
-                    "loginBox"
-                )
-                .classList
-                .add("hidden");
+            showMessage(
+                "passwordMessage",
+                data.message ||
+                "Password successfully change ho gaya.",
+                true
+            );
 
 
             document
                 .getElementById(
-                    "dashboard"
+                    "currentPassword"
                 )
-                .classList
-                .remove("hidden");
+                .value = "";
 
+            document
+                .getElementById(
+                    "newPassword"
+                )
+                .value = "";
 
-            await loadTournaments();
+            document
+                .getElementById(
+                    "confirmPassword"
+                )
+                .value = "";
 
-            await loadEditableTournaments();
+        }
 
-            await loadAdminNotices();
+        else {
+
+            showMessage(
+                "passwordMessage",
+                data.message ||
+                "Password change nahi hua."
+            );
 
         }
 
@@ -2601,8 +2432,9 @@ async function checkAdminSession() {
 
     catch (error) {
 
-        console.log(
-            "Admin session check failed"
+        showMessage(
+            "passwordMessage",
+            "Server error."
         );
 
     }
@@ -2612,10 +2444,9 @@ async function checkAdminSession() {
 
 /* =====================================================
    START
-====================================================== */
+===================================================== */
 
-checkAdminSession();
-
+checkAdmin();
 
 </script>
 
