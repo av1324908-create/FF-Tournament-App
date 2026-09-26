@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>Free Fire Tournament Hub</title>
 
@@ -244,6 +249,7 @@ button:disabled {
 }
 
 @media(max-width:700px) {
+
     .signup-login {
         grid-template-columns: 1fr;
     }
@@ -251,27 +257,41 @@ button:disabled {
     .result-row {
         flex-direction: column;
     }
+
 }
 
 </style>
+
 </head>
 
 <body>
 
 <header>
+
     <div class="container">
-        <h1>🔥 Free Fire Tournament Hub</h1>
+
+        <h1>
+            🔥 Free Fire Tournament Hub
+        </h1>
+
     </div>
+
 </header>
 
 <div class="container">
 
-    <div id="authSection" class="auth-box">
+    <div
+        id="authSection"
+        class="auth-box"
+    >
 
         <div class="signup-login">
 
             <div>
-                <h2>🔐 Login</h2>
+
+                <h2>
+                    🔐 Login
+                </h2>
 
                 <input
                     id="loginIdentifier"
@@ -284,15 +304,25 @@ button:disabled {
                     placeholder="Password"
                 >
 
-                <button onclick="loginUser()">
+                <button
+                    onclick="loginUser()"
+                >
                     Login
                 </button>
 
-                <div id="loginMessage" class="message"></div>
+                <div
+                    id="loginMessage"
+                    class="message"
+                ></div>
+
             </div>
 
+
             <div>
-                <h2>📝 Signup</h2>
+
+                <h2>
+                    📝 Signup
+                </h2>
 
                 <input
                     id="signupUsername"
@@ -322,47 +352,73 @@ button:disabled {
                     placeholder="Confirm Password"
                 >
 
-                <button onclick="signupUser()">
+                <button
+                    onclick="signupUser()"
+                >
                     Create Account
                 </button>
 
-                <div id="signupMessage" class="message"></div>
+                <div
+                    id="signupMessage"
+                    class="message"
+                ></div>
+
             </div>
 
         </div>
 
     </div>
 
-    <div id="userSection" class="hidden">
+
+    <div
+        id="userSection"
+        class="hidden"
+    >
 
         <div class="top-bar">
 
             <h2>
+
                 👋 Welcome,
-                <span id="usernameDisplay"></span>
+                <span
+                    id="usernameDisplay"
+                ></span>
+
             </h2>
 
-            <button onclick="logoutUser()">
+            <button
+                onclick="logoutUser()"
+            >
                 Logout
             </button>
 
         </div>
 
+
         <div class="wallet">
 
             💰 Your Wallet:
+
             <strong>
-                <span id="walletBalance">0</span>
+                <span
+                    id="walletBalance"
+                >
+                    0
+                </span>
             </strong>
+
             Tokens
 
         </div>
 
     </div>
 
+
     <div class="notice-board">
 
-        <h2>📢 Notice Board</h2>
+        <h2>
+            📢 Notice Board
+        </h2>
 
         <div id="noticeBoard">
 
@@ -373,6 +429,7 @@ button:disabled {
         </div>
 
     </div>
+
 
     <h2 class="section-title">
         🏆 Upcoming Tournaments
@@ -386,6 +443,7 @@ button:disabled {
 
     </div>
 
+
     <h2 class="section-title">
         🔴 Live Tournaments
     </h2>
@@ -397,6 +455,7 @@ button:disabled {
         </div>
 
     </div>
+
 
     <h2 class="section-title">
         🏁 Completed Tournaments
@@ -412,9 +471,11 @@ button:disabled {
 
 </div>
 
+
 <script>
 
 let currentUser = null;
+
 
 function escapeHTML(value) {
 
@@ -427,6 +488,7 @@ function escapeHTML(value) {
 
 }
 
+
 async function checkUser() {
 
     try {
@@ -435,7 +497,8 @@ async function checkUser() {
             await fetch(
                 "/api/auth/me",
                 {
-                    credentials: "same-origin"
+                    credentials:
+                        "same-origin"
                 }
             );
 
@@ -444,7 +507,8 @@ async function checkUser() {
 
         if (data.logged_in) {
 
-            currentUser = data.user;
+            currentUser =
+                data.user;
 
             showLoggedIn();
 
@@ -470,65 +534,98 @@ async function checkUser() {
 
 }
 
+
 function showLoggedOut() {
 
     document
-        .getElementById("authSection")
-        .classList.remove("hidden");
+        .getElementById(
+            "authSection"
+        )
+        .classList
+        .remove("hidden");
 
     document
-        .getElementById("userSection")
-        .classList.add("hidden");
+        .getElementById(
+            "userSection"
+        )
+        .classList
+        .add("hidden");
 
 }
+
 
 function showLoggedIn() {
 
     document
-        .getElementById("authSection")
-        .classList.add("hidden");
+        .getElementById(
+            "authSection"
+        )
+        .classList
+        .add("hidden");
 
     document
-        .getElementById("userSection")
-        .classList.remove("hidden");
+        .getElementById(
+            "userSection"
+        )
+        .classList
+        .remove("hidden");
 
     document
-        .getElementById("usernameDisplay")
+        .getElementById(
+            "usernameDisplay"
+        )
         .innerText =
         currentUser.username || "";
 
 }
 
+
 async function signupUser() {
 
     const username =
         document
-            .getElementById("signupUsername")
-            .value.trim();
+            .getElementById(
+                "signupUsername"
+            )
+            .value
+            .trim();
 
     const email =
         document
-            .getElementById("signupEmail")
-            .value.trim();
+            .getElementById(
+                "signupEmail"
+            )
+            .value
+            .trim();
 
     const uid =
         document
-            .getElementById("signupUID")
-            .value.trim();
+            .getElementById(
+                "signupUID"
+            )
+            .value
+            .trim();
 
     const password =
         document
-            .getElementById("signupPassword")
+            .getElementById(
+                "signupPassword"
+            )
             .value;
 
     const confirm =
         document
-            .getElementById("signupConfirm")
+            .getElementById(
+                "signupConfirm"
+            )
             .value;
 
     const message =
         document
-            .getElementById("signupMessage");
+            .getElementById(
+                "signupMessage"
+            );
+
 
     if (
         !username ||
@@ -544,8 +641,22 @@ async function signupUser() {
 
     }
 
+
+    if (
+        password !== confirm
+    ) {
+
+        message.innerText =
+            "❌ Password aur confirm password same nahi hain.";
+
+        return;
+
+    }
+
+
     message.innerText =
         "⏳ Account create ho raha hai...";
+
 
     try {
 
@@ -553,36 +664,42 @@ async function signupUser() {
             await fetch(
                 "/api/auth/signup",
                 {
-                    method: "POST",
+
+                    method:
+                        "POST",
 
                     headers: {
                         "Content-Type":
                             "application/json"
                     },
 
-                    body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        username:
-                            username,
+                            username:
+                                username,
 
-                        email:
-                            email,
+                            email:
+                                email,
 
-                        uid:
-                            uid,
+                            uid:
+                                uid,
 
-                        password:
-                            password,
+                            password:
+                                password,
 
-                        confirm_password:
-                            confirm
+                            confirm_password:
+                                confirm
 
-                    })
+                        })
+
                 }
             );
 
+
         const data =
             await response.json();
+
 
         if (data.success) {
 
@@ -590,19 +707,33 @@ async function signupUser() {
                 "✅ Signup successful! Ab login karo.";
 
             document
-                .getElementById("signupUsername")
+                .getElementById(
+                    "signupUsername"
+                )
                 .value = "";
 
             document
-                .getElementById("signupEmail")
+                .getElementById(
+                    "signupEmail"
+                )
                 .value = "";
 
             document
-                .getElementById("signupUID")
+                .getElementById(
+                    "signupUID"
+                )
                 .value = "";
 
             document
-                .getElementById("signupPassword")
+                .getElementById(
+                    "signupPassword"
+                )
+                .value = "";
+
+            document
+                .getElementById(
+                    "signupConfirm"
+                )
                 .value = "";
 
         }
@@ -629,23 +760,35 @@ async function signupUser() {
 
 }
 
+
 async function loginUser() {
 
     const identifier =
         document
-            .getElementById("loginIdentifier")
-            .value.trim();
+            .getElementById(
+                "loginIdentifier"
+            )
+            .value
+            .trim();
 
     const password =
         document
-            .getElementById("loginPassword")
+            .getElementById(
+                "loginPassword"
+            )
             .value;
 
     const message =
         document
-            .getElementById("loginMessage");
+            .getElementById(
+                "loginMessage"
+            );
 
-    if (!identifier || !password) {
+
+    if (
+        !identifier ||
+        !password
+    ) {
 
         message.innerText =
             "❌ Username/email aur password bharo.";
@@ -654,8 +797,10 @@ async function loginUser() {
 
     }
 
+
     message.innerText =
         "⏳ Login ho raha hai...";
+
 
     try {
 
@@ -663,7 +808,9 @@ async function loginUser() {
             await fetch(
                 "/api/auth/login",
                 {
-                    method: "POST",
+
+                    method:
+                        "POST",
 
                     headers: {
                         "Content-Type":
@@ -673,20 +820,24 @@ async function loginUser() {
                     credentials:
                         "same-origin",
 
-                    body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        identifier:
-                            identifier,
+                            identifier:
+                                identifier,
 
-                        password:
-                            password
+                            password:
+                                password
 
-                    })
+                        })
+
                 }
             );
 
+
         const data =
             await response.json();
+
 
         if (data.success) {
 
@@ -698,6 +849,8 @@ async function loginUser() {
             await loadWallet();
 
             message.innerText = "";
+
+            await loadTournaments();
 
         }
 
@@ -723,6 +876,7 @@ async function loginUser() {
 
 }
 
+
 async function logoutUser() {
 
     try {
@@ -730,10 +884,13 @@ async function logoutUser() {
         await fetch(
             "/api/auth/logout",
             {
-                method: "POST",
+
+                method:
+                    "POST",
 
                 credentials:
                     "same-origin"
+
             }
         );
 
@@ -743,34 +900,46 @@ async function logoutUser() {
 
     }
 
+
     currentUser = null;
 
     showLoggedOut();
 
     document
-        .getElementById("walletBalance")
+        .getElementById(
+            "walletBalance"
+        )
         .innerText = "0";
 
 }
 
+
 async function loadWallet() {
 
     if (!currentUser) {
+
         return;
+
     }
+
 
     try {
 
         const response =
             await fetch(
-                `/api/wallet/${encodeURIComponent(currentUser.uid)}`
+                `/api/wallet/${encodeURIComponent(
+                    currentUser.uid
+                )}`
             );
 
         const data =
             await response.json();
 
+
         document
-            .getElementById("walletBalance")
+            .getElementById(
+                "walletBalance"
+            )
             .innerText =
             data.balance ?? 0;
 
@@ -779,13 +948,16 @@ async function loadWallet() {
     catch (error) {
 
         document
-            .getElementById("walletBalance")
+            .getElementById(
+                "walletBalance"
+            )
             .innerText =
             "0";
 
     }
 
 }
+
 
 async function loadNotices() {
 
@@ -799,9 +971,13 @@ async function loadNotices() {
         const notices =
             await response.json();
 
+
         const box =
             document
-                .getElementById("noticeBoard");
+                .getElementById(
+                    "noticeBoard"
+                );
+
 
         if (
             !Array.isArray(notices) ||
@@ -809,50 +985,70 @@ async function loadNotices() {
         ) {
 
             box.innerHTML = `
-                <div class="notice-empty">
+
+                <div
+                    class="notice-empty"
+                >
                     📭 Abhi koi important notice nahi hai.
                 </div>
+
             `;
 
             return;
 
         }
 
+
         box.innerHTML =
-            notices.map(
-                n => `
+            notices
+                .map(
+                    n => `
 
-                <div class="notice-item">
+                    <div
+                        class="notice-item"
+                    >
 
-                    <h3>
-                        📌
-                        ${escapeHTML(n.title)}
-                    </h3>
+                        <h3>
+                            📌
+                            ${escapeHTML(
+                                n.title
+                            )}
+                        </h3>
 
-                    <p>
-                        ${escapeHTML(n.message)}
-                    </p>
+                        <p>
+                            ${escapeHTML(
+                                n.message
+                            )}
+                        </p>
 
-                </div>
+                    </div>
 
-            `
-            ).join("");
+                `
+                )
+                .join("");
 
     }
 
     catch (error) {
 
         document
-            .getElementById("noticeBoard")
+            .getElementById(
+                "noticeBoard"
+            )
             .innerHTML = `
-                <div class="notice-empty">
+
+                <div
+                    class="notice-empty"
+                >
                     Notice load nahi ho paaye.
                 </div>
+
             `;
 
     }
 
 }
+
 
 async function loadTournaments() {
 
@@ -866,11 +1062,13 @@ async function loadTournaments() {
         const tournaments =
             await response.json();
 
+
         const upcomingBox =
             document
                 .getElementById(
                     "upcomingTournaments"
                 );
+
 
         const liveBox =
             document
@@ -878,19 +1076,31 @@ async function loadTournaments() {
                     "liveTournaments"
                 );
 
+
         const completedBox =
             document
                 .getElementById(
                     "completedTournaments"
                 );
 
+
         upcomingBox.innerHTML = "";
+
         liveBox.innerHTML = "";
+
         completedBox.innerHTML = "";
 
+
+        window.__tournaments =
+            tournaments;
+
+
         let upcomingCount = 0;
+
         let liveCount = 0;
+
         let completedCount = 0;
+
 
         tournaments.forEach(
             t => {
@@ -899,15 +1109,21 @@ async function loadTournaments() {
                     t.status ||
                     "upcoming";
 
+
                 const players =
-                    Array.isArray(t.players)
+                    Array.isArray(
+                        t.players
+                    )
                         ? t.players
                         : [];
+
 
                 const booked =
                     players.length;
 
+
                 let statusHTML = "";
+
 
                 if (
                     status ===
@@ -915,11 +1131,16 @@ async function loadTournaments() {
                 ) {
 
                     statusHTML = `
+
                         <span
-                            class="status status-live"
+                            class="
+                                status
+                                status-live
+                            "
                         >
                             🔴 LIVE
                         </span>
+
                     `;
 
                 }
@@ -930,11 +1151,16 @@ async function loadTournaments() {
                 ) {
 
                     statusHTML = `
+
                         <span
-                            class="status status-completed"
+                            class="
+                                status
+                                status-completed
+                            "
                         >
                             🏁 COMPLETED
                         </span>
+
                     `;
 
                 }
@@ -942,16 +1168,23 @@ async function loadTournaments() {
                 else {
 
                     statusHTML = `
+
                         <span
-                            class="status status-upcoming"
+                            class="
+                                status
+                                status-upcoming
+                            "
                         >
                             🟢 UPCOMING
                         </span>
+
                     `;
 
                 }
 
+
                 let registrationHTML = "";
+
 
                 if (
                     status ===
@@ -963,9 +1196,13 @@ async function loadTournaments() {
                     ) {
 
                         registrationHTML = `
-                            <button disabled>
+
+                            <button
+                                disabled
+                            >
                                 ✅ Already Registered
                             </button>
+
                         `;
 
                     }
@@ -976,9 +1213,13 @@ async function loadTournaments() {
                     ) {
 
                         registrationHTML = `
-                            <button disabled>
+
+                            <button
+                                disabled
+                            >
                                 ❌ Tournament Full
                             </button>
+
                         `;
 
                     }
@@ -988,6 +1229,7 @@ async function loadTournaments() {
                     ) {
 
                         registrationHTML = `
+
                             <button
                                 onclick="
                                     alert(
@@ -997,6 +1239,7 @@ async function loadTournaments() {
                             >
                                 🔐 Login to Register
                             </button>
+
                         `;
 
                     }
@@ -1015,23 +1258,61 @@ async function loadTournaments() {
                                 🎮 Register Now
                             </button>
 
+
                             <div
                                 class="form-box"
-                                id="form-${t.id}"
+                                id="
+                                    form-${t.id}
+                                "
                             >
 
                                 <input
-                                    id="name-${t.id}"
-                                    placeholder="Player Name"
+                                    id="
+                                        name-${t.id}
+                                    "
+                                    placeholder="
+                                        Player Name
+                                    "
                                 >
 
+
                                 <input
-                                    id="uid-${t.id}"
-                                    placeholder="Free Fire UID"
-                                    value="${escapeHTML(
-                                        currentUser.uid
-                                    )}"
+                                    id="
+                                        uid-${t.id}
+                                    "
+                                    placeholder="
+                                        Free Fire UID
+                                    "
+                                    value="
+                                        ${escapeHTML(
+                                            currentUser.uid
+                                        )}
+                                    "
                                 >
+
+
+                                <input
+                                    id="
+                                        instagram-${t.id}
+                                    "
+                                    placeholder="
+                                        Instagram ID (without @)
+                                    "
+                                >
+
+
+                                <input
+                                    id="
+                                        slot-${t.id}
+                                    "
+                                    type="number"
+                                    min="1"
+                                    max="${t.max_players}"
+                                    placeholder="
+                                        Slot Number (1-${t.max_players})
+                                    "
+                                >
+
 
                                 <button
                                     onclick="
@@ -1043,9 +1324,12 @@ async function loadTournaments() {
                                     Confirm Registration
                                 </button>
 
+
                                 <div
                                     class="message"
-                                    id="message-${t.id}"
+                                    id="
+                                        message-${t.id}
+                                    "
                                 ></div>
 
                             </div>
@@ -1056,7 +1340,9 @@ async function loadTournaments() {
 
                 }
 
+
                 let roomHTML = "";
+
 
                 if (
                     t.registered &&
@@ -1094,7 +1380,9 @@ async function loadTournaments() {
 
                 }
 
+
                 let rulesHTML = "";
+
 
                 if (
                     t.rules &&
@@ -1123,7 +1411,9 @@ async function loadTournaments() {
 
                 }
 
+
                 let resultsHTML = "";
+
 
                 if (
                     status ===
@@ -1145,11 +1435,13 @@ async function loadTournaments() {
                                         999999
                                     );
 
+
                                 const posB =
                                     Number(
                                         b.position ||
                                         999999
                                     );
+
 
                                 if (
                                     posA !==
@@ -1162,6 +1454,7 @@ async function loadTournaments() {
                                     );
 
                                 }
+
 
                                 return (
                                     Number(
@@ -1177,6 +1470,7 @@ async function loadTournaments() {
                             }
                         );
 
+
                     resultsHTML = `
 
                         <div
@@ -1186,6 +1480,7 @@ async function loadTournaments() {
                             <h3>
                                 🏆 Final Results
                             </h3>
+
 
                             ${sortedPlayers
                                 .map(
@@ -1207,6 +1502,7 @@ async function loadTournaments() {
                                             )}
 
                                         </span>
+
 
                                         <span>
 
@@ -1231,6 +1527,7 @@ async function loadTournaments() {
 
                 }
 
+
                 const tournamentCard = `
 
                     <div
@@ -1243,6 +1540,7 @@ async function loadTournaments() {
                                 t.name
                             )}
                         </h2>
+
 
                         <div
                             class="info"
@@ -1280,17 +1578,22 @@ async function loadTournaments() {
 
                         </div>
 
+
                         ${rulesHTML}
+
 
                         ${roomHTML}
 
+
                         ${resultsHTML}
+
 
                         ${registrationHTML}
 
                     </div>
 
                 `;
+
 
                 if (
                     status ===
@@ -1328,38 +1631,47 @@ async function loadTournaments() {
             }
         );
 
+
         if (
             upcomingCount === 0
         ) {
 
             upcomingBox.innerHTML = `
+
                 <div class="empty">
                     😔 Abhi koi upcoming tournament nahi hai.
                 </div>
+
             `;
 
         }
+
 
         if (
             liveCount === 0
         ) {
 
             liveBox.innerHTML = `
+
                 <div class="empty">
                     Abhi koi live tournament nahi hai.
                 </div>
+
             `;
 
         }
+
 
         if (
             completedCount === 0
         ) {
 
             completedBox.innerHTML = `
+
                 <div class="empty">
                     Abhi koi completed tournament nahi hai.
                 </div>
+
             `;
 
         }
@@ -1373,14 +1685,17 @@ async function loadTournaments() {
                 "upcomingTournaments"
             )
             .innerHTML = `
+
                 <div class="empty">
                     ❌ Tournaments load nahi ho paaye.
                 </div>
+
             `;
 
     }
 
 }
+
 
 function showForm(id) {
 
@@ -1390,13 +1705,13 @@ function showForm(id) {
                 `form-${id}`
             );
 
-    if (
-        !form
-    ) {
+
+    if (!form) {
 
         return;
 
     }
+
 
     if (
         form.style.display ===
@@ -1417,6 +1732,7 @@ function showForm(id) {
 
 }
 
+
 async function registerPlayer(id) {
 
     if (!currentUser) {
@@ -1429,6 +1745,7 @@ async function registerPlayer(id) {
 
     }
 
+
     const name =
         document
             .getElementById(
@@ -1436,6 +1753,7 @@ async function registerPlayer(id) {
             )
             .value
             .trim();
+
 
     const uid =
         document
@@ -1445,13 +1763,40 @@ async function registerPlayer(id) {
             .value
             .trim();
 
+
+    const instagram_id =
+        document
+            .getElementById(
+                `instagram-${id}`
+            )
+            .value
+            .trim();
+
+
+    const slotValue =
+        document
+            .getElementById(
+                `slot-${id}`
+            )
+            .value
+            .trim();
+
+
+    const slot_number =
+        Number(slotValue);
+
+
     const message =
         document
             .getElementById(
                 `message-${id}`
             );
 
-    if (!name || !uid) {
+
+    if (
+        !name ||
+        !uid
+    ) {
 
         message.innerText =
             "❌ Name aur UID dono bharo.";
@@ -1460,20 +1805,84 @@ async function registerPlayer(id) {
 
     }
 
+
+    if (!instagram_id) {
+
+        message.innerText =
+            "❌ Instagram ID bharo.";
+
+        return;
+
+    }
+
+
+    if (
+        !slotValue ||
+        !Number.isInteger(
+            slot_number
+        )
+    ) {
+
+        message.innerText =
+            "❌ Valid slot number bharo.";
+
+        return;
+
+    }
+
+
+    const tournament =
+        (
+            window.__tournaments ||
+            []
+        )
+        .find(
+            t =>
+                Number(t.id) ===
+                Number(id)
+        );
+
+
+    if (
+        tournament &&
+        (
+            slot_number < 1 ||
+            slot_number >
+            Number(
+                tournament.max_players
+            )
+        )
+    ) {
+
+        message.innerText =
+            `❌ Slot number 1 se ${tournament.max_players} ke beech hona chahiye.`;
+
+        return;
+
+    }
+
+
     message.innerText =
         "⏳ Registering...";
+
 
     try {
 
         const response =
             await fetch(
-                `/api/tournaments/${id}/players`,
+
+                `/api/tournaments/${id}/register`,
+
                 {
-                    method: "POST",
+
+                    method:
+                        "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     credentials:
@@ -1481,17 +1890,29 @@ async function registerPlayer(id) {
 
                     body:
                         JSON.stringify({
+
                             name:
                                 name,
 
                             uid:
-                                uid
+                                uid,
+
+                            instagram_id:
+                                instagram_id,
+
+                            slot_number:
+                                slot_number
+
                         })
+
                 }
+
             );
+
 
         const data =
             await response.json();
+
 
         if (
             data.success
@@ -1499,6 +1920,7 @@ async function registerPlayer(id) {
 
             message.innerText =
                 "✅ Registration successful!";
+
 
             await loadWallet();
 
@@ -1528,28 +1950,34 @@ async function registerPlayer(id) {
 
 }
 
+
 checkUser();
 
 loadNotices();
 
 loadTournaments();
 
+
 setInterval(
     loadTournaments,
     15000
 );
+
 
 setInterval(
     loadNotices,
     15000
 );
 
+
 setInterval(
     loadWallet,
     15000
 );
 
+
 </script>
 
 </body>
+
 </html>
