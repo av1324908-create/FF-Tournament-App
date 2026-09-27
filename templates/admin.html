@@ -305,6 +305,12 @@ min="1"
 placeholder="Max players"
 >
 
+<select id="tmode">
+<option value="Battle Royale">Battle Royale</option>
+<option value="Clash Squad">Clash Squad (4v4)</option>
+<option value="Lone Wolf">Lone Wolf (1v1)</option>
+</select>
+
 </div>
 
 <div>
@@ -725,6 +731,12 @@ id="em"
 type="number"
 min="1"
 >
+
+<select id="emode">
+<option value="Battle Royale">Battle Royale</option>
+<option value="Clash Squad">Clash Squad (4v4)</option>
+<option value="Lone Wolf">Lone Wolf (1v1)</option>
+</select>
 
 <input
 id="ek"
@@ -1192,7 +1204,10 @@ date_time:
 $('td').value.trim(),
 
 rules:
-$('tr').value.trim()
+$('tr').value.trim(),
+
+game_mode:
+$('tmode').value
 
 };
 
@@ -1227,7 +1242,8 @@ msg(
 'tk',
 'tp',
 'td',
-'tr'
+'tr',
+'tmode'
 ].forEach(
 x=>$(x).value=''
 );
@@ -1654,6 +1670,7 @@ $('em').value=t.max_players??0;
 $('ek').value=t.kill_reward??0;
 $('ep').value=t.first_prize??0;
 $('ed').value=t.date_time||'';
+$('emode').value=t.game_mode||'Battle Royale';
 $('er').value=t.rules||'';
 
 $('editModal')
@@ -1697,7 +1714,10 @@ date_time:
 $('ed').value.trim(),
 
 rules:
-$('er').value.trim()
+$('er').value.trim(),
+
+game_mode:
+$('emode').value
 
 };
 
