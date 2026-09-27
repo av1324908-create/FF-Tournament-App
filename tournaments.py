@@ -12,6 +12,7 @@ class Tournament(db.Model):
     first_prize = db.Column(db.Integer, default=0)
     date_time = db.Column(db.String(50))
     rules = db.Column(db.Text, default="")
+    game_mode = db.Column(db.String(50), default="Battle Royale", nullable=False)
     result_published = db.Column(db.Boolean, default=False, nullable=False)
     room_id = db.Column(db.String(100), default="")
     room_password = db.Column(db.String(100), default="")
