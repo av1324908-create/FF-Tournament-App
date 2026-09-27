@@ -125,6 +125,12 @@ with app.app_context():
                 text("ALTER TABLE tournament ADD COLUMN result_published BOOLEAN DEFAULT FALSE")
             )
 
+    if "game_mode" not in tournament_columns:
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE tournament ADD COLUMN game_mode VARCHAR(50) DEFAULT 'Battle Royale'")
+            )
+
     admin = AdminAccount.query.filter_by(
         username="admin"
     ).first()
@@ -658,6 +664,11 @@ def get_tournaments():
             {"id": tournament.id}
         ).scalar()
         result_published = bool(published_row)
+
+        game_mode = db.session.execute(
+            text("SELECT game_mode FROM tournament WHERE id = :id"),
+            {"id": tournament.id}
+        ).scalar() or "Battle Royale"
         show_results = admin_view or (status == "completed" and result_published)
 
         players_data = []
@@ -683,6 +694,7 @@ def get_tournaments():
             "first_prize": tournament.first_prize,
             "date_time": tournament.date_time,
             "rules": tournament.rules or "",
+            "game_mode": game_mode,
             "player_count": len(players),
             "available_slots": max(0, int(tournament.max_players or 0) - len(players)),
             "registered": registered,
@@ -729,6 +741,14 @@ def create_tournament():
     rules = str(
         data.get("rules", "")
     ).strip()
+
+    game_mode = str(
+        data.get("game_mode", "Battle Royale")
+    ).strip() or "Battle Royale"
+
+    allowed_modes = {"Battle Royale", "Clash Squad", "Lone Wolf"}
+    if game_mode not in allowed_modes:
+        game_mode = "Battle Royale"
 
 
     try:
@@ -800,6 +820,13 @@ def create_tournament():
 
 
     db.session.add(tournament)
+    db.session.flush()
+
+    db.session.execute(
+        text("UPDATE tournament SET game_mode = :game_mode WHERE id = :id"),
+        {"game_mode": game_mode, "id": tournament.id}
+    )
+
     db.session.commit()
 
 
@@ -814,7 +841,8 @@ def create_tournament():
             "kill_reward": tournament.kill_reward,
             "first_prize": tournament.first_prize,
             "date_time": tournament.date_time,
-            "rules": tournament.rules or ""
+            "rules": tournament.rules or "",
+            "game_mode": game_mode
         }
     })
 
@@ -864,6 +892,11 @@ def edit_tournament(tournament_id):
     name = str(data.get("name", "")).strip()
     date_time = str(data.get("date_time", "")).strip()
     rules = str(data.get("rules", "")).strip()
+    game_mode = str(data.get("game_mode", "Battle Royale")).strip() or "Battle Royale"
+
+    allowed_modes = {"Battle Royale", "Clash Squad", "Lone Wolf"}
+    if game_mode not in allowed_modes:
+        game_mode = "Battle Royale"
 
     try:
         entry_fee = int(data.get("entry_fee", 0))
@@ -908,6 +941,11 @@ def edit_tournament(tournament_id):
     tournament.first_prize = first_prize
     tournament.date_time = date_time
     tournament.rules = rules
+
+    db.session.execute(
+        text("UPDATE tournament SET game_mode = :game_mode WHERE id = :id"),
+        {"game_mode": game_mode, "id": tournament.id}
+    )
 
     db.session.commit()
 
