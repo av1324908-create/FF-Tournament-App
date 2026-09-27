@@ -50,6 +50,7 @@ class RegistrationDetail(db.Model):
     player_id = db.Column(db.Integer, nullable=False, unique=True, index=True)
     instagram_id = db.Column(db.String(100), nullable=False)
     slot_number = db.Column(db.Integer, nullable=False)
+    team = db.Column(db.String(20), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
@@ -129,6 +130,16 @@ with app.app_context():
         with db.engine.begin() as connection:
             connection.execute(
                 text("ALTER TABLE tournament ADD COLUMN game_mode VARCHAR(50) DEFAULT 'Battle Royale'")
+            )
+
+    registration_columns = {
+        col["name"] for col in inspect(db.engine).get_columns("registration_detail")
+    }
+
+    if "team" not in registration_columns:
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE registration_detail ADD COLUMN team VARCHAR(20)")
             )
 
     admin = AdminAccount.query.filter_by(
@@ -664,12 +675,13 @@ def get_tournaments():
             {"id": tournament.id}
         ).scalar()
         result_published = bool(published_row)
-
-        game_mode = db.session.execute(
-            text("SELECT game_mode FROM tournament WHERE id = :id"),
-            {"id": tournament.id}
-        ).scalar() or "Battle Royale"
         show_results = admin_view or (status == "completed" and result_published)
+
+        team_counts = {"Team A": 0, "Team B": 0}
+        for p in players:
+            detail = RegistrationDetail.query.filter_by(player_id=p.id).first()
+            if detail and detail.team in team_counts:
+                team_counts[detail.team] += 1
 
         players_data = []
         if show_results:
@@ -682,7 +694,8 @@ def get_tournaments():
                     "kills": p.kills or 0,
                     "position": p.position or 0,
                     "instagram_id": detail.instagram_id if detail else "",
-                    "slot_number": detail.slot_number if detail else 0
+                    "slot_number": detail.slot_number if detail else 0,
+                    "team": detail.team if detail else ""
                 })
 
         item = {
@@ -694,9 +707,10 @@ def get_tournaments():
             "first_prize": tournament.first_prize,
             "date_time": tournament.date_time,
             "rules": tournament.rules or "",
-            "game_mode": game_mode,
+            "game_mode": tournament.game_mode or "Battle Royale",
             "player_count": len(players),
             "available_slots": max(0, int(tournament.max_players or 0) - len(players)),
+            "team_counts": team_counts,
             "registered": registered,
             "status": status,
             "result_published": result_published,
@@ -742,12 +756,8 @@ def create_tournament():
         data.get("rules", "")
     ).strip()
 
-    game_mode = str(
-        data.get("game_mode", "Battle Royale")
-    ).strip() or "Battle Royale"
-
-    allowed_modes = {"Battle Royale", "Clash Squad", "Lone Wolf"}
-    if game_mode not in allowed_modes:
+    game_mode = str(data.get("game_mode", "Battle Royale")).strip()
+    if game_mode not in ("Battle Royale", "Clash Squad", "Lone Wolf"):
         game_mode = "Battle Royale"
 
 
@@ -807,6 +817,11 @@ def create_tournament():
             "message": "Prize negative nahi ho sakta."
         }), 400
 
+    if game_mode == "Clash Squad":
+        max_players = 8
+    elif game_mode == "Lone Wolf":
+        max_players = 2
+
 
     tournament = Tournament(
         name=name,
@@ -815,18 +830,12 @@ def create_tournament():
         kill_reward=kill_reward,
         first_prize=first_prize,
         date_time=date_time,
-        rules=rules
+        rules=rules,
+        game_mode=game_mode
     )
 
 
     db.session.add(tournament)
-    db.session.flush()
-
-    db.session.execute(
-        text("UPDATE tournament SET game_mode = :game_mode WHERE id = :id"),
-        {"game_mode": game_mode, "id": tournament.id}
-    )
-
     db.session.commit()
 
 
@@ -842,7 +851,7 @@ def create_tournament():
             "first_prize": tournament.first_prize,
             "date_time": tournament.date_time,
             "rules": tournament.rules or "",
-            "game_mode": game_mode
+            "game_mode": tournament.game_mode or "Battle Royale"
         }
     })
 
@@ -892,10 +901,8 @@ def edit_tournament(tournament_id):
     name = str(data.get("name", "")).strip()
     date_time = str(data.get("date_time", "")).strip()
     rules = str(data.get("rules", "")).strip()
-    game_mode = str(data.get("game_mode", "Battle Royale")).strip() or "Battle Royale"
-
-    allowed_modes = {"Battle Royale", "Clash Squad", "Lone Wolf"}
-    if game_mode not in allowed_modes:
+    game_mode = str(data.get("game_mode", tournament.game_mode or "Battle Royale")).strip()
+    if game_mode not in ("Battle Royale", "Clash Squad", "Lone Wolf"):
         game_mode = "Battle Royale"
 
     try:
@@ -934,6 +941,17 @@ def edit_tournament(tournament_id):
             "message": "Max players 0 se zyada hona chahiye."
         }), 400
 
+    if game_mode == "Clash Squad":
+        max_players = 8
+    elif game_mode == "Lone Wolf":
+        max_players = 2
+
+    if max_players < booked_count:
+        return jsonify({
+            "success": False,
+            "message": f"Already {booked_count} players registered hain; selected mode ke liye capacity kam hai."
+        }), 400
+
     tournament.name = name
     tournament.entry_fee = entry_fee
     tournament.max_players = max_players
@@ -941,11 +959,7 @@ def edit_tournament(tournament_id):
     tournament.first_prize = first_prize
     tournament.date_time = date_time
     tournament.rules = rules
-
-    db.session.execute(
-        text("UPDATE tournament SET game_mode = :game_mode WHERE id = :id"),
-        {"game_mode": game_mode, "id": tournament.id}
-    )
+    tournament.game_mode = game_mode
 
     db.session.commit()
 
@@ -960,7 +974,8 @@ def edit_tournament(tournament_id):
             "kill_reward": tournament.kill_reward,
             "first_prize": tournament.first_prize,
             "date_time": tournament.date_time,
-            "rules": tournament.rules or ""
+            "rules": tournament.rules or "",
+            "game_mode": tournament.game_mode or "Battle Royale"
         }
     })
 
@@ -1276,8 +1291,28 @@ def register_player(tournament_id):
     if not instagram_id:
         return jsonify({"success": False, "message": "Valid Instagram ID required."}), 400
 
-    if slot_number < 1 or slot_number > int(tournament.max_players or 0):
-        return jsonify({"success": False, "message": "Valid slot number select karo."}), 400
+    game_mode = tournament.game_mode or "Battle Royale"
+    team = str(data.get("team", "")).strip()
+    team_limit = 0
+
+    if game_mode in ("Clash Squad", "Lone Wolf"):
+        team_limit = 4 if game_mode == "Clash Squad" else 1
+        if team not in ("Team A", "Team B"):
+            return jsonify({"success": False, "message": "Team A ya Team B select karo."}), 400
+
+        team_players = (
+            db.session.query(RegistrationDetail)
+            .filter_by(tournament_id=tournament_id, team=team)
+            .count()
+        )
+        if team_players >= team_limit:
+            return jsonify({"success": False, "message": f"{team} full ho chuki hai."}), 400
+
+        slot_number = team_players + 1
+    else:
+        team = ""
+        if slot_number < 1 or slot_number > int(tournament.max_players or 0):
+            return jsonify({"success": False, "message": "Valid slot number select karo."}), 400
 
     user_registration = UserTournamentRegistration.query.filter_by(
         user_id=user.id, tournament_id=tournament_id
@@ -1289,9 +1324,12 @@ def register_player(tournament_id):
     if existing_player:
         return jsonify({"success": False, "message": "Ye UID is tournament me already registered hai."}), 400
 
-    existing_slot = RegistrationDetail.query.filter_by(
+    existing_slot_query = RegistrationDetail.query.filter_by(
         tournament_id=tournament_id, slot_number=slot_number
-    ).first()
+    )
+    if team:
+        existing_slot_query = existing_slot_query.filter_by(team=team)
+    existing_slot = existing_slot_query.first()
     if existing_slot:
         return jsonify({"success": False, "message": f"Slot {slot_number} already booked hai. Dusra slot select karo."}), 400
 
@@ -1327,7 +1365,8 @@ def register_player(tournament_id):
         tournament_id=tournament_id,
         player_id=player.id,
         instagram_id=instagram_id,
-        slot_number=slot_number
+        slot_number=slot_number,
+        team=team
     )
     db.session.add(detail)
 
@@ -1351,7 +1390,7 @@ def register_player(tournament_id):
 
     return jsonify({
         "success": True,
-        "message": f"Registration successful! Slot {slot_number} booked. {entry_fee} tokens deduct hue.",
+        "message": f"Registration successful! {team + ' • ' if team else ''}Slot {slot_number} booked. {entry_fee} tokens deduct hue.",
         "entry_fee": entry_fee,
         "balance": wallet.balance if wallet else 0,
         "player": {
@@ -1360,6 +1399,7 @@ def register_player(tournament_id):
             "uid": player.uid,
             "instagram_id": instagram_id,
             "slot_number": slot_number,
+            "team": team,
             "tournament_id": tournament_id
         }
     })
