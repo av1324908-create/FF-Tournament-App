@@ -1625,6 +1625,20 @@ function registrationHTML(t){
                     📝 Tournament Registration
                 </h3>
 
+                <div class="small">
+                    🎮 Game Mode:
+                    <b>${esc(t.game_mode || "Battle Royale")}</b>
+                    ${
+                        t.game_mode === "Clash Squad"
+                        ? " • CS 4v4"
+                        : (
+                            t.game_mode === "Lone Wolf"
+                            ? " • 1v1"
+                            : ""
+                        )
+                    }
+                </div>
+
 
                 <label>
                     👤 FREE FIRE ID
@@ -1845,6 +1859,11 @@ async function loadTournaments(){
 
                             👥 Slots:
                             ${playerCount}/${maxPlayers}
+
+                            <br>
+
+                            🎮 Mode:
+                            <b>${esc(t.game_mode || "Battle Royale")}</b>
 
                             <br>
 
