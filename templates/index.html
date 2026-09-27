@@ -1523,208 +1523,75 @@ function resultsHTML(t){
 function registrationHTML(t){
 
     if(!currentUser){
-
-        return `
-
-            <button
-                type="button"
-                onclick="showLogin()"
-            >
-                🔐 Login to Register
-            </button>
-
-        `;
-
+        return `<button type="button" onclick="showLogin()">🔐 Login to Register</button>`;
     }
-
 
     if(t.registered){
+        return `<button type="button" disabled>✅ Already Registered</button>`;
+    }
 
-        return `
+    if(t.status !== "upcoming") return "";
 
-            <button
-                type="button"
-                disabled
-            >
-                ✅ Already Registered
-            </button>
+    const mode = t.game_mode || "Battle Royale";
+    const isTeamMode = mode === "Clash Squad" || mode === "Lone Wolf";
+    const teamLimit = mode === "Clash Squad" ? 4 : 1;
+    const teamCounts = t.team_counts || {"Team A":0,"Team B":0};
 
+    if(Number(t.available_slots || 0) <= 0){
+        return `<button type="button" disabled>❌ Tournament Full</button>`;
+    }
+
+    let teamHTML = "";
+    let slotHTML = "";
+
+    if(isTeamMode){
+        const a = Number(teamCounts["Team A"] || 0);
+        const b = Number(teamCounts["Team B"] || 0);
+        const aFull = a >= teamLimit;
+        const bFull = b >= teamLimit;
+        teamHTML = `
+            <label>⚔️ Select Team</label>
+            <select id="team-${Number(t.id)}" class="slot-select">
+                <option value="">Select Team</option>
+                <option value="Team A" ${aFull ? "disabled" : ""}>Team A (${a}/${teamLimit})${aFull ? " — FULL" : ""}</option>
+                <option value="Team B" ${bFull ? "disabled" : ""}>Team B (${b}/${teamLimit})${bFull ? " — FULL" : ""}</option>
+            </select>
         `;
-
-    }
-
-
-    if(t.status !== "upcoming"){
-
-        return "";
-
-    }
-
-
-    if(
-        Number(
-            t.available_slots || 0
-        ) <= 0
-    ){
-
-        return `
-
-            <button
-                type="button"
-                disabled
-            >
-                ❌ Tournament Full
-            </button>
-
+    }else{
+        const maxPlayers = Number(t.max_players || 0);
+        const options = Array.from({length:maxPlayers}, (_,index) => `<option value="${index+1}">Slot ${index+1}</option>`).join("");
+        slotHTML = `
+            <label>🎯 Slot Number</label>
+            <select id="slot-${Number(t.id)}" class="slot-select">${options}</select>
         `;
-
     }
-
-
-    const maxPlayers =
-        Number(
-            t.max_players || 0
-        );
-
-
-    const options =
-        Array
-            .from(
-                {
-                    length:maxPlayers
-                },
-                (_,index) =>
-
-                    `
-                    <option value="${index + 1}">
-                        Slot ${index + 1}
-                    </option>
-                    `
-            )
-            .join("");
-
 
     return `
-
         <div class="register-section">
+            <button type="button" onclick="showForm(${Number(t.id)})">📝 Register Player</button>
+            <div id="form-${Number(t.id)}" class="box hidden">
+                <h3>📝 Tournament Registration</h3>
+                <div class="small">🎮 Game Mode: <b>${esc(mode)}</b>${mode === "Clash Squad" ? " • CS 4v4" : (mode === "Lone Wolf" ? " • 1v1" : "")}</div>
 
-            <button
-                type="button"
-                onclick="showForm(${Number(t.id)})"
-            >
-                📝 Register Player
-            </button>
+                <label>👤 FREE FIRE ID</label>
+                <input id="name-${Number(t.id)}" value="${esc(currentUser.username)}">
 
+                <label>🎮 Free Fire UID</label>
+                <input id="uid-${Number(t.id)}" value="${esc(currentUser.uid)}" readonly>
 
-            <div
-                id="form-${Number(t.id)}"
-                class="box hidden"
-            >
+                <label>📸 Instagram ID</label>
+                <input id="instagram-${Number(t.id)}" placeholder="Instagram ID (without @ is okay)">
 
-                <h3>
-                    📝 Tournament Registration
-                </h3>
+                ${teamHTML}
+                ${slotHTML}
 
-                <div class="small">
-                    🎮 Game Mode:
-                    <b>${esc(t.game_mode || "Battle Royale")}</b>
-                    ${
-                        t.game_mode === "Clash Squad"
-                        ? " • CS 4v4"
-                        : (
-                            t.game_mode === "Lone Wolf"
-                            ? " • 1v1"
-                            : ""
-                        )
-                    }
-                </div>
+                <div class="entry-box">💰 Entry Fee: <b>₹${Number(t.entry_fee || 0)}</b> / <b>${Number(t.entry_fee || 0)} Tokens</b></div>
 
-
-                <label>
-                    👤 FREE FIRE ID
-                </label>
-
-                <input
-                    id="name-${Number(t.id)}"
-                    value="${esc(currentUser.username)}"
-                >
-
-
-                <label>
-                    🎮 Free Fire UID
-                </label>
-
-                <input
-                    id="uid-${Number(t.id)}"
-                    value="${esc(currentUser.uid)}"
-                    readonly
-                >
-
-
-                <label>
-                    📸 Instagram ID
-                </label>
-
-                <input
-                    id="instagram-${Number(t.id)}"
-                    placeholder="Instagram ID (without @ is okay)"
-                >
-
-
-                <label>
-                    🎯 Slot Number
-                </label>
-
-                <select
-                    id="slot-${Number(t.id)}"
-                    class="slot-select"
-                >
-
-                    ${options}
-
-                </select>
-
-
-                <div class="entry-box">
-
-                    💰 Entry Fee:
-
-                    <b>
-                        ₹${Number(t.entry_fee || 0)}
-                    </b>
-
-                    /
-
-                    <b>
-                        ${Number(t.entry_fee || 0)} Tokens
-                    </b>
-
-                </div>
-
-
-                <button
-                    type="button"
-                    id="regbtn-${Number(t.id)}"
-                    class="register-button"
-                    onclick="registerPlayer(${Number(t.id)})"
-                >
-
-                    ✅ Register Now
-
-                </button>
-
-
-                <div
-                    id="message-${Number(t.id)}"
-                    class="message"
-                ></div>
-
+                <button type="button" id="regbtn-${Number(t.id)}" class="register-button" onclick="registerPlayer(${Number(t.id)})">✅ Register Now</button>
+                <div id="message-${Number(t.id)}" class="message"></div>
             </div>
-
         </div>
-
     `;
-
 }
 
 
@@ -1859,6 +1726,9 @@ async function loadTournaments(){
 
                             👥 Slots:
                             ${playerCount}/${maxPlayers}
+
+                            ${t.game_mode === "Clash Squad" ? `<br>⚔️ Teams: Team A ${Number(t.team_counts?.["Team A"]||0)}/4 | Team B ${Number(t.team_counts?.["Team B"]||0)}/4` : ""}
+                            ${t.game_mode === "Lone Wolf" ? `<br>🐺 Teams: Team A ${Number(t.team_counts?.["Team A"]||0)}/1 | Team B ${Number(t.team_counts?.["Team B"]||0)}/1` : ""}
 
                             <br>
 
@@ -2036,278 +1906,83 @@ function showForm(id){
 
 async function registerPlayer(id){
 
-    console.log(
-        "Register button clicked:",
-        id
-    );
+    if(!currentUser){ showLogin(); return; }
 
+    const nameInput = document.getElementById(`name-${id}`);
+    const uidInput = document.getElementById(`uid-${id}`);
+    const instagramInput = document.getElementById(`instagram-${id}`);
+    const slotInput = document.getElementById(`slot-${id}`);
+    const teamInput = document.getElementById(`team-${id}`);
+    const message = document.getElementById(`message-${id}`);
+    const button = document.getElementById(`regbtn-${id}`);
 
-    if(!currentUser){
-
-        showLogin();
-
+    if(!nameInput || !uidInput || !instagramInput || !message || !button){
+        alert("Registration form load nahi hua. Page refresh karo.");
         return;
-
     }
 
+    const name = nameInput.value.trim();
+    const uid = uidInput.value.trim();
+    const instagram = instagramInput.value.trim();
+    const team = teamInput ? teamInput.value : "";
+    const slot = slotInput ? Number(slotInput.value) : 0;
 
-    const nameInput =
-        document.getElementById(
-            `name-${id}`
-        );
-
-
-    const uidInput =
-        document.getElementById(
-            `uid-${id}`
-        );
-
-
-    const instagramInput =
-        document.getElementById(
-            `instagram-${id}`
-        );
-
-
-    const slotInput =
-        document.getElementById(
-            `slot-${id}`
-        );
-
-
-    const message =
-        document.getElementById(
-            `message-${id}`
-        );
-
-
-    const button =
-        document.getElementById(
-            `regbtn-${id}`
-        );
-
-
-    if(
-        !nameInput ||
-        !uidInput ||
-        !instagramInput ||
-        !slotInput ||
-        !message ||
-        !button
-    ){
-
-        console.error(
-            "Registration elements missing:",
-            id
-        );
-
-        alert(
-            "Registration form load nahi hua. Page refresh karo."
-        );
-
+    if(!name || !uid || !instagram){
+        message.innerText = "❌ Name, Instagram ID bharo.";
         return;
-
     }
 
-
-    const name =
-        nameInput.value.trim();
-
-
-    const uid =
-        uidInput.value.trim();
-
-
-    const instagram =
-        instagramInput.value.trim();
-
-
-    const slot =
-        Number(
-            slotInput.value
-        );
-
-
-    if(
-        !name ||
-        !uid ||
-        !instagram ||
-        !slot
-    ){
-
-        message.innerText =
-            "❌ Name, Instagram ID aur Slot Number bharo.";
-
+    if(teamInput && !team){
+        message.innerText = "❌ Team A ya Team B select karo.";
         return;
-
     }
 
+    if(!teamInput && !slot){
+        message.innerText = "❌ Slot Number select karo.";
+        return;
+    }
 
     button.disabled = true;
-
-    button.innerText =
-        "⏳ Registering...";
-
-
-    message.innerText =
-        "⏳ Registration process ho raha hai...";
-
+    button.innerText = "⏳ Registering...";
+    message.innerText = "⏳ Registration process ho raha hai...";
 
     try{
-
-        /*
-         IMPORTANT:
-         Backend route is:
-
-         POST
-         /api/tournaments/<id>/players
-
-         NOT /register
-        */
-
-
-        const response =
-            await fetch(
-                `/api/tournaments/${id}/players`,
-                {
-
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    credentials:
-                        "same-origin",
-
-                    body:
-                        JSON.stringify({
-
-                            name:
-                                name,
-
-                            uid:
-                                uid,
-
-                            instagram_id:
-                                instagram,
-
-                            slot_number:
-                                slot
-
-                        })
-
-                }
-            );
-
+        const response = await fetch(`/api/tournaments/${id}/players`, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            credentials:"same-origin",
+            body:JSON.stringify({
+                name:name,
+                uid:uid,
+                instagram_id:instagram,
+                slot_number:slot,
+                team:team
+            })
+        });
 
         let data;
+        try{ data = await response.json(); }
+        catch(error){ data = {success:false,message:`Server error (${response.status})`}; }
 
-
-        try{
-
-            data =
-                await response.json();
-
-        }
-        catch(error){
-
-            data = {
-
-                success:false,
-
-                message:
-                    `Server error (${response.status})`
-
-            };
-
-        }
-
-
-        console.log(
-            "Registration response:",
-            response.status,
-            data
-        );
-
-
-        if(
-            response.ok &&
-            data.success
-        ){
-
-            message.innerText =
-                "✅ " +
-                (
-                    data.message ||
-                    "Tournament registration successful."
-                );
-
-
+        if(response.ok && data.success){
+            message.innerText = "✅ " + (data.message || "Tournament registration successful.");
             await loadWallet();
-
-
-            button.innerText =
-                "✅ Registered";
-
-
-            button.disabled =
-                true;
-
-
-            setTimeout(
-                async function(){
-
-                    await loadTournaments();
-
-                },
-                500
-            );
-
+            button.innerText = "✅ Registered";
+            button.disabled = true;
+            setTimeout(async function(){ await loadTournaments(); }, 500);
+        }else{
+            message.innerText = "❌ " + (data.message || "Registration failed.");
+            button.disabled = false;
+            button.innerText = "✅ Register Now";
         }
-        else{
-
-            message.innerText =
-                "❌ " +
-                (
-                    data.message ||
-                    "Registration failed."
-                );
-
-
-            button.disabled =
-                false;
-
-
-            button.innerText =
-                "✅ Register Now";
-
-        }
-
+    }catch(error){
+        console.error("Registration error:", error);
+        message.innerText = "❌ Server se connection nahi ho paya.";
+        button.disabled = false;
+        button.innerText = "✅ Register Now";
     }
-    catch(error){
-
-        console.error(
-            "Registration error:",
-            error
-        );
-
-
-        message.innerText =
-            "❌ Server se connection nahi ho paya.";
-
-
-        button.disabled =
-            false;
-
-
-        button.innerText =
-            "✅ Register Now";
-
-    }
-
 }
+
 
 
 
