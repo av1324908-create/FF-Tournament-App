@@ -50,7 +50,7 @@ class RegistrationDetail(db.Model):
     player_id = db.Column(db.Integer, nullable=False, unique=True, index=True)
     instagram_id = db.Column(db.String(100), nullable=False)
     slot_number = db.Column(db.Integer, nullable=False)
-    team = db.Column(db.String(20), nullable=True)
+    team = db.Column(db.String(50), default="", nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
@@ -132,6 +132,12 @@ with app.app_context():
                 text("ALTER TABLE tournament ADD COLUMN game_mode VARCHAR(50) DEFAULT 'Battle Royale'")
             )
 
+    if "sub_mode" not in tournament_columns:
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE tournament ADD COLUMN sub_mode VARCHAR(30) DEFAULT 'Squad'")
+            )
+
     registration_columns = {
         col["name"] for col in inspect(db.engine).get_columns("registration_detail")
     }
@@ -139,8 +145,17 @@ with app.app_context():
     if "team" not in registration_columns:
         with db.engine.begin() as connection:
             connection.execute(
-                text("ALTER TABLE registration_detail ADD COLUMN team VARCHAR(20)")
+                text("ALTER TABLE registration_detail ADD COLUMN team VARCHAR(50) DEFAULT ''")
             )
+
+    # Old tournaments continue as normal Battle Royale Squad tournaments.
+    with db.engine.begin() as connection:
+        connection.execute(
+            text("UPDATE tournament SET game_mode = 'Battle Royale' WHERE game_mode IS NULL OR game_mode = ''")
+        )
+        connection.execute(
+            text("UPDATE tournament SET sub_mode = 'Squad' WHERE sub_mode IS NULL OR sub_mode = ''")
+        )
 
     admin = AdminAccount.query.filter_by(
         username="admin"
@@ -635,6 +650,70 @@ def change_admin_password():
 
 
 # =========================================================
+# GAME MODE HELPERS
+# =========================================================
+
+def normalize_game_mode(mode):
+    mode = str(mode or "Battle Royale").strip()
+    allowed = {"Battle Royale", "Clash Squad", "Lone Wolf"}
+    return mode if mode in allowed else "Battle Royale"
+
+
+def normalize_sub_mode(game_mode, sub_mode):
+    game_mode = normalize_game_mode(game_mode)
+    sub_mode = str(sub_mode or "").strip()
+
+    if game_mode == "Battle Royale":
+        return sub_mode if sub_mode in {"Solo", "Duo", "Squad"} else "Squad"
+
+    if game_mode == "Lone Wolf":
+        return sub_mode if sub_mode in {"Solo", "Duo"} else "Solo"
+
+    return "4v4"
+
+
+def mode_capacity(game_mode, sub_mode, requested_max=0):
+    game_mode = normalize_game_mode(game_mode)
+    sub_mode = normalize_sub_mode(game_mode, sub_mode)
+
+    if game_mode == "Clash Squad":
+        return 8
+
+    if game_mode == "Lone Wolf":
+        return 2 if sub_mode == "Solo" else 4
+
+    max_players = int(requested_max or 0)
+    if max_players <= 0:
+        return max_players
+
+    if sub_mode == "Duo" and max_players % 2 != 0:
+        max_players -= 1
+
+    return max_players
+
+
+def team_limit(game_mode, sub_mode):
+    game_mode = normalize_game_mode(game_mode)
+    sub_mode = normalize_sub_mode(game_mode, sub_mode)
+
+    if game_mode == "Clash Squad":
+        return 4
+    if game_mode == "Lone Wolf":
+        return 1 if sub_mode == "Solo" else 2
+    if game_mode == "Battle Royale" and sub_mode == "Duo":
+        return 2
+    if game_mode == "Battle Royale" and sub_mode == "Squad":
+        return 4
+    return 1
+
+
+def mode_label(game_mode, sub_mode):
+    game_mode = normalize_game_mode(game_mode)
+    sub_mode = normalize_sub_mode(game_mode, sub_mode)
+    return f"{game_mode} - {sub_mode}"
+
+
+# =========================================================
 # GET TOURNAMENTS
 # =========================================================
 
@@ -677,12 +756,6 @@ def get_tournaments():
         result_published = bool(published_row)
         show_results = admin_view or (status == "completed" and result_published)
 
-        team_counts = {"Team A": 0, "Team B": 0}
-        for p in players:
-            detail = RegistrationDetail.query.filter_by(player_id=p.id).first()
-            if detail and detail.team in team_counts:
-                team_counts[detail.team] += 1
-
         players_data = []
         if show_results:
             for p in players:
@@ -698,6 +771,12 @@ def get_tournaments():
                     "team": detail.team if detail else ""
                 })
 
+        team_counts = {}
+        for p in players:
+            d = RegistrationDetail.query.filter_by(player_id=p.id).first()
+            if d and d.team:
+                team_counts[d.team] = team_counts.get(d.team, 0) + 1
+
         item = {
             "id": tournament.id,
             "name": tournament.name,
@@ -707,7 +786,9 @@ def get_tournaments():
             "first_prize": tournament.first_prize,
             "date_time": tournament.date_time,
             "rules": tournament.rules or "",
-            "game_mode": tournament.game_mode or "Battle Royale",
+            "game_mode": normalize_game_mode(tournament.game_mode),
+            "sub_mode": normalize_sub_mode(tournament.game_mode, tournament.sub_mode),
+            "mode_label": mode_label(tournament.game_mode, tournament.sub_mode),
             "player_count": len(players),
             "available_slots": max(0, int(tournament.max_players or 0) - len(players)),
             "team_counts": team_counts,
@@ -756,9 +837,11 @@ def create_tournament():
         data.get("rules", "")
     ).strip()
 
-    game_mode = str(data.get("game_mode", "Battle Royale")).strip()
-    if game_mode not in ("Battle Royale", "Clash Squad", "Lone Wolf"):
-        game_mode = "Battle Royale"
+    game_mode = normalize_game_mode(data.get("game_mode", "Battle Royale"))
+    sub_mode = normalize_sub_mode(
+        game_mode,
+        data.get("sub_mode", "Squad")
+    )
 
 
     try:
@@ -786,6 +869,14 @@ def create_tournament():
             "message": "Numeric values galat hain."
         }), 400
 
+
+    max_players = mode_capacity(game_mode, sub_mode, max_players)
+
+    if max_players <= 0:
+        return jsonify({
+            "success": False,
+            "message": "Is mode ke liye valid max players required hai."
+        }), 400
 
     if not name:
         return jsonify({
@@ -817,11 +908,6 @@ def create_tournament():
             "message": "Prize negative nahi ho sakta."
         }), 400
 
-    if game_mode == "Clash Squad":
-        max_players = 8
-    elif game_mode == "Lone Wolf":
-        max_players = 2
-
 
     tournament = Tournament(
         name=name,
@@ -831,7 +917,8 @@ def create_tournament():
         first_prize=first_prize,
         date_time=date_time,
         rules=rules,
-        game_mode=game_mode
+        game_mode=game_mode,
+        sub_mode=sub_mode
     )
 
 
@@ -851,7 +938,9 @@ def create_tournament():
             "first_prize": tournament.first_prize,
             "date_time": tournament.date_time,
             "rules": tournament.rules or "",
-            "game_mode": tournament.game_mode or "Battle Royale"
+            "game_mode": tournament.game_mode,
+            "sub_mode": tournament.sub_mode,
+            "mode_label": mode_label(tournament.game_mode, tournament.sub_mode)
         }
     })
 
@@ -901,9 +990,13 @@ def edit_tournament(tournament_id):
     name = str(data.get("name", "")).strip()
     date_time = str(data.get("date_time", "")).strip()
     rules = str(data.get("rules", "")).strip()
-    game_mode = str(data.get("game_mode", tournament.game_mode or "Battle Royale")).strip()
-    if game_mode not in ("Battle Royale", "Clash Squad", "Lone Wolf"):
-        game_mode = "Battle Royale"
+    game_mode = normalize_game_mode(
+        data.get("game_mode", tournament.game_mode or "Battle Royale")
+    )
+    sub_mode = normalize_sub_mode(
+        game_mode,
+        data.get("sub_mode", tournament.sub_mode or "Squad")
+    )
 
     try:
         entry_fee = int(data.get("entry_fee", 0))
@@ -928,6 +1021,8 @@ def edit_tournament(tournament_id):
             "message": "Entry fee/prize negative nahi ho sakta."
         }), 400
 
+    max_players = mode_capacity(game_mode, sub_mode, max_players)
+
     # Existing booked slots ko kabhi bhi max players se kam nahi karenge.
     if max_players < booked_count:
         return jsonify({
@@ -941,17 +1036,6 @@ def edit_tournament(tournament_id):
             "message": "Max players 0 se zyada hona chahiye."
         }), 400
 
-    if game_mode == "Clash Squad":
-        max_players = 8
-    elif game_mode == "Lone Wolf":
-        max_players = 2
-
-    if max_players < booked_count:
-        return jsonify({
-            "success": False,
-            "message": f"Already {booked_count} players registered hain; selected mode ke liye capacity kam hai."
-        }), 400
-
     tournament.name = name
     tournament.entry_fee = entry_fee
     tournament.max_players = max_players
@@ -960,6 +1044,7 @@ def edit_tournament(tournament_id):
     tournament.date_time = date_time
     tournament.rules = rules
     tournament.game_mode = game_mode
+    tournament.sub_mode = sub_mode
 
     db.session.commit()
 
@@ -975,7 +1060,9 @@ def edit_tournament(tournament_id):
             "first_prize": tournament.first_prize,
             "date_time": tournament.date_time,
             "rules": tournament.rules or "",
-            "game_mode": tournament.game_mode or "Battle Royale"
+            "game_mode": tournament.game_mode,
+            "sub_mode": tournament.sub_mode,
+            "mode_label": mode_label(tournament.game_mode, tournament.sub_mode)
         }
     })
 
@@ -1272,11 +1359,17 @@ def register_player(tournament_id):
     name = str(data.get("name", "")).strip()
     requested_uid = str(data.get("uid", "")).strip()
     instagram_id = str(data.get("instagram_id", "")).strip()
+    team = str(data.get("team", "")).strip()
 
     try:
         slot_number = int(data.get("slot_number", 0))
     except (ValueError, TypeError):
         slot_number = 0
+
+    game_mode = normalize_game_mode(tournament.game_mode)
+    sub_mode = normalize_sub_mode(game_mode, tournament.sub_mode)
+    max_players = int(tournament.max_players or 0)
+    per_team = team_limit(game_mode, sub_mode)
 
     if not name:
         return jsonify({"success": False, "message": "Player name required."}), 400
@@ -1291,28 +1384,83 @@ def register_player(tournament_id):
     if not instagram_id:
         return jsonify({"success": False, "message": "Valid Instagram ID required."}), 400
 
-    game_mode = tournament.game_mode or "Battle Royale"
-    team = str(data.get("team", "")).strip()
-    team_limit = 0
+    # BR Solo/Squad uses normal global slots.
+    # BR Duo uses Duo 1/Duo 2... with 2 players per duo.
+    # Clash Squad uses Team A/B with 4 players each.
+    # Lone Wolf Solo/Duo uses Team A/B with 1/2 players each.
+    is_team_mode = (
+        (game_mode == "Clash Squad") or
+        (game_mode == "Lone Wolf") or
+        (game_mode == "Battle Royale" and sub_mode == "Duo")
+    )
 
-    if game_mode in ("Clash Squad", "Lone Wolf"):
-        team_limit = 4 if game_mode == "Clash Squad" else 1
-        if team not in ("Team A", "Team B"):
-            return jsonify({"success": False, "message": "Team A ya Team B select karo."}), 400
+    if is_team_mode:
+        if game_mode == "Battle Royale" and sub_mode == "Duo":
+            valid_team_prefix = "Duo "
+            if not team.startswith(valid_team_prefix):
+                return jsonify({
+                    "success": False,
+                    "message": "Duo select karo, jaise Duo 1, Duo 2."
+                }), 400
+            try:
+                duo_number = int(team.split(" ", 1)[1])
+            except (ValueError, IndexError):
+                duo_number = 0
+            total_duos = max_players // 2
+            if duo_number < 1 or duo_number > total_duos:
+                return jsonify({
+                    "success": False,
+                    "message": "Valid Duo select karo."
+                }), 400
+        else:
+            if team not in {"Team A", "Team B"}:
+                return jsonify({
+                    "success": False,
+                    "message": "Team A ya Team B select karo."
+                }), 400
 
-        team_players = (
-            db.session.query(RegistrationDetail)
-            .filter_by(tournament_id=tournament_id, team=team)
-            .count()
-        )
-        if team_players >= team_limit:
-            return jsonify({"success": False, "message": f"{team} full ho chuki hai."}), 400
+        if slot_number < 1 or slot_number > per_team:
+            return jsonify({
+                "success": False,
+                "message": f"Is team me slot 1 se {per_team} tak hai."
+            }), 400
 
-        slot_number = team_players + 1
+        existing_slot = RegistrationDetail.query.filter_by(
+            tournament_id=tournament_id,
+            team=team,
+            slot_number=slot_number
+        ).first()
+        if existing_slot:
+            return jsonify({
+                "success": False,
+                "message": f"{team} Slot {slot_number} already booked hai."
+            }), 400
+
+        team_count = RegistrationDetail.query.filter_by(
+            tournament_id=tournament_id,
+            team=team
+        ).count()
+        if team_count >= per_team:
+            return jsonify({
+                "success": False,
+                "message": f"{team} full hai."
+            }), 400
+
     else:
         team = ""
-        if slot_number < 1 or slot_number > int(tournament.max_players or 0):
+        if slot_number < 1 or slot_number > max_players:
             return jsonify({"success": False, "message": "Valid slot number select karo."}), 400
+
+        existing_slot = RegistrationDetail.query.filter_by(
+            tournament_id=tournament_id,
+            slot_number=slot_number,
+            team=""
+        ).first()
+        if existing_slot:
+            return jsonify({
+                "success": False,
+                "message": f"Slot {slot_number} already booked hai. Dusra slot select karo."
+            }), 400
 
     user_registration = UserTournamentRegistration.query.filter_by(
         user_id=user.id, tournament_id=tournament_id
@@ -1320,43 +1468,44 @@ def register_player(tournament_id):
     if user_registration:
         return jsonify({"success": False, "message": "Aap is tournament me already registered ho."}), 400
 
-    existing_player = Player.query.filter_by(tournament_id=tournament_id, uid=user.uid).first()
+    existing_player = Player.query.filter_by(
+        tournament_id=tournament_id,
+        uid=user.uid
+    ).first()
     if existing_player:
         return jsonify({"success": False, "message": "Ye UID is tournament me already registered hai."}), 400
 
-    existing_slot_query = RegistrationDetail.query.filter_by(
-        tournament_id=tournament_id, slot_number=slot_number
-    )
-    if team:
-        existing_slot_query = existing_slot_query.filter_by(team=team)
-    existing_slot = existing_slot_query.first()
-    if existing_slot:
-        return jsonify({"success": False, "message": f"Slot {slot_number} already booked hai. Dusra slot select karo."}), 400
-
     current_players = Player.query.filter_by(tournament_id=tournament_id).count()
-    if current_players >= int(tournament.max_players or 0):
+    if current_players >= max_players:
         return jsonify({"success": False, "message": "Tournament ke saare slots full ho gaye hain."}), 400
 
     entry_fee = int(tournament.entry_fee or 0)
     wallet = Wallet.query.filter_by(player_uid=user.uid).first()
     current_balance = wallet.balance if wallet is not None else 0
 
+    # Free tournament = 0 token required.
     if current_balance < entry_fee:
         return jsonify({
             "success": False,
-            "message": f"Registration ke liye {entry_fee} tokens chahiye. Aapke wallet me {current_balance} tokens hain. Admin se tokens add karwao.",
+            "message": f"Registration ke liye {entry_fee} tokens chahiye. Aapke wallet me {current_balance} tokens hain.",
             "entry_fee": entry_fee,
             "balance": current_balance
         }), 400
 
     player = Player(
-        name=name, uid=user.uid, kills=0, position=0, tournament_id=tournament_id
+        name=name,
+        uid=user.uid,
+        kills=0,
+        position=0,
+        tournament_id=tournament_id
     )
     db.session.add(player)
     db.session.flush()
 
     registration = UserTournamentRegistration(
-        user_id=user.id, tournament_id=tournament_id, player_id=player.id
+        user_id=user.id,
+        tournament_id=tournament_id,
+        player_id=player.id
     )
     db.session.add(registration)
 
@@ -1373,7 +1522,11 @@ def register_player(tournament_id):
     if entry_fee > 0:
         if wallet is None:
             db.session.rollback()
-            return jsonify({"success": False, "message": "Wallet error. Registration cancel kar di gayi."}), 500
+            return jsonify({
+                "success": False,
+                "message": "Wallet error. Registration cancel kar di gayi."
+            }), 500
+
         wallet.balance -= entry_fee
         db.session.add(TokenTransaction(
             player_uid=user.uid,
@@ -1386,11 +1539,14 @@ def register_player(tournament_id):
         db.session.commit()
     except Exception:
         db.session.rollback()
-        return jsonify({"success": False, "message": "Registration save nahi ho payi. Tokens deduct nahi hue."}), 500
+        return jsonify({
+            "success": False,
+            "message": "Registration save nahi ho payi. Tokens deduct nahi hue."
+        }), 500
 
     return jsonify({
         "success": True,
-        "message": f"Registration successful! {team + ' • ' if team else ''}Slot {slot_number} booked. {entry_fee} tokens deduct hue.",
+        "message": f"Registration successful! {team + ' ' if team else ''}Slot {slot_number} booked. {entry_fee} tokens deduct hue.",
         "entry_fee": entry_fee,
         "balance": wallet.balance if wallet else 0,
         "player": {
@@ -1400,6 +1556,8 @@ def register_player(tournament_id):
             "instagram_id": instagram_id,
             "slot_number": slot_number,
             "team": team,
+            "game_mode": game_mode,
+            "sub_mode": sub_mode,
             "tournament_id": tournament_id
         }
     })
@@ -2055,7 +2213,13 @@ def get_tournament_players(tournament_id):
 
             "position": player.position,
 
-            "tournament_id": player.tournament_id
+            "tournament_id": player.tournament_id,
+            "instagram_id": (RegistrationDetail.query.filter_by(player_id=player.id).first().instagram_id
+                              if RegistrationDetail.query.filter_by(player_id=player.id).first() else ""),
+            "slot_number": (RegistrationDetail.query.filter_by(player_id=player.id).first().slot_number
+                            if RegistrationDetail.query.filter_by(player_id=player.id).first() else 0),
+            "team": (RegistrationDetail.query.filter_by(player_id=player.id).first().team
+                     if RegistrationDetail.query.filter_by(player_id=player.id).first() else "")
         })
 
 
