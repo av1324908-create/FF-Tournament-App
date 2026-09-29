@@ -1414,6 +1414,12 @@ def register_player(tournament_id):
     )
 
     if is_team_mode:
+        # Lone Wolf 1v1 me har team ka sirf ek slot hota hai.
+        # Frontend agar global slot (1/2) bhej de to Team B ke liye 2 ko
+        # reject mat karo; Team A/Team B dono ka local slot 1 hi rahega.
+        if game_mode == "Lone Wolf" and sub_mode == "Solo":
+            slot_number = 1
+
         if game_mode == "Battle Royale" and sub_mode == "Duo":
             valid_team_prefix = "Duo "
             if not team.startswith(valid_team_prefix):
@@ -1751,28 +1757,13 @@ def delete_player_account(user_id):
         registrations = UserTournamentRegistration.query.filter_by(user_id=user.id).all()
         player_ids = [r.player_id for r in registrations if r.player_id]
 
-        # Match proofs ko pehle remove karo, warna player/account delete ke time
-        # purane proof records ki wajah se delete/constraint error aa sakta hai.
-        MatchProof.query.filter_by(user_id=user.id).delete(
-            synchronize_session=False
-        )
-
         if player_ids:
             RegistrationDetail.query.filter(
                 RegistrationDetail.player_id.in_(player_ids)
             ).delete(synchronize_session=False)
 
-            # Kisi purane/orphan registration detail ko bhi user_id se clean karo.
-            RegistrationDetail.query.filter(
-                RegistrationDetail.user_id == user.id
-            ).delete(synchronize_session=False)
-
             Player.query.filter(
                 Player.id.in_(player_ids)
-            ).delete(synchronize_session=False)
-        else:
-            RegistrationDetail.query.filter(
-                RegistrationDetail.user_id == user.id
             ).delete(synchronize_session=False)
 
         UserTournamentRegistration.query.filter_by(user_id=user.id).delete(
