@@ -328,6 +328,18 @@ id="td"
 placeholder="Date/time: DD/MM/YY HH:MM"
 >
 
+<select id="tmode">
+<option value="Battle Royale">Battle Royale</option>
+<option value="Clash Squad">Clash Squad</option>
+<option value="Lone Wolf">Lone Wolf</option>
+</select>
+
+<select id="tsubmode">
+<option value="Squad">Squad</option>
+<option value="Duo">Duo</option>
+<option value="Solo">Solo</option>
+</select>
+
 </div>
 
 </div>
@@ -337,7 +349,7 @@ id="tr"
 placeholder="Tournament rules"
 ></textarea>
 
-<button onclick="createTournament()">
+<button type="button" onclick="createTournament()">
 Create Tournament
 </button>
 
@@ -756,6 +768,18 @@ id="ed"
 placeholder="DD/MM/YY HH:MM"
 >
 
+<select id="emode">
+<option value="Battle Royale">Battle Royale</option>
+<option value="Clash Squad">Clash Squad</option>
+<option value="Lone Wolf">Lone Wolf</option>
+</select>
+
+<select id="esubmode">
+<option value="Squad">Squad</option>
+<option value="Duo">Duo</option>
+<option value="Solo">Solo</option>
+</select>
+
 <textarea id="er"></textarea>
 
 <div class="row">
@@ -767,7 +791,7 @@ onclick="closeEdit()"
 Cancel
 </button>
 
-<button onclick="saveEdit()">
+<button type="button" onclick="saveEdit()">
 Save Changes
 </button>
 
@@ -1190,68 +1214,51 @@ let body={
 
 name:$('tn').value.trim(),
 
-entry_fee:
-Number($('te').value||0),
+entry_fee:Number($('te').value||0),
 
-max_players:
-Number($('tm').value||0),
+max_players:Number($('tm').value||0),
 
-kill_reward:
-Number($('tk').value||0),
+kill_reward:Number($('tk').value||0),
 
-first_prize:
-Number($('tp').value||0),
+first_prize:Number($('tp').value||0),
 
-date_time:
-$('td').value.trim(),
+date_time:$('td').value.trim(),
 
-rules:
-$('tr').value.trim(),
+rules:$('tr').value.trim(),
 
-game_mode:
-$('tmode').value
+game_mode:$('tmode').value,
+
+sub_mode:$('tsubmode').value
 
 };
 
-let {r,d}=
-await json(
+try{
+
+let {r,d}=await json(
 '/api/tournaments',
 {
 method:'POST',
-headers:{
-'Content-Type':'application/json'
-},
+headers:{'Content-Type':'application/json'},
 body:JSON.stringify(body)
 }
 );
 
 if(!r.ok||d.success===false)
-return msg(
-'createMsg',
-d.message||'Create failed.',
-false
-);
+return msg('createMsg',d.message||'Create failed.',false);
 
-msg(
-'createMsg',
-'Tournament successfully create ho gaya.'
-);
+msg('createMsg','Tournament successfully create ho gaya.');
 
-[
-'tn',
-'te',
-'tm',
-'tk',
-'tp',
-'td',
-'tr',
-'tmode'
-].forEach(
-x=>$(x).value=''
-);
+['tn','te','tm','tk','tp','td','tr'].forEach(x=>$(x).value='');
 
-loadTournaments();
+$('tmode').value='Battle Royale';
+$('tsubmode').value='Squad';
 
+await loadTournaments();
+
+}catch(error){
+console.error('Create tournament error:',error);
+msg('createMsg','Server se connection nahi ho paya.',false);
+}
 }
 
 
@@ -1673,6 +1680,7 @@ $('ek').value=t.kill_reward??0;
 $('ep').value=t.first_prize??0;
 $('ed').value=t.date_time||'';
 $('emode').value=t.game_mode||'Battle Royale';
+$('esubmode').value=t.sub_mode||'Squad';
 $('er').value=t.rules||'';
 
 $('editModal')
@@ -1700,53 +1708,45 @@ let body={
 
 name:$('en').value.trim(),
 
-entry_fee:
-Number($('ee').value||0),
+entry_fee:Number($('ee').value||0),
 
-max_players:
-Number($('em').value||0),
+max_players:Number($('em').value||0),
 
-kill_reward:
-Number($('ek').value||0),
+kill_reward:Number($('ek').value||0),
 
-first_prize:
-Number($('ep').value||0),
+first_prize:Number($('ep').value||0),
 
-date_time:
-$('ed').value.trim(),
+date_time:$('ed').value.trim(),
 
-rules:
-$('er').value.trim(),
+rules:$('er').value.trim(),
 
-game_mode:
-$('emode').value
+game_mode:$('emode').value,
+
+sub_mode:$('esubmode').value
 
 };
 
-let {r,d}=
-await json(
+try{
+
+let {r,d}=await json(
 `/api/tournaments/${editId}`,
 {
 method:'PUT',
-headers:{
-'Content-Type':
-'application/json'
-},
+headers:{'Content-Type':'application/json'},
 body:JSON.stringify(body)
 }
 );
 
 if(!r.ok||d.success===false)
-return msg(
-'editMsg',
-d.message||'Edit failed.',
-false
-);
+return msg('editMsg',d.message||'Edit failed.',false);
 
 closeEdit();
+await loadTournaments();
 
-loadTournaments();
-
+}catch(error){
+console.error('Edit tournament error:',error);
+msg('editMsg','Server se connection nahi ho paya.',false);
+}
 }
 
 
